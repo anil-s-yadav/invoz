@@ -370,12 +370,7 @@ class _DocumentEditorScreenState extends State<DocumentEditorScreen> {
       body: SafeArea(
         child: ResponsiveMaxWidth(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(
-              16,
-              8,
-              16,
-              120, // Room for bottom sticky bar
-            ),
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -420,7 +415,7 @@ class _DocumentEditorScreenState extends State<DocumentEditorScreen> {
           ),
         ),
       ),
-      bottomSheet: _buildBottomStickyBar(),
+      bottomNavigationBar: _buildBottomStickyBar(),
     );
   }
 
@@ -1766,54 +1761,58 @@ class _DocumentEditorScreenState extends State<DocumentEditorScreen> {
   }
 
   Widget _buildBottomStickyBar() {
-    return ResponsiveMaxWidth(
-      child: Container(
-        decoration: BoxDecoration(
-          color: _isDark ? AppColors.darkSurface : Colors.white,
-          border: Border(top: BorderSide(color: _border, width: 1)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: _isDark ? 0.3 : 0.05),
-              blurRadius: 10,
-              offset: const Offset(0, -5),
-            ),
-          ],
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-        child: SafeArea(
-          child: Row(
-            children: [
-              Expanded(
-                child: ElevatedButton.icon(
-                  onPressed: _isSaving ? null : _handleSaveAndPreview,
-                  icon: _isSaving
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            color: Colors.white,
-                            strokeWidth: 2,
-                          ),
-                        )
-                      : const Icon(Icons.picture_as_pdf_rounded),
-                  label: Text(_isSaving ? 'Saving...' : 'Save & Preview'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    elevation: 4,
-                    shadowColor: AppColors.primary.withValues(alpha: 0.5),
-                    textStyle: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+    return Container(
+      decoration: BoxDecoration(
+        color: _isDark ? AppColors.darkSurface : Colors.white,
+        border: Border(top: BorderSide(color: _border, width: 1)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: _isDark ? 0.3 : 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, -5),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      child: SafeArea(
+        child: Center(
+          heightFactor: 1.0,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 800),
+            child: Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: _isSaving ? null : _handleSaveAndPreview,
+                    icon: _isSaving
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2,
+                            ),
+                          )
+                        : const Icon(Icons.picture_as_pdf_rounded),
+                    label: Text(_isSaving ? 'Saving...' : 'Save & Preview'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 4,
+                      shadowColor: AppColors.primary.withValues(alpha: 0.5),
+                      textStyle: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
