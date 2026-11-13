@@ -302,7 +302,7 @@ class _DocumentEditorScreenState extends State<DocumentEditorScreen> {
       overallDiscountType: _overallDiscountType,
       templateId: _templateId,
       enableRoundOff: _enableRoundOff,
-        includePaymentDetails:
+      includePaymentDetails:
           _selectedBankDetailId != null ||
           _selectedUpiDetailId != null ||
           _includePaymentDetails,
@@ -371,53 +371,53 @@ class _DocumentEditorScreenState extends State<DocumentEditorScreen> {
         child: ResponsiveMaxWidth(
           child: SingleChildScrollView(
             padding: const EdgeInsets.fromLTRB(
-            16,
-            8,
-            16,
-            120, // Room for bottom sticky bar
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // 1. Document Type Switcher Pills
-              // _buildDocTypePills(),
-              // const SizedBox(height: 16),
+              16,
+              8,
+              16,
+              120, // Room for bottom sticky bar
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // 1. Document Type Switcher Pills
+                // _buildDocTypePills(),
+                // const SizedBox(height: 16),
 
-              // 1.5 Selected Company Selector
-              _buildCompanySelector(),
-              const SizedBox(height: 16),
+                // 1.5 Selected Company Selector
+                _buildCompanySelector(),
+                const SizedBox(height: 16),
 
-              // 2. Document Meta Card (Number + Dates)
-              _buildMetaCard(),
-              const SizedBox(height: 24),
-
-              // 3. Customer Section
-              _buildSectionTitle('BILLED TO'),
-              _buildCustomerSection(),
-              const SizedBox(height: 24),
-
-              // 4. Line Items Section
-              _buildSectionTitle('LINE ITEMS'),
-              _buildItemsSection(),
-              const SizedBox(height: 24),
-
-              // _buildSectionTitle('DETAILS (OPTIONAL)'),
-              _buildOptionalFields(),
-              const SizedBox(height: 24),
-
-              // 5. Totals & Tax Summary Card
-              if (_items.isNotEmpty) ...[
-                _buildSectionTitle('SUMMARY'),
-                _buildSummaryCard(),
+                // 2. Document Meta Card (Number + Dates)
+                _buildMetaCard(),
                 const SizedBox(height: 24),
-              ],
 
-              // 6. Notes & Terms Accordion
-              _buildSectionTitle('SHOW PAYMENTS INFO'),
-              _buildNotesTermsSection(),
-            ],
+                // 3. Customer Section
+                _buildSectionTitle('BILLED TO'),
+                _buildCustomerSection(),
+                const SizedBox(height: 24),
+
+                // 4. Line Items Section
+                _buildSectionTitle('LINE ITEMS'),
+                _buildItemsSection(),
+                const SizedBox(height: 24),
+
+                // _buildSectionTitle('DETAILS (OPTIONAL)'),
+                _buildOptionalFields(),
+                const SizedBox(height: 24),
+
+                // 5. Totals & Tax Summary Card
+                if (_items.isNotEmpty) ...[
+                  _buildSectionTitle('SUMMARY'),
+                  _buildSummaryCard(),
+                  const SizedBox(height: 24),
+                ],
+
+                // 6. Notes & Terms Accordion
+                _buildSectionTitle('SHOW PAYMENTS INFO'),
+                _buildNotesTermsSection(),
+              ],
+            ),
           ),
-        ),
         ),
       ),
       bottomSheet: _buildBottomStickyBar(),
@@ -1820,4 +1820,3 @@ class _DocumentEditorScreenState extends State<DocumentEditorScreen> {
     );
   }
 }
-

@@ -40,6 +40,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
               initialIndex: widget.initialTabIndex,
               child: Scaffold(
                 appBar: AppBar(
+                  automaticallyImplyLeading: false,
                   title: TabBar(
                     indicator: BoxDecoration(
                       color: isDark ? AppColors.darkSurface : Colors.white,
@@ -159,4 +160,3 @@ class _CatalogScreenState extends State<CatalogScreen> {
     );
   }
 }
-
