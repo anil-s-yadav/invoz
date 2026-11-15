@@ -46,7 +46,10 @@ class _PdfPreviewScreenState extends State<PdfPreviewScreen> {
   void initState() {
     super.initState();
     _document = widget.document;
-    _currentTemplateId = widget.document.templateId;
+    _currentTemplateId = TemplateRegistry.resolveTemplateId(
+      widget.document.templateId,
+      widget.document.docType,
+    );
   }
 
   Future<void> _handleConvertProformaToInvoice() async {
@@ -734,15 +737,24 @@ class _PdfPreviewScreenState extends State<PdfPreviewScreen> {
                       final hasPremium =
                           subState.effectivePlan.hasPremiumTemplates;
 
+                      final availableTemplates =
+                          TemplateRegistry.getTemplatesFor(_document.docType);
                       String actualTemplateId = _currentTemplateId;
+                      if (!availableTemplates.any((t) => t.id == actualTemplateId)) {
+                        actualTemplateId = availableTemplates.isNotEmpty
+                            ? availableTemplates.first.id
+                            : _currentTemplateId;
+                      }
+
                       if (!hasPremium) {
                         final info = TemplateRegistry.getById(
-                          _currentTemplateId,
+                          actualTemplateId,
                         );
                         if (info.isPremium) {
-                          // Fallback to first non-premium template
-                          actualTemplateId = TemplateRegistry.allTemplates
-                              .firstWhere((t) => !t.isPremium)
+                          // Fallback to first non-premium template for this type
+                          actualTemplateId = availableTemplates
+                              .firstWhere((t) => !t.isPremium,
+                                  orElse: () => availableTemplates.first)
                               .id;
                         }
                       }

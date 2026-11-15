@@ -104,28 +104,40 @@ class TemplatePreviewScreen extends StatelessWidget {
                 minScale: 1.0,
                 maxScale: 4.0,
                 child: Center(
-                  child: AspectRatio(
-                    aspectRatio: 1 / 1.414, // A4 ratio
-                    child: Container(
-                      margin: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withAlpha(15),
-                            blurRadius: 8,
-                            offset: const Offset(0, 4),
+                  child: (template.id == TemplateRegistry.thermalReceipt ||
+                          template.id == TemplateRegistry.orderReceipt)
+                      ? SingleChildScrollView(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 24,
+                            horizontal: 16,
                           ),
-                        ],
-                      ),
-                      child: ClipRect(
-                        child: DummyTemplateWidget(
-                          templateId: template.id,
-                          documentType: documentType,
+                          child: DummyTemplateWidget(
+                            templateId: template.id,
+                            documentType: documentType,
+                          ),
+                        )
+                      : AspectRatio(
+                          aspectRatio: 1 / 1.414, // A4 ratio
+                          child: Container(
+                            margin: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withAlpha(15),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child: ClipRect(
+                              child: DummyTemplateWidget(
+                                templateId: template.id,
+                                documentType: documentType,
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  ),
                 ),
               ),
             ),

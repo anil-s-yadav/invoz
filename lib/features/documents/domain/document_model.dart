@@ -57,7 +57,7 @@ class DocumentModel {
   final String? selectedBankDetailId;
   final String? selectedUpiDetailId;
   final String
-  templateId; // 'modern_crimson', 'minimal', 'professional', 'elegant', 'compact', 'bold'
+  templateId; // 'free_classic', 'premium_modern', 'elegant_center', 'thermal_receipt'
   final String? notes;
   final String? terms;
   final String? relatedDocId;
@@ -86,7 +86,7 @@ class DocumentModel {
     this.includePaymentDetails = true,
     this.selectedBankDetailId,
     this.selectedUpiDetailId,
-    this.templateId = 'modern_crimson',
+    this.templateId = 'free_classic',
     this.notes,
     this.terms,
     this.relatedDocId,
@@ -340,7 +340,7 @@ class DocumentModel {
           map['includePaymentDetails'] == true,
       selectedBankDetailId: map['selectedBankDetailId'] as String?,
       selectedUpiDetailId: map['selectedUpiDetailId'] as String?,
-      templateId: map['templateId'] as String? ?? 'modern_crimson',
+      templateId: map['templateId'] as String? ?? 'free_classic',
       notes: map['notes'] as String?,
       terms: map['terms'] as String?,
       relatedDocId: map['relatedDocId'] as String?,

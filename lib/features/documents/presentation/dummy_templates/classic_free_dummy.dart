@@ -22,7 +22,7 @@ Widget buildClassicFreeDummy(DocumentType documentType) {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
-              flex: 3,
+              flex: 1,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -48,18 +48,23 @@ Widget buildClassicFreeDummy(DocumentType documentType) {
                 ],
               ),
             ),
+            const SizedBox(width: 16),
             Expanded(
-              flex: 2,
+              flex: 1,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text(
-                    documentType.displayName.toUpperCase(),
-                    style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w900,
-                      color: primarySlate,
-                      letterSpacing: 1.5,
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      documentType.displayName.toUpperCase(),
+                      style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w900,
+                        color: primarySlate,
+                        letterSpacing: 1.2,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -74,41 +79,55 @@ Widget buildClassicFreeDummy(DocumentType documentType) {
                       border: Border.all(color: borderColor),
                     ),
                     child: buildDummyText(
-                      '# INV-2026-0001',
+                      '# ${documentType.prefix}2026-0001',
                       bold: true,
                       size: 11,
                       color: primarySlate,
                     ),
                   ),
                   const SizedBox(height: 8),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      buildDummyText(
-                        'Issue Date: ',
-                        size: 10,
-                        color: mutedSlate,
-                      ),
-                      buildDummyText(
-                        '28 Sep 2026',
-                        size: 10,
-                        bold: true,
-                        color: primarySlate,
-                      ),
-                    ],
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerRight,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        buildDummyText(
+                          'Issue Date: ',
+                          size: 10,
+                          color: mutedSlate,
+                        ),
+                        buildDummyText(
+                          '28 Sep 2026',
+                          size: 10,
+                          bold: true,
+                          color: primarySlate,
+                        ),
+                      ],
+                    ),
                   ),
                   const SizedBox(height: 3),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      buildDummyText('Due Date: ', size: 10, color: mutedSlate),
-                      buildDummyText(
-                        '13 Oct 2026',
-                        size: 10,
-                        bold: true,
-                        color: primarySlate,
-                      ),
-                    ],
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerRight,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        buildDummyText(
+                          documentType == DocumentType.proforma
+                              ? 'Valid Until: '
+                              : 'Due Date: ',
+                          size: 10,
+                          color: mutedSlate,
+                        ),
+                        buildDummyText(
+                          '13 Oct 2026',
+                          size: 10,
+                          bold: true,
+                          color: primarySlate,
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -125,35 +144,38 @@ Widget buildClassicFreeDummy(DocumentType documentType) {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                buildDummyText(
-                  'BILLED TO',
-                  size: 9,
-                  bold: true,
-                  color: mutedSlate,
-                ),
-                const SizedBox(height: 4),
-                buildDummyText(
-                  'Georgo graph LTD',
-                  size: 13,
-                  bold: true,
-                  color: primarySlate,
-                ),
-                const SizedBox(height: 2),
-                buildDummyText(
-                  'vajsisi@shjs.com  •  +1 987-654-3210',
-                  size: 9.5,
-                  color: secondarySlate,
-                ),
-                buildDummyText(
-                  '742 Evergreen Terrace, Brooklyn, NY 11201',
-                  size: 9.5,
-                  color: secondarySlate,
-                ),
-              ],
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  buildDummyText(
+                    'BILLED TO',
+                    size: 9,
+                    bold: true,
+                    color: mutedSlate,
+                  ),
+                  const SizedBox(height: 4),
+                  buildDummyText(
+                    'Georgo graph LTD',
+                    size: 13,
+                    bold: true,
+                    color: primarySlate,
+                  ),
+                  const SizedBox(height: 2),
+                  buildDummyText(
+                    'vajsisi@shjs.com  •  +1 987-654-3210',
+                    size: 9.5,
+                    color: secondarySlate,
+                  ),
+                  buildDummyText(
+                    '742 Evergreen Terrace, Brooklyn, NY 11201',
+                    size: 9.5,
+                    color: secondarySlate,
+                  ),
+                ],
+              ),
             ),
+            const SizedBox(width: 12),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
               decoration: BoxDecoration(
@@ -165,17 +187,22 @@ Widget buildClassicFreeDummy(DocumentType documentType) {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   buildDummyText(
-                    'TOTAL DUE',
+                    documentType == DocumentType.proforma
+                        ? 'TOTAL AMOUNT'
+                        : 'TOTAL DUE',
                     size: 8.5,
                     bold: true,
                     color: mutedSlate,
                   ),
                   const SizedBox(height: 2),
-                  buildDummyText(
-                    'Rs. 1,120.00',
-                    size: 15,
-                    bold: true,
-                    color: primarySlate,
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: buildDummyText(
+                      'Rs. 1,120.00',
+                      size: 15,
+                      bold: true,
+                      color: primarySlate,
+                    ),
                   ),
                 ],
               ),
@@ -335,7 +362,7 @@ Widget buildClassicFreeDummy(DocumentType documentType) {
         Align(
           alignment: Alignment.centerRight,
           child: Container(
-            width: 220,
+            width: 240,
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               color: bgLight,
@@ -345,33 +372,51 @@ Widget buildClassicFreeDummy(DocumentType documentType) {
             child: Column(
               children: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    buildDummyText(
-                      'Subtotal',
-                      size: 10.5,
-                      color: secondarySlate,
+                    Expanded(
+                      child: buildDummyText(
+                        'Subtotal',
+                        size: 10.5,
+                        color: secondarySlate,
+                      ),
                     ),
-                    buildDummyText(
-                      'Rs. 1,000.00',
-                      size: 10.5,
-                      color: primarySlate,
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: buildDummyText(
+                            'Rs. 1,000.00',
+                            size: 10.5,
+                            color: primarySlate,
+                          ),
+                        ),
+                      ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 6),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    buildDummyText(
-                      'Tax (12%)',
-                      size: 10.5,
-                      color: secondarySlate,
+                    Expanded(
+                      child: buildDummyText(
+                        'Tax (12%)',
+                        size: 10.5,
+                        color: secondarySlate,
+                      ),
                     ),
-                    buildDummyText(
-                      'Rs. 120.00',
-                      size: 10.5,
-                      color: primarySlate,
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: buildDummyText(
+                            'Rs. 120.00',
+                            size: 10.5,
+                            color: primarySlate,
+                          ),
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -379,19 +424,28 @@ Widget buildClassicFreeDummy(DocumentType documentType) {
                 Container(height: 1, color: borderColor),
                 const SizedBox(height: 8),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    buildDummyText(
-                      'Total',
-                      bold: true,
-                      size: 13,
-                      color: primarySlate,
+                    Expanded(
+                      child: buildDummyText(
+                        'Total',
+                        bold: true,
+                        size: 13,
+                        color: primarySlate,
+                      ),
                     ),
-                    buildDummyText(
-                      'Rs. 1,120.00',
-                      bold: true,
-                      size: 14,
-                      color: primarySlate,
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: buildDummyText(
+                            'Rs. 1,120.00',
+                            bold: true,
+                            size: 14,
+                            color: primarySlate,
+                          ),
+                        ),
+                      ),
                     ),
                   ],
                 ),

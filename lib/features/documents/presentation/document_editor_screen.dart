@@ -33,6 +33,8 @@ import 'widgets/customer_select_sheet.dart';
 import '../../customers/presentation/customer_editor_sheet.dart';
 import 'widgets/item_entry_sheet.dart';
 import 'widgets/product_select_sheet.dart';
+import '../../pdf_engine/template_registry.dart';
+import 'widgets/template_thumbnail_card.dart';
 
 class DocumentEditorScreen extends StatefulWidget {
   final DocumentModel? initialDocument;
@@ -99,7 +101,10 @@ class _DocumentEditorScreenState extends State<DocumentEditorScreen> {
     _items = doc?.items != null ? List.from(doc!.items) : [];
     _overallDiscountValue = doc?.overallDiscountValue ?? 0.0;
     _overallDiscountType = doc?.overallDiscountType ?? DiscountType.percentage;
-    _templateId = doc?.templateId ?? 'modern_crimson';
+    _templateId = TemplateRegistry.resolveTemplateId(
+      doc?.templateId,
+      _docType,
+    );
     _notesController = TextEditingController(text: doc?.notes ?? '');
     _termsController = TextEditingController(text: doc?.terms ?? '');
 
@@ -120,6 +125,30 @@ class _DocumentEditorScreenState extends State<DocumentEditorScreen> {
           _docNumberController.text = nextNumber;
         });
 
+        final templateRepo = TemplateSettingsRepository();
+        final defaultTemplateId = await templateRepo.getDefaultTemplate(
+          _docType,
+        );
+
+        if (!mounted) return;
+        setState(() {
+          _templateId = defaultTemplateId;
+
+          // Auto-select first available bank and UPI for new documents
+          if (_selectedBankDetailId == null) {
+            final banks = _payments.where((p) => p.type == 'Bank').toList();
+            if (banks.isNotEmpty) {
+              _selectedBankDetailId = banks.first.id;
+            }
+          }
+          if (_selectedUpiDetailId == null) {
+            final upis = _payments.where((p) => p.type == 'UPI').toList();
+            if (upis.isNotEmpty) {
+              _selectedUpiDetailId = upis.first.id;
+            }
+          }
+        });
+
         final profileState = context.read<BusinessProfileBloc>().state;
         if (profileState is BusinessProfileLoaded) {
           final profile = profileState.profile;
@@ -129,30 +158,6 @@ class _DocumentEditorScreenState extends State<DocumentEditorScreen> {
           if (_notesController.text.isEmpty) {
             _notesController.text = profile.defaultNotes;
           }
-
-          final templateRepo = TemplateSettingsRepository();
-          final defaultTemplateId = await templateRepo.getDefaultTemplate(
-            _docType,
-          );
-
-          if (!mounted) return;
-          setState(() {
-            _templateId = defaultTemplateId;
-
-            // Auto-select first available bank and UPI for new documents
-            if (_selectedBankDetailId == null) {
-              final banks = _payments.where((p) => p.type == 'Bank').toList();
-              if (banks.isNotEmpty) {
-                _selectedBankDetailId = banks.first.id;
-              }
-            }
-            if (_selectedUpiDetailId == null) {
-              final upis = _payments.where((p) => p.type == 'UPI').toList();
-              if (upis.isNotEmpty) {
-                _selectedUpiDetailId = upis.first.id;
-              }
-            }
-          });
         }
       }
     } catch (_) {}
@@ -658,8 +663,194 @@ class _DocumentEditorScreenState extends State<DocumentEditorScreen> {
               ),
             ],
           ),
+          const SizedBox(height: 12),
+          _buildTemplateChip(),
         ],
       ),
+    );
+  }
+
+  Widget _buildTemplateChip() {
+    final available = TemplateRegistry.getTemplatesFor(_docType);
+    final currentTemplate = available.any((t) => t.id == _templateId)
+        ? TemplateRegistry.getById(_templateId)
+        : (available.isNotEmpty
+            ? available.first
+            : TemplateRegistry.allTemplates.first);
+    return InkWell(
+      onTap: _showTemplateSelector,
+      borderRadius: BorderRadius.circular(8),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        decoration: BoxDecoration(
+          color: _isDark ? AppColors.darkSurfaceVariant : AppColors.canvas,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: _isDark ? AppColors.darkBorder : AppColors.border,
+            width: 0.8,
+          ),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              currentTemplate.icon,
+              size: 20,
+              color: AppColors.primary,
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Template Style',
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: AppColors.textMuted,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    currentTemplate.name,
+                    style: TextStyle(
+                      fontSize: 13.5,
+                      fontWeight: FontWeight.w700,
+                      color: _textPrimary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: AppColors.primary.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Change',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.primary,
+                    ),
+                  ),
+                  SizedBox(width: 2),
+                  Icon(
+                    Icons.arrow_forward_ios,
+                    size: 11,
+                    color: AppColors.primary,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showTemplateSelector() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      backgroundColor: isDark ? AppColors.darkSurface : Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (bottomSheetContext) {
+        final screenHeight = MediaQuery.of(bottomSheetContext).size.height;
+        final templates = TemplateRegistry.getTemplatesFor(_docType);
+
+        return Container(
+          height: screenHeight * 0.85,
+          padding: const EdgeInsets.only(top: 14),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Select ${_docType.displayName} Template',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                        color: isDark
+                            ? AppColors.darkTextPrimary
+                            : AppColors.textPrimary,
+                      ),
+                    ),
+                    IconButton(
+                      icon: Icon(
+                        Icons.close,
+                        color: isDark
+                            ? AppColors.darkTextPrimary
+                            : AppColors.textPrimary,
+                      ),
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                      onPressed: () => Navigator.pop(bottomSheetContext),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+              Expanded(
+                child: GridView.builder(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 16,
+                    mainAxisSpacing: 16,
+                    childAspectRatio: 0.65,
+                  ),
+                  itemCount: templates.length,
+                  itemBuilder: (context, index) {
+                    final t = templates[index];
+                    final isSelected = t.id == _templateId;
+                    return TemplateThumbnailCard(
+                      template: t,
+                      isSelected: isSelected,
+                      documentType: _docType,
+                      onTap: () {
+                        if (t.isPremium) {
+                          final subState =
+                              context.read<SubscriptionBloc>().state;
+                          if (!subState.effectivePlan.hasPremiumTemplates) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                  'Premium template. Please upgrade your plan.',
+                                ),
+                                backgroundColor: Colors.orange,
+                              ),
+                            );
+                            return;
+                          }
+                        }
+                        setState(() => _templateId = t.id);
+                        Navigator.pop(bottomSheetContext);
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 

@@ -88,7 +88,11 @@ class DocumentPdfGenerator {
       author: profile.businessName.isNotEmpty ? profile.businessName : 'invoz',
     );
 
-    final selectedTemplate = templateId ?? document.templateId;
+    final String selectedTemplate = TemplateRegistry.resolveTemplateId(
+      templateId ?? document.templateId,
+      document.docType,
+    );
+
     final Uint8List? logoBytes = profile.logoPath != null
         ? await _fetchImageBytes(profile.logoPath!)
         : null;
@@ -127,6 +131,28 @@ class DocumentPdfGenerator {
           ),
         ),
         build: (context) {
+          if (selectedTemplate == TemplateRegistry.thermalReceipt) {
+            return _buildReceiptThermal(
+              context,
+              document,
+              profile,
+              payments: payments,
+              logoBytes: logoBytes,
+              signatureBytes: signatureBytes,
+              stampBytes: stampBytes,
+            );
+          }
+          if (selectedTemplate == TemplateRegistry.orderReceipt) {
+            return _buildOrderReceipt(
+              context,
+              document,
+              profile,
+              payments: payments,
+              logoBytes: logoBytes,
+              signatureBytes: signatureBytes,
+              stampBytes: stampBytes,
+            );
+          }
           if (selectedTemplate == TemplateRegistry.premiumModern) {
             return _buildPremiumModern(
               context,
@@ -163,6 +189,289 @@ class DocumentPdfGenerator {
     );
 
     return pdf.save();
+  }
+
+  static List<pw.Widget> _buildReceiptThermal(
+    pw.Context context,
+    DocumentModel doc,
+    BusinessProfile profile, {
+    required List<PaymentDetail> payments,
+    Uint8List? logoBytes,
+    Uint8List? signatureBytes,
+    Uint8List? stampBytes,
+  }) {
+    String currency =
+        profile.currencySymbol.isNotEmpty ? profile.currencySymbol : 'Rs.';
+    if (currency == '\u20B9') {
+      currency = 'Rs.';
+    }
+    final courier = pw.Font.courier();
+    final courierBold = pw.Font.courierBold();
+
+    pw.Widget dottedLine() => pw.Padding(
+      padding: const pw.EdgeInsets.symmetric(vertical: 4),
+      child: pw.Text(
+        '.' * 48,
+        textAlign: pw.TextAlign.center,
+        style: pw.TextStyle(
+          font: courierBold,
+          fontSize: 10,
+          color: PdfColors.black,
+          letterSpacing: 2,
+        ),
+      ),
+    );
+
+    final bName =
+        profile.businessName.isNotEmpty ? profile.businessName : 'BUSINESS NAME';
+    final address = profile.address?.trim() ?? '';
+    final phone = profile.phone?.trim() ?? '';
+
+    String paidBy = 'Credit';
+    if (doc.payments.isNotEmpty) {
+      paidBy = doc.payments.first.paymentMethod;
+    } else if (doc.totalPaid >= doc.totalAmount && doc.totalAmount > 0) {
+      paidBy = 'Paid in Full';
+    }
+
+    return [
+      pw.Center(
+        child: pw.Container(
+          width: 320,
+          padding: const pw.EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+          decoration: pw.BoxDecoration(
+            color: PdfColors.white,
+            border: pw.Border.all(color: PdfColors.grey400, width: 0.8),
+          ),
+          child: pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.stretch,
+            children: [
+              if (logoBytes != null) ...[
+                pw.Center(
+                  child: pw.Container(
+                    height: 40,
+                    child: pw.Image(
+                      pw.MemoryImage(logoBytes),
+                      fit: pw.BoxFit.contain,
+                    ),
+                  ),
+                ),
+                pw.SizedBox(height: 8),
+              ],
+              pw.Text(
+                bName.toUpperCase(),
+                textAlign: pw.TextAlign.center,
+                style: pw.TextStyle(
+                  font: courierBold,
+                  fontSize: 16,
+                  fontWeight: pw.FontWeight.bold,
+                  letterSpacing: 1.0,
+                ),
+              ),
+              pw.SizedBox(height: 4),
+              if (address.isNotEmpty)
+                pw.Text(
+                  address,
+                  textAlign: pw.TextAlign.center,
+                  style: pw.TextStyle(
+                    font: courier,
+                    fontSize: 9.5,
+                    height: 1.2,
+                  ),
+                ),
+              if (phone.isNotEmpty)
+                pw.Text(
+                  phone,
+                  textAlign: pw.TextAlign.center,
+                  style: pw.TextStyle(font: courier, fontSize: 9.5),
+                ),
+              pw.SizedBox(height: 10),
+
+              dottedLine(),
+              pw.SizedBox(height: 6),
+
+              ...doc.items.map((item) {
+                final itemTitle = item.quantity > 1
+                    ? '${item.quantity.toInt()}x ${item.title}'
+                    : item.title;
+                final itemPrice = CurrencyFormatter.format(
+                  item.lineTotal,
+                  symbol: currency,
+                );
+                return pw.Padding(
+                  padding: const pw.EdgeInsets.symmetric(vertical: 2.5),
+                  child: pw.Row(
+                    mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                    children: [
+                      pw.Expanded(
+                        child: pw.Text(
+                          itemTitle,
+                          style: pw.TextStyle(font: courier, fontSize: 9.5),
+                        ),
+                      ),
+                      pw.SizedBox(width: 8),
+                      pw.Text(
+                        itemPrice,
+                        style: pw.TextStyle(font: courier, fontSize: 9.5),
+                      ),
+                    ],
+                  ),
+                );
+              }),
+
+              pw.SizedBox(height: 10),
+
+              pw.Padding(
+                padding: const pw.EdgeInsets.symmetric(vertical: 2),
+                child: pw.Row(
+                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                  children: [
+                    pw.Text(
+                      'Sub Total',
+                      style: pw.TextStyle(font: courier, fontSize: 9.5),
+                    ),
+                    pw.Text(
+                      CurrencyFormatter.format(doc.subtotal, symbol: currency),
+                      style: pw.TextStyle(font: courier, fontSize: 9.5),
+                    ),
+                  ],
+                ),
+              ),
+
+              if (doc.totalTaxAmount > 0)
+                pw.Padding(
+                  padding: const pw.EdgeInsets.symmetric(vertical: 2),
+                  child: pw.Row(
+                    mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                    children: [
+                      pw.Text(
+                        'Sales Tax',
+                        style: pw.TextStyle(font: courier, fontSize: 9.5),
+                      ),
+                      pw.Text(
+                        CurrencyFormatter.format(
+                          doc.totalTaxAmount,
+                          symbol: currency,
+                        ),
+                        style: pw.TextStyle(font: courier, fontSize: 9.5),
+                      ),
+                    ],
+                  ),
+                ),
+
+              if ((doc.overallDiscountAmount + doc.itemDiscountsTotal) > 0)
+                pw.Padding(
+                  padding: const pw.EdgeInsets.symmetric(vertical: 2),
+                  child: pw.Row(
+                    mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                    children: [
+                      pw.Text(
+                        'Discount',
+                        style: pw.TextStyle(font: courier, fontSize: 9.5),
+                      ),
+                      pw.Text(
+                        '-${CurrencyFormatter.format(doc.overallDiscountAmount + doc.itemDiscountsTotal, symbol: currency)}',
+                        style: pw.TextStyle(font: courier, fontSize: 9.5),
+                      ),
+                    ],
+                  ),
+                ),
+
+              pw.SizedBox(height: 6),
+              dottedLine(),
+              pw.SizedBox(height: 6),
+
+              pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                children: [
+                  pw.Text(
+                    'TOTAL',
+                    style: pw.TextStyle(
+                      font: courierBold,
+                      fontSize: 15,
+                      fontWeight: pw.FontWeight.bold,
+                    ),
+                  ),
+                  pw.Text(
+                    CurrencyFormatter.format(doc.totalAmount, symbol: currency),
+                    style: pw.TextStyle(
+                      font: courierBold,
+                      fontSize: 15,
+                      fontWeight: pw.FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+
+              pw.SizedBox(height: 6),
+              dottedLine(),
+              pw.SizedBox(height: 6),
+
+              pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                children: [
+                  pw.Text(
+                    'Paid By:',
+                    style: pw.TextStyle(font: courier, fontSize: 10),
+                  ),
+                  pw.Text(
+                    paidBy,
+                    style: pw.TextStyle(font: courier, fontSize: 10),
+                  ),
+                ],
+              ),
+
+              pw.SizedBox(height: 12),
+
+              pw.Text(
+                DateFormatter.format(doc.issueDate),
+                style: pw.TextStyle(font: courier, fontSize: 9),
+              ),
+              pw.Text(
+                'Transaction ID: ${doc.docNumber}',
+                style: pw.TextStyle(font: courier, fontSize: 9),
+              ),
+              if (profile.gstin != null && profile.gstin!.isNotEmpty)
+                pw.Text(
+                  'Vendor ID: ${profile.gstin!}',
+                  style: pw.TextStyle(font: courier, fontSize: 9),
+                )
+              else if (profile.pan != null && profile.pan!.isNotEmpty)
+                pw.Text(
+                  'Vendor ID: ${profile.pan!}',
+                  style: pw.TextStyle(font: courier, fontSize: 9),
+                ),
+
+              pw.SizedBox(height: 16),
+
+              pw.Text(
+                doc.notes?.isNotEmpty == true
+                    ? doc.notes!
+                    : 'Thank You For Supporting\nLocal Business!',
+                textAlign: pw.TextAlign.center,
+                style: pw.TextStyle(font: courier, fontSize: 10, height: 1.3),
+              ),
+
+              if (doc.showSignature && signatureBytes != null) ...[
+                pw.SizedBox(height: 16),
+                pw.Center(
+                  child: pw.Container(
+                    height: 40,
+                    child: pw.Image(pw.MemoryImage(signatureBytes)),
+                  ),
+                ),
+                pw.SizedBox(height: 4),
+                pw.Text(
+                  'Authorized Signature',
+                  textAlign: pw.TextAlign.center,
+                  style: pw.TextStyle(font: courier, fontSize: 8),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    ];
   }
 
   static List<pw.Widget> _buildFreeClassic(
@@ -1285,6 +1594,11 @@ class DocumentPdfGenerator {
     final title = doc.docType.displayName.toUpperCase();
     final primaryColor = PdfColor.fromHex('#0D47A1');
     final lightBlue = PdfColor.fromHex('#D6E4F0');
+    String currency =
+        profile.currencySymbol.isNotEmpty ? profile.currencySymbol : 'Rs.';
+    if (currency == '\u20B9') {
+      currency = 'Rs.';
+    }
 
     final cName = doc.customerSnapshot?.name ?? 'Unknown Customer';
     final cEmail = doc.customerSnapshot?.email ?? '';
@@ -1584,7 +1898,7 @@ class DocumentPdfGenerator {
                         child: pw.Text(
                           CurrencyFormatter.format(
                             item.unitPrice,
-                            symbol: 'Rs.',
+                            symbol: currency,
                           ),
                           style: const pw.TextStyle(fontSize: 11),
                         ),
@@ -1597,7 +1911,7 @@ class DocumentPdfGenerator {
                         child: pw.Text(
                           CurrencyFormatter.format(
                             item.lineTotal,
-                            symbol: 'Rs.',
+                            symbol: currency,
                           ),
                           style: const pw.TextStyle(fontSize: 11),
                         ),
@@ -1628,7 +1942,7 @@ class DocumentPdfGenerator {
                     child: pw.Align(
                       alignment: pw.Alignment.centerRight,
                       child: pw.Text(
-                        CurrencyFormatter.format(doc.subtotal, symbol: 'Rs.'),
+                        CurrencyFormatter.format(doc.subtotal, symbol: currency),
                         style: const pw.TextStyle(fontSize: 11),
                       ),
                     ),
@@ -1659,7 +1973,7 @@ class DocumentPdfGenerator {
                         child: pw.Text(
                           CurrencyFormatter.format(
                             doc.totalTaxAmount,
-                            symbol: 'Rs.',
+                            symbol: currency,
                           ),
                           style: const pw.TextStyle(fontSize: 11),
                         ),
@@ -1689,7 +2003,7 @@ class DocumentPdfGenerator {
                       child: pw.Align(
                         alignment: pw.Alignment.centerRight,
                         child: pw.Text(
-                          '-${CurrencyFormatter.format(doc.overallDiscountAmount, symbol: 'Rs.')}',
+                          '-${CurrencyFormatter.format(doc.overallDiscountAmount, symbol: currency)}',
                           style: const pw.TextStyle(fontSize: 11),
                         ),
                       ),
@@ -1725,7 +2039,7 @@ class DocumentPdfGenerator {
                       child: pw.Text(
                         CurrencyFormatter.format(
                           doc.totalAmount,
-                          symbol: 'Rs.',
+                          symbol: currency,
                         ),
                         style: pw.TextStyle(
                           color: primaryColor,
@@ -1827,4 +2141,496 @@ class DocumentPdfGenerator {
       ),
     ];
   }
+
+  static List<pw.Widget> _buildOrderReceipt(
+    pw.Context context,
+    DocumentModel doc,
+    BusinessProfile profile, {
+    required List<PaymentDetail> payments,
+    Uint8List? logoBytes,
+    Uint8List? signatureBytes,
+    Uint8List? stampBytes,
+  }) {
+    String currency =
+        profile.currencySymbol.isNotEmpty ? profile.currencySymbol : 'Rs.';
+    if (currency == '\u20B9') {
+      currency = 'Rs.';
+    }
+
+    final cName = doc.customerSnapshot?.name ?? 'Valued Customer';
+    final cAddress = doc.customerSnapshot?.billingAddress ?? '';
+
+    String paidBy = 'Credit';
+    if (doc.payments.isNotEmpty) {
+      paidBy = doc.payments.first.paymentMethod;
+    } else if (doc.totalPaid >= doc.totalAmount && doc.totalAmount > 0) {
+      paidBy = 'Paid in Full';
+    }
+
+    return [
+      pw.Center(
+        child: pw.Column(
+          mainAxisSize: pw.MainAxisSize.min,
+          children: [
+            // Main Card
+            pw.Container(
+              width: 420,
+              decoration: pw.BoxDecoration(
+                color: PdfColors.white,
+                borderRadius: const pw.BorderRadius.all(pw.Radius.circular(14)),
+                border: pw.Border.all(
+                  color: PdfColor.fromHex('#CBD5E1'),
+                  width: 1,
+                ),
+              ),
+              child: pw.Column(
+                mainAxisSize: pw.MainAxisSize.min,
+                crossAxisAlignment: pw.CrossAxisAlignment.stretch,
+                children: [
+                  pw.Padding(
+                    padding: const pw.EdgeInsets.fromLTRB(28, 22, 28, 16),
+                    child: pw.Column(
+                      crossAxisAlignment: pw.CrossAxisAlignment.center,
+                      children: [
+                        // Company Logo
+                        if (logoBytes != null)
+                          pw.Container(
+                            width: 44,
+                            height: 44,
+                            margin: const pw.EdgeInsets.only(bottom: 12),
+                            child: pw.ClipOval(
+                              child: pw.Image(
+                                pw.MemoryImage(logoBytes),
+                                fit: pw.BoxFit.contain,
+                              ),
+                            ),
+                          )
+                        else
+                          pw.Container(
+                            width: 42,
+                            height: 42,
+                            margin: const pw.EdgeInsets.only(bottom: 12),
+                            decoration: pw.BoxDecoration(
+                              color: PdfColor.fromHex('#F1F5F9'),
+                              shape: pw.BoxShape.circle,
+                              border: pw.Border.all(
+                                color: PdfColor.fromHex('#CBD5E1'),
+                                width: 1,
+                              ),
+                            ),
+                            child: pw.Center(
+                              child: pw.Text(
+                                profile.businessName.isNotEmpty
+                                    ? profile.businessName[0].toUpperCase()
+                                    : 'B',
+                                style: pw.TextStyle(
+                                  color: PdfColor.fromHex('#475569'),
+                                  fontSize: 18,
+                                  fontWeight: pw.FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+
+                        // Thanks for your business
+                        pw.Text(
+                          'Thanks For Your Business!',
+                          textAlign: pw.TextAlign.center,
+                          style: pw.TextStyle(
+                            fontSize: 22,
+                            fontWeight: pw.FontWeight.bold,
+                            color: PdfColor.fromHex('#1E293B'),
+                          ),
+                        ),
+                        pw.SizedBox(height: 14),
+
+                        // Your order
+                        pw.Text(
+                          'Your order',
+                          textAlign: pw.TextAlign.center,
+                          style: pw.TextStyle(
+                            fontSize: 15,
+                            fontWeight: pw.FontWeight.bold,
+                            color: PdfColor.fromHex('#1E293B'),
+                          ),
+                        ),
+                        pw.SizedBox(height: 4),
+                        pw.Text(
+                          DateFormatter.format(doc.issueDate),
+                          textAlign: pw.TextAlign.center,
+                          style: pw.TextStyle(
+                            fontSize: 10,
+                            color: PdfColor.fromHex('#94A3B8'),
+                          ),
+                        ),
+                        pw.SizedBox(height: 14),
+
+                        // Items list
+                        ...doc.items.map((item) {
+                          final itemTitle = item.quantity > 1
+                              ? '${item.quantity.toInt()}x ${item.title}'
+                              : item.title;
+                          return pw.Padding(
+                            padding: const pw.EdgeInsets.symmetric(vertical: 3),
+                            child: pw.Row(
+                              mainAxisAlignment:
+                                  pw.MainAxisAlignment.spaceBetween,
+                              children: [
+                                pw.Expanded(
+                                  child: pw.Text(
+                                    itemTitle,
+                                    style: pw.TextStyle(
+                                      fontSize: 11,
+                                      color: PdfColor.fromHex('#1E293B'),
+                                    ),
+                                  ),
+                                ),
+                                pw.Text(
+                                  CurrencyFormatter.format(
+                                    item.lineTotal,
+                                    symbol: currency,
+                                  ),
+                                  style: pw.TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: pw.FontWeight.bold,
+                                    color: PdfColor.fromHex('#1E293B'),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }),
+
+                        pw.SizedBox(height: 8),
+
+                        // Subtotal
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.symmetric(vertical: 2),
+                          child: pw.Row(
+                            mainAxisAlignment:
+                                pw.MainAxisAlignment.spaceBetween,
+                            children: [
+                              pw.Text(
+                                'Subtotal',
+                                style: pw.TextStyle(
+                                  fontSize: 10.5,
+                                  color: PdfColor.fromHex('#64748B'),
+                                ),
+                              ),
+                              pw.Text(
+                                CurrencyFormatter.format(
+                                  doc.subtotal,
+                                  symbol: currency,
+                                ),
+                                style: pw.TextStyle(
+                                  fontSize: 10.5,
+                                  color: PdfColor.fromHex('#64748B'),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        // Tax
+                        if (doc.totalTaxAmount > 0)
+                          pw.Padding(
+                            padding: const pw.EdgeInsets.symmetric(vertical: 2),
+                            child: pw.Row(
+                              mainAxisAlignment:
+                                  pw.MainAxisAlignment.spaceBetween,
+                              children: [
+                                pw.Text(
+                                  'Tax',
+                                  style: pw.TextStyle(
+                                    fontSize: 10.5,
+                                    color: PdfColor.fromHex('#64748B'),
+                                  ),
+                                ),
+                                pw.Text(
+                                  CurrencyFormatter.format(
+                                    doc.totalTaxAmount,
+                                    symbol: currency,
+                                  ),
+                                  style: pw.TextStyle(
+                                    fontSize: 10.5,
+                                    color: PdfColor.fromHex('#64748B'),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                        // Other fee / shipping / discount
+                        if (doc.shippingCharges > 0)
+                          pw.Padding(
+                            padding: const pw.EdgeInsets.symmetric(vertical: 2),
+                            child: pw.Row(
+                              mainAxisAlignment:
+                                  pw.MainAxisAlignment.spaceBetween,
+                              children: [
+                                pw.Text(
+                                  'Shipping Fee',
+                                  style: pw.TextStyle(
+                                    fontSize: 10.5,
+                                    color: PdfColor.fromHex('#64748B'),
+                                  ),
+                                ),
+                                pw.Text(
+                                  CurrencyFormatter.format(
+                                    doc.shippingCharges,
+                                    symbol: currency,
+                                  ),
+                                  style: pw.TextStyle(
+                                    fontSize: 10.5,
+                                    color: PdfColor.fromHex('#64748B'),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                        if ((doc.overallDiscountAmount + doc.itemDiscountsTotal) >
+                            0)
+                          pw.Padding(
+                            padding: const pw.EdgeInsets.symmetric(vertical: 2),
+                            child: pw.Row(
+                              mainAxisAlignment:
+                                  pw.MainAxisAlignment.spaceBetween,
+                              children: [
+                                pw.Text(
+                                  'Discount',
+                                  style: pw.TextStyle(
+                                    fontSize: 10.5,
+                                    color: PdfColor.fromHex('#64748B'),
+                                  ),
+                                ),
+                                pw.Text(
+                                  '-${CurrencyFormatter.format(doc.overallDiscountAmount + doc.itemDiscountsTotal, symbol: currency)}',
+                                  style: pw.TextStyle(
+                                    fontSize: 10.5,
+                                    color: PdfColor.fromHex('#64748B'),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                        pw.SizedBox(height: 8),
+
+                        // Total bar with top & bottom lines
+                        pw.Container(
+                          padding: const pw.EdgeInsets.symmetric(vertical: 6),
+                          decoration: pw.BoxDecoration(
+                            border: pw.Border.symmetric(
+                              horizontal: pw.BorderSide(
+                                color: PdfColor.fromHex('#1E293B'),
+                                width: 1.5,
+                              ),
+                            ),
+                          ),
+                          child: pw.Row(
+                            mainAxisAlignment:
+                                pw.MainAxisAlignment.spaceBetween,
+                            children: [
+                              pw.Text(
+                                'Total',
+                                style: pw.TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: pw.FontWeight.bold,
+                                  color: PdfColor.fromHex('#1E293B'),
+                                ),
+                              ),
+                              pw.Text(
+                                CurrencyFormatter.format(
+                                  doc.totalAmount,
+                                  symbol: currency,
+                                ),
+                                style: pw.TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: pw.FontWeight.bold,
+                                  color: PdfColor.fromHex('#1E293B'),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        pw.SizedBox(height: 18),
+
+                        // Your details
+                        pw.Text(
+                          'Your details',
+                          textAlign: pw.TextAlign.center,
+                          style: pw.TextStyle(
+                            fontSize: 15,
+                            fontWeight: pw.FontWeight.bold,
+                            color: PdfColor.fromHex('#1E293B'),
+                          ),
+                        ),
+                        pw.SizedBox(height: 12),
+
+                        // Details rows
+                        pw.Row(
+                          crossAxisAlignment: pw.CrossAxisAlignment.start,
+                          children: [
+                            pw.SizedBox(
+                              width: 100,
+                              child: pw.Text(
+                                'Shipping to',
+                                style: pw.TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: pw.FontWeight.bold,
+                                  color: PdfColor.fromHex('#1E293B'),
+                                ),
+                              ),
+                            ),
+                            pw.Expanded(
+                              child: pw.Text(
+                                '$cName${cAddress.isNotEmpty ? '\n$cAddress' : ''}',
+                                style: pw.TextStyle(
+                                  fontSize: 10.5,
+                                  lineSpacing: 1.3,
+                                  color: PdfColor.fromHex('#64748B'),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        pw.SizedBox(height: 10),
+                        pw.Row(
+                          crossAxisAlignment: pw.CrossAxisAlignment.start,
+                          children: [
+                            pw.SizedBox(
+                              width: 100,
+                              child: pw.Text(
+                                'Billed to',
+                                style: pw.TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: pw.FontWeight.bold,
+                                  color: PdfColor.fromHex('#1E293B'),
+                                ),
+                              ),
+                            ),
+                            pw.Expanded(
+                              child: pw.Text(
+                                '$paidBy\nReceipt #${doc.docNumber}',
+                                style: pw.TextStyle(
+                                  fontSize: 10.5,
+                                  lineSpacing: 1.3,
+                                  color: PdfColor.fromHex('#64748B'),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        pw.SizedBox(height: 14),
+
+                        // Support help notice
+                        pw.Text(
+                          'Notice something wrong? Contact support (${profile.email?.isNotEmpty == true ? profile.email : (profile.phone?.isNotEmpty == true ? profile.phone : "support")}) and we\'ll be happy to help.',
+                          textAlign: pw.TextAlign.center,
+                          style: pw.TextStyle(
+                            fontSize: 9.5,
+                            color: PdfColor.fromHex('#64748B'),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // Compact Invoz Promo Banner
+                  pw.UrlLink(
+                    destination:
+                        'https://play.google.com/store/apps/details?id=com.invoice.invoz',
+                    child: pw.Container(
+                      color: PdfColor.fromHex('#00A859'),
+                      padding: const pw.EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                      child: pw.Row(
+                        mainAxisAlignment:
+                            pw.MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: pw.CrossAxisAlignment.center,
+                        children: [
+                          pw.Column(
+                            crossAxisAlignment: pw.CrossAxisAlignment.start,
+                            mainAxisSize: pw.MainAxisSize.min,
+                            children: [
+                              pw.Text(
+                                'Created with Invoz App',
+                                style: pw.TextStyle(
+                                  fontSize: 10.5,
+                                  fontWeight: pw.FontWeight.bold,
+                                  color: PdfColors.white,
+                                ),
+                              ),
+                              pw.SizedBox(height: 1.5),
+                              pw.Text(
+                                'Fast Invoicing & Receipts on Google Play',
+                                style: const pw.TextStyle(
+                                  fontSize: 8,
+                                  color: PdfColors.white,
+                                ),
+                              ),
+                            ],
+                          ),
+                          pw.Container(
+                            padding: const pw.EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 3.5,
+                            ),
+                            decoration: const pw.BoxDecoration(
+                              color: PdfColors.white,
+                              borderRadius: pw.BorderRadius.all(
+                                pw.Radius.circular(10),
+                              ),
+                            ),
+                            child: pw.Text(
+                              'Get Invoz',
+                              style: pw.TextStyle(
+                                fontSize: 8.5,
+                                fontWeight: pw.FontWeight.bold,
+                                color: PdfColor.fromHex('#00A859'),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  // Footer (NO "View My Account" button per instruction)
+                  pw.Padding(
+                    padding: const pw.EdgeInsets.symmetric(vertical: 14),
+                    child: pw.Text(
+                      'Thanks for being a great customer.',
+                      textAlign: pw.TextAlign.center,
+                      style: pw.TextStyle(
+                        fontSize: 10.5,
+                        color: PdfColor.fromHex('#64748B'),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            if (doc.showSignature && signatureBytes != null) ...[
+              pw.SizedBox(height: 16),
+              pw.Container(
+                height: 40,
+                child: pw.Image(pw.MemoryImage(signatureBytes)),
+              ),
+              pw.SizedBox(height: 4),
+              pw.Text(
+                'Authorized Signature',
+                style: const pw.TextStyle(fontSize: 8, color: PdfColors.grey700),
+              ),
+            ],
+          ],
+        ),
+      ),
+    ];
+  }
+
 }

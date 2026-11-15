@@ -50,3 +50,5 @@ Since you asked me to make sure everything is working perfectly, I audited the C
 
 Broken Subscription Expiry Field: The backend was looking for sub.endDate to check for expiring subscriptions, but your Dart app saves it to Firestore as expiryDate. I updated the backend to correctly look for expiryDate.
 Broken Document Due Date Format: The backend was trying to parse document due dates using a Firestore Timestamp method (inv.dueDate.toDate()), but your Dart app saves the document's dueDate as an ISO String (toIso8601String()), which caused the cron job to crash with a type error. I fixed the backend to correctly parse the ISO string.
+
+As we know if user came to home screen means he has a account. So check if they are not a premium user show them our offer and encourage to buy our free premium experience on a beautiful screen having cross button on top. 

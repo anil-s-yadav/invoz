@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../documents/domain/document_model.dart';
+import '../../pdf_engine/template_registry.dart';
 
 class TemplateSettingsRepository {
   static const String _keyInvoice = 'defaultInvoiceTemplateId';
@@ -53,16 +54,36 @@ class TemplateSettingsRepository {
 
   Future<String> getDefaultTemplate(DocumentType type) async {
     final data = await _getMap();
+    final available = TemplateRegistry.getTemplatesFor(type);
+    final fallback = type == DocumentType.receipt
+        ? TemplateRegistry.elegantCenter
+        : (available.isNotEmpty
+            ? available.first.id
+            : TemplateRegistry.freeClassic);
+
+    String? savedId;
     switch (type) {
       case DocumentType.invoice:
-        return data[_keyInvoice] as String? ?? 'modern_crimson';
-      case DocumentType.quotation:
-        return data[_keyQuotation] as String? ?? 'modern_crimson';
-      case DocumentType.receipt:
-        return data[_keyReceipt] as String? ?? 'modern_crimson';
+        savedId = data[_keyInvoice] as String?;
+        break;
       case DocumentType.proforma:
-        return data[_keyProforma] as String? ?? 'modern_crimson';
+        savedId = data[_keyProforma] as String?;
+        break;
+      case DocumentType.receipt:
+        savedId = data[_keyReceipt] as String?;
+        break;
+      case DocumentType.quotation:
+        savedId = data[_keyQuotation] as String?;
+        break;
     }
+
+    if (savedId != null) {
+      final resolved = TemplateRegistry.resolveTemplateId(savedId, type);
+      if (available.any((t) => t.id == resolved)) {
+        return resolved;
+      }
+    }
+    return fallback;
   }
 
   Future<void> setDefaultTemplate(DocumentType type, String templateId) async {

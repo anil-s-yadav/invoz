@@ -35,6 +35,8 @@ class TemplateRegistry {
   static const String freeClassic = 'free_classic';
   static const String premiumModern = 'premium_modern';
   static const String elegantCenter = 'elegant_center';
+  static const String orderReceipt = 'order_receipt';
+  static const String thermalReceipt = 'thermal_receipt';
 
   static const List<TemplateInfo> allTemplates = [
     TemplateInfo(
@@ -46,21 +48,22 @@ class TemplateRegistry {
       accentColor: AppColors.textPrimary,
       thumbnailAssetPath: 'assets/images/templates/free_template_thumb.png',
       isPremium: false,
-      // By default, Classic Free supports all document types.
+      supportedTypes: [
+        DocumentType.invoice,
+        DocumentType.proforma,
+      ],
     ),
     TemplateInfo(
       id: premiumModern,
-      name: 'Modern Pro',
+      name: 'Modern Free',
       description:
-          'Sleek, colored headers with premium typography and card styling.',
+          'Sleek, colored headers with clean typography and card styling.',
       icon: Icons.auto_awesome,
       accentColor: AppColors.primary,
       thumbnailAssetPath: 'assets/images/templates/paid_template_thumb.png',
-      isPremium: true,
-      // Example: supports everything EXCEPT receipt
+      isPremium: false,
       supportedTypes: [
         DocumentType.invoice,
-        DocumentType.quotation,
         DocumentType.proforma,
       ],
     ),
@@ -72,16 +75,83 @@ class TemplateRegistry {
       icon: Icons.format_align_center,
       accentColor: Color(0xFF0D47A1),
       thumbnailAssetPath: 'assets/images/templates/elegant_center_thumb.png',
-      isPremium: true,
-      // Let's assume elegantCenter supports all types for now
+      isPremium: false,
+      supportedTypes: [
+        DocumentType.receipt,
+      ],
+    ),
+    TemplateInfo(
+      id: orderReceipt,
+      name: 'Order Receipt',
+      description:
+          'Modern order confirmation receipt with brand header and promo banner.',
+      icon: Icons.receipt_rounded,
+      accentColor: Color(0xFF00A859),
+      thumbnailAssetPath: 'assets/images/templates/order_receipt_thumb.png',
+      isPremium: false,
+      supportedTypes: [
+        DocumentType.receipt,
+      ],
+    ),
+    TemplateInfo(
+      id: thermalReceipt,
+      name: 'Thermal Print',
+      description:
+          'Classic cash register & thermal receipt slip with itemized list and transaction ID.',
+      icon: Icons.receipt_long_rounded,
+      accentColor: Color(0xFF1E293B),
+      thumbnailAssetPath: 'assets/images/templates/thermal_receipt_thumb.png',
+      isPremium: false,
+      supportedTypes: [
+        DocumentType.receipt,
+      ],
     ),
   ];
 
+  static String resolveTemplateId(String? id, DocumentType type) {
+    final available = getTemplatesFor(type);
+    if (available.isEmpty) return freeClassic;
+    if (id == null || id.isEmpty) return available.first.id;
+
+    // Direct match
+    if (available.any((t) => t.id == id)) return id;
+
+    // Aliases / Legacy mappings
+    if (type == DocumentType.receipt) {
+      if (id == thermalReceipt || id == 'compact') {
+        return thermalReceipt;
+      }
+      if (id == orderReceipt || id == 'order') {
+        return orderReceipt;
+      }
+      return elegantCenter;
+    } else {
+      // Invoice & Proforma
+      if (id == premiumModern || id == 'modern_crimson' || id == 'bold') {
+        return premiumModern;
+      }
+      return freeClassic;
+    }
+  }
+
   static TemplateInfo getById(String id) {
-    return allTemplates.firstWhere(
-      (t) => t.id == id,
-      orElse: () => allTemplates.first,
-    );
+    for (final t in allTemplates) {
+      if (t.id == id) return t;
+    }
+    // Check aliases
+    if (id == 'modern_crimson' || id == 'bold') {
+      return allTemplates.firstWhere((t) => t.id == premiumModern);
+    }
+    if (id == 'compact') {
+      return allTemplates.firstWhere((t) => t.id == thermalReceipt);
+    }
+    if (id == 'elegant') {
+      return allTemplates.firstWhere((t) => t.id == elegantCenter);
+    }
+    if (id == 'order') {
+      return allTemplates.firstWhere((t) => t.id == orderReceipt);
+    }
+    return allTemplates.first;
   }
 
   static List<TemplateInfo> getTemplatesFor(DocumentType type) {

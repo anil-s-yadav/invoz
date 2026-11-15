@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:invoz/core/utils/currency_formatter.dart';
 import 'package:invoz/core/widgets/status_badge.dart';
@@ -6,6 +7,7 @@ import 'package:invoz/features/customers/domain/customer_model.dart';
 import 'package:invoz/features/documents/domain/document_item_model.dart';
 import 'package:invoz/features/documents/domain/document_model.dart';
 import 'package:invoz/features/documents/domain/payment_record_model.dart';
+import 'package:invoz/features/documents/presentation/dummy_template_widget.dart';
 import 'package:invoz/features/pdf_engine/document_pdf_generator.dart';
 import 'package:invoz/features/pdf_engine/template_registry.dart';
 
@@ -17,10 +19,10 @@ void main() {
       expect(formatted, contains('1,50,000.00'));
     });
 
-    test('formats compact numbers for dashboards', () {
-      expect(CurrencyFormatter.formatCompact(150000.00), contains('1.50 L'));
-      expect(CurrencyFormatter.formatCompact(25000000.00), contains('2.50 Cr'));
-      expect(CurrencyFormatter.formatCompact(45000.00), contains('45.0 k'));
+    test('formats compact numbers for dashboards (full amount per user preference)', () {
+      expect(CurrencyFormatter.formatCompact(150000.00), contains('1,50,000'));
+      expect(CurrencyFormatter.formatCompact(25000000.00), contains('2,50,00,000'));
+      expect(CurrencyFormatter.formatCompact(45000.00), contains('45,000'));
     });
 
     test('converts numbers to Indian Rupees in words', () {
@@ -148,19 +150,88 @@ void main() {
   });
 
   group('Template Registry & PDF Generation', () {
-    test('Template Registry contains all 3 promised styles', () {
+    test('Template Registry contains all 5 promised styles', () {
       expect(
         TemplateRegistry.allTemplates.length,
-        3,
-        reason: 'Should contain 3 template styles',
+        5,
+        reason: 'Should contain 5 template styles',
       );
       final ids = TemplateRegistry.allTemplates.map((t) => t.id).toList();
       expect(ids, contains('free_classic'));
       expect(ids, contains('premium_modern'));
       expect(ids, contains('elegant_center'));
+      expect(ids, contains('order_receipt'));
+      expect(ids, contains('thermal_receipt'));
     });
 
-    test('generates valid PDF bytes across all 6 templates', () async {
+    test('Template classification matches specification', () {
+      final invoiceTemplates =
+          TemplateRegistry.getTemplatesFor(DocumentType.invoice);
+      final proformaTemplates =
+          TemplateRegistry.getTemplatesFor(DocumentType.proforma);
+      final receiptTemplates =
+          TemplateRegistry.getTemplatesFor(DocumentType.receipt);
+      final quotationTemplates =
+          TemplateRegistry.getTemplatesFor(DocumentType.quotation);
+
+      // Rule 1: Always same templates inside invoice and proforma
+      final invoiceIds = invoiceTemplates.map((t) => t.id).toList();
+      final proformaIds = proformaTemplates.map((t) => t.id).toList();
+      expect(invoiceIds, equals(proformaIds));
+
+      // Rule 2: Classic free & Modern free are invoice/proforma
+      expect(invoiceIds, containsAll(['free_classic', 'premium_modern']));
+      expect(invoiceIds.length, equals(2));
+
+      // Rule 3: 3 templates in receipt: Elegant Center, Order Receipt, Thermal Print
+      final receiptIds = receiptTemplates.map((t) => t.id).toList();
+      expect(
+        receiptIds,
+        containsAll(['elegant_center', 'order_receipt', 'thermal_receipt']),
+      );
+      expect(receiptIds, isNot(contains('free_classic')));
+      expect(receiptIds.length, equals(3));
+
+      // Rule 4: No templates for quotation right now
+      expect(quotationTemplates.isEmpty, isTrue);
+    });
+
+    test('TemplateRegistry.resolveTemplateId handles aliases and document types', () {
+      expect(
+        TemplateRegistry.resolveTemplateId('modern_crimson', DocumentType.invoice),
+        equals(TemplateRegistry.premiumModern),
+      );
+      expect(
+        TemplateRegistry.resolveTemplateId('bold', DocumentType.invoice),
+        equals(TemplateRegistry.premiumModern),
+      );
+      expect(
+        TemplateRegistry.resolveTemplateId('minimal', DocumentType.invoice),
+        equals(TemplateRegistry.freeClassic),
+      );
+      expect(
+        TemplateRegistry.resolveTemplateId('compact', DocumentType.receipt),
+        equals(TemplateRegistry.thermalReceipt),
+      );
+      expect(
+        TemplateRegistry.resolveTemplateId('order', DocumentType.receipt),
+        equals(TemplateRegistry.orderReceipt),
+      );
+      expect(
+        TemplateRegistry.resolveTemplateId('elegant', DocumentType.receipt),
+        equals(TemplateRegistry.elegantCenter),
+      );
+      expect(
+        TemplateRegistry.resolveTemplateId('unknown', DocumentType.receipt),
+        equals(TemplateRegistry.elegantCenter),
+      );
+      expect(
+        TemplateRegistry.resolveTemplateId(null, DocumentType.proforma),
+        equals(TemplateRegistry.freeClassic),
+      );
+    });
+
+    test('generates valid PDF bytes across all templates', () async {
       final now = DateTime.now();
       final customer = Customer(
         id: 'cust_1',
@@ -227,6 +298,27 @@ void main() {
         expect(pdfBytes.isNotEmpty, isTrue);
         // PDF header magic bytes "%PDF-"
         expect(String.fromCharCodes(pdfBytes.sublist(0, 5)), equals('%PDF-'));
+      }
+    });
+
+    testWidgets('DummyTemplateWidget renders without crash for all templates', (tester) async {
+      for (final t in TemplateRegistry.allTemplates) {
+        for (final docType in DocumentType.values) {
+          await tester.pumpWidget(
+            MaterialApp(
+              home: Scaffold(
+                body: SizedBox(
+                  width: 300,
+                  height: 400,
+                  child: DummyTemplateWidget(
+                    templateId: t.id,
+                    documentType: docType,
+                  ),
+                ),
+              ),
+            ),
+          );
+        }
       }
     });
   });

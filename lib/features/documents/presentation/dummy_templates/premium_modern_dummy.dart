@@ -21,32 +21,47 @@ Widget buildPremiumModernDummy(DocumentType documentType) {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    buildDummyText(
-                      documentType.displayName.toUpperCase(),
-                      size: 24,
-                      bold: true,
-                      color: Colors.white,
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerLeft,
+                      child: buildDummyText(
+                        documentType.displayName.toUpperCase(),
+                        size: 24,
+                        bold: true,
+                        color: Colors.white,
+                      ),
                     ),
                     const SizedBox(height: 4),
                     buildDummyText(
-                      '# INV-2026-0001',
+                      '# ${documentType.prefix}2026-0001',
                       color: Colors.white,
                       size: 11,
                     ),
                   ],
                 ),
               ),
+              const SizedBox(width: 16),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    buildDummyText(
-                      'Issue Date: 28 Sep 2026',
-                      color: Colors.white70,
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerRight,
+                      child: buildDummyText(
+                        'Issue Date: 28 Sep 2026',
+                        color: Colors.white70,
+                      ),
                     ),
-                    buildDummyText(
-                      'Due Date: 13 Oct 2026',
-                      color: Colors.white70,
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerRight,
+                      child: buildDummyText(
+                        documentType == DocumentType.proforma
+                            ? 'Valid Until: 13 Oct 2026'
+                            : 'Due Date: 13 Oct 2026',
+                        color: Colors.white70,
+                      ),
                     ),
                   ],
                 ),
@@ -214,7 +229,7 @@ Widget buildPremiumModernDummy(DocumentType documentType) {
                 Align(
                   alignment: Alignment.centerRight,
                   child: Container(
-                    width: 220,
+                    width: 240,
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       color: Colors.grey.shade100,
@@ -223,35 +238,58 @@ Widget buildPremiumModernDummy(DocumentType documentType) {
                     child: Column(
                       children: [
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            buildDummyText('Subtotal'),
-                            buildDummyText('Rs. 1,000.00'),
+                            Expanded(child: buildDummyText('Subtotal')),
+                            Expanded(
+                              child: Align(
+                                alignment: Alignment.centerRight,
+                                child: FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  child: buildDummyText('Rs. 1,000.00'),
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                         const SizedBox(height: 4),
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            buildDummyText('Tax'),
-                            buildDummyText('Rs. 120.00'),
+                            Expanded(child: buildDummyText('Tax')),
+                            Expanded(
+                              child: Align(
+                                alignment: Alignment.centerRight,
+                                child: FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  child: buildDummyText('Rs. 120.00'),
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                         const SizedBox(height: 8),
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            buildDummyText(
-                              'Total',
-                              bold: true,
-                              size: 14,
-                              color: primary,
+                            Expanded(
+                              child: buildDummyText(
+                                'Total',
+                                bold: true,
+                                size: 14,
+                                color: primary,
+                              ),
                             ),
-                            buildDummyText(
-                              'Rs. 1,120.00',
-                              bold: true,
-                              size: 14,
-                              color: primary,
+                            Expanded(
+                              child: Align(
+                                alignment: Alignment.centerRight,
+                                child: FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  child: buildDummyText(
+                                    'Rs. 1,120.00',
+                                    bold: true,
+                                    size: 14,
+                                    color: primary,
+                                  ),
+                                ),
+                              ),
                             ),
                           ],
                         ),

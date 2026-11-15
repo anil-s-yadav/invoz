@@ -38,7 +38,7 @@ class _DefaultTemplatesScreenState extends State<DefaultTemplatesScreen>
     _tabController = TabController(
       length: _types.length,
       vsync: this,
-      initialIndex: widget.initialIndex,
+      initialIndex: widget.initialIndex.clamp(0, _types.length - 1),
     );
     _loadDefaults();
   }
@@ -189,25 +189,77 @@ class _DefaultTemplatesScreenState extends State<DefaultTemplatesScreen>
 
           final profile = state.profile;
 
-          return TabBarView(
-            controller: _tabController,
-            children: _types.map((type) {
-              final templates = TemplateRegistry.getTemplatesFor(type);
-              final currentDefaultId = _defaults[type] ?? 'modern_crimson';
-              final currentTemplate = TemplateRegistry.getById(
-                currentDefaultId,
-              );
-              final color = _getDocumentColor(type);
-              final icon = _getDocumentIcon(type);
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Center(child: AdBannerWidget()),
+              Expanded(
+                child: TabBarView(
+                  controller: _tabController,
+                  children: _types.map((type) {
+                    final templates = TemplateRegistry.getTemplatesFor(type);
+                    final currentDefaultId = _defaults[type] != null
+                        ? TemplateRegistry.resolveTemplateId(
+                            _defaults[type],
+                            type,
+                          )
+                        : (type == DocumentType.receipt
+                            ? TemplateRegistry.elegantCenter
+                            : (templates.isNotEmpty
+                                ? templates.first.id
+                                : TemplateRegistry.freeClassic));
+                    final currentTemplate = TemplateRegistry.getById(
+                      currentDefaultId,
+                    );
+                    final color = _getDocumentColor(type);
+                    final icon = _getDocumentIcon(type);
 
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Center(child: AdBannerWidget()),
-                  // Active default banner
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-                    child: Container(
+                    if (templates.isEmpty) {
+                      return Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(18),
+                              decoration: BoxDecoration(
+                                color: color.withValues(alpha: 0.1),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(icon, color: color, size: 44),
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              'No ${type.displayName} Templates',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: isDark
+                                    ? AppColors.darkTextPrimary
+                                    : AppColors.textPrimary,
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              'Templates for ${type.displayName} are coming soon.',
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: isDark
+                                    ? AppColors.darkTextSecondary
+                                    : AppColors.textSecondary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        // Active default banner
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+                          child: Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 14,
                         vertical: 10,
@@ -333,7 +385,10 @@ class _DefaultTemplatesScreenState extends State<DefaultTemplatesScreen>
                 ],
               );
             }).toList(),
-          );
+          ),
+        ),
+      ],
+    );
         },
       ),
     );
