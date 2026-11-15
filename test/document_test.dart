@@ -150,15 +150,17 @@ void main() {
   });
 
   group('Template Registry & PDF Generation', () {
-    test('Template Registry contains all 5 promised styles', () {
+    test('Template Registry contains all 7 promised styles', () {
       expect(
         TemplateRegistry.allTemplates.length,
-        5,
-        reason: 'Should contain 5 template styles',
+        7,
+        reason: 'Should contain 7 template styles',
       );
       final ids = TemplateRegistry.allTemplates.map((t) => t.id).toList();
       expect(ids, contains('free_classic'));
       expect(ids, contains('premium_modern'));
+      expect(ids, contains('cyan_quotation'));
+      expect(ids, contains('warm_quotation'));
       expect(ids, contains('elegant_center'));
       expect(ids, contains('order_receipt'));
       expect(ids, contains('thermal_receipt'));
@@ -192,8 +194,23 @@ void main() {
       expect(receiptIds, isNot(contains('free_classic')));
       expect(receiptIds.length, equals(3));
 
-      // Rule 4: No templates for quotation right now
-      expect(quotationTemplates.isEmpty, isTrue);
+      // Rule 4: 2 modern quotation templates for quotation
+      expect(quotationTemplates.length, equals(2));
+      expect(
+        quotationTemplates.map((t) => t.id).toList(),
+        containsAll(['warm_quotation', 'cyan_quotation']),
+      );
+
+      // Rule 5: Exactly 1 free template per category, rest are paid
+      for (final type in DocumentType.values) {
+        final list = TemplateRegistry.getTemplatesFor(type);
+        final freeCount = list.where((t) => !t.isPremium).length;
+        final paidCount = list.where((t) => t.isPremium).length;
+        expect(freeCount, equals(1),
+            reason: '$type should have exactly 1 free template');
+        expect(paidCount, equals(list.length - 1),
+            reason: '$type remaining templates should be paid');
+      }
     });
 
     test('TemplateRegistry.resolveTemplateId handles aliases and document types', () {
@@ -208,6 +225,18 @@ void main() {
       expect(
         TemplateRegistry.resolveTemplateId('minimal', DocumentType.invoice),
         equals(TemplateRegistry.freeClassic),
+      );
+      expect(
+        TemplateRegistry.resolveTemplateId(null, DocumentType.quotation),
+        equals(TemplateRegistry.cyanQuotation),
+      );
+      expect(
+        TemplateRegistry.resolveTemplateId('warm_quotation', DocumentType.quotation),
+        equals(TemplateRegistry.warmQuotation),
+      );
+      expect(
+        TemplateRegistry.resolveTemplateId('cyan_quotation', DocumentType.quotation),
+        equals(TemplateRegistry.cyanQuotation),
       );
       expect(
         TemplateRegistry.resolveTemplateId('compact', DocumentType.receipt),

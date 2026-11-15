@@ -204,54 +204,15 @@ class _DefaultTemplatesScreenState extends State<DefaultTemplatesScreen>
                             type,
                           )
                         : (type == DocumentType.receipt
-                            ? TemplateRegistry.elegantCenter
-                            : (templates.isNotEmpty
-                                ? templates.first.id
-                                : TemplateRegistry.freeClassic));
+                              ? TemplateRegistry.elegantCenter
+                              : (templates.isNotEmpty
+                                    ? templates.first.id
+                                    : TemplateRegistry.freeClassic));
                     final currentTemplate = TemplateRegistry.getById(
                       currentDefaultId,
                     );
                     final color = _getDocumentColor(type);
                     final icon = _getDocumentIcon(type);
-
-                    if (templates.isEmpty) {
-                      return Center(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(18),
-                              decoration: BoxDecoration(
-                                color: color.withValues(alpha: 0.1),
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(icon, color: color, size: 44),
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              'No ${type.displayName} Templates',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: isDark
-                                    ? AppColors.darkTextPrimary
-                                    : AppColors.textPrimary,
-                              ),
-                            ),
-                            const SizedBox(height: 6),
-                            Text(
-                              'Templates for ${type.displayName} are coming soon.',
-                              style: TextStyle(
-                                fontSize: 13,
-                                color: isDark
-                                    ? AppColors.darkTextSecondary
-                                    : AppColors.textSecondary,
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }
 
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -260,135 +221,143 @@ class _DefaultTemplatesScreenState extends State<DefaultTemplatesScreen>
                         Padding(
                           padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
                           child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 14,
-                        vertical: 10,
-                      ),
-                      decoration: BoxDecoration(
-                        color: isDark ? AppColors.darkSurface : Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: isDark
-                              ? AppColors.darkBorder
-                              : Colors.grey.withValues(alpha: 0.15),
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.02),
-                            blurRadius: 4,
-                            offset: const Offset(0, 1),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(6),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 10,
+                            ),
                             decoration: BoxDecoration(
-                              color: color.withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Icon(icon, color: color, size: 16),
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: Text.rich(
-                              TextSpan(
-                                text: 'Active Default: ',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: isDark
-                                      ? AppColors.darkTextSecondary
-                                      : AppColors.textSecondary,
-                                ),
-                                children: [
-                                  TextSpan(
-                                    text: currentTemplate.name,
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold,
-                                      color: color,
-                                    ),
-                                  ),
-                                  TextSpan(
-                                    text:
-                                        ' • Tap any design to preview & set default',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: isDark
-                                          ? AppColors.darkTextMuted
-                                          : AppColors.textSecondary,
-                                    ),
-                                  ),
-                                ],
+                              color: isDark
+                                  ? AppColors.darkSurface
+                                  : Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: isDark
+                                    ? AppColors.darkBorder
+                                    : Colors.grey.withValues(alpha: 0.15),
                               ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.02),
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 1),
+                                ),
+                              ],
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(6),
+                                  decoration: BoxDecoration(
+                                    color: color.withValues(alpha: 0.1),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Icon(icon, color: color, size: 16),
+                                ),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: Text.rich(
+                                    TextSpan(
+                                      text: 'Active Default: ',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: isDark
+                                            ? AppColors.darkTextSecondary
+                                            : AppColors.textSecondary,
+                                      ),
+                                      children: [
+                                        TextSpan(
+                                          text: currentTemplate.name,
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold,
+                                            color: color,
+                                          ),
+                                        ),
+                                        TextSpan(
+                                          text:
+                                              ' • Tap any design to preview & set default',
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: isDark
+                                                ? AppColors.darkTextMuted
+                                                : AppColors.textSecondary,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                        ],
-                      ),
-                    ),
-                  ),
+                        ),
 
-                  // 5 Curated Templates in 2-column Grid
-                  Expanded(
-                    child: GridView.builder(
-                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            childAspectRatio: 0.72,
-                            crossAxisSpacing: 16,
-                            mainAxisSpacing: 20,
+                        // 5 Curated Templates in 2-column Grid
+                        Expanded(
+                          child: GridView.builder(
+                            padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  childAspectRatio: 0.72,
+                                  crossAxisSpacing: 16,
+                                  mainAxisSpacing: 20,
+                                ),
+                            itemCount: templates.length,
+
+                            itemBuilder: (context, index) {
+                              final t = templates[index];
+                              final isSelected = t.id == currentDefaultId;
+
+                              return TemplateThumbnailCard(
+                                template: t,
+                                isSelected: isSelected,
+                                documentType: type,
+
+                                onTap: () {
+                                  TemplatePreviewScreen.show(
+                                    context: context,
+                                    template: t,
+                                    documentType: type,
+                                    profile: profile,
+                                    isDefault: isSelected,
+
+                                    onSetDefault: () async {
+                                      final messenger = ScaffoldMessenger.of(
+                                        context,
+                                      );
+                                      await _repo.setDefaultTemplate(
+                                        type,
+                                        t.id,
+                                      );
+                                      if (!mounted) return;
+                                      setState(() {
+                                        _defaults[type] = t.id;
+                                      });
+                                      messenger.showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                            '${t.name} set as default for ${type.displayName}',
+                                          ),
+                                          duration: const Duration(seconds: 2),
+                                          backgroundColor:
+                                              AppColors.statusPaidText,
+                                        ),
+                                      );
+                                    },
+                                  );
+                                },
+                              );
+                            },
                           ),
-                      itemCount: templates.length,
-
-                      itemBuilder: (context, index) {
-                        final t = templates[index];
-                        final isSelected = t.id == currentDefaultId;
-
-                        return TemplateThumbnailCard(
-                          template: t,
-                          isSelected: isSelected,
-                          documentType: type,
-
-                          onTap: () {
-                            TemplatePreviewScreen.show(
-                              context: context,
-                              template: t,
-                              documentType: type,
-                              profile: profile,
-                              isDefault: isSelected,
-
-                              onSetDefault: () async {
-                                final messenger = ScaffoldMessenger.of(context);
-                                await _repo.setDefaultTemplate(type, t.id);
-                                if (!mounted) return;
-                                setState(() {
-                                  _defaults[type] = t.id;
-                                });
-                                messenger.showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                      '${t.name} set as default for ${type.displayName}',
-                                    ),
-                                    duration: const Duration(seconds: 2),
-                                    backgroundColor: AppColors.statusPaidText,
-                                  ),
-                                );
-                              },
-                            );
-                          },
-                        );
-                      },
-                    ),
-                  ),
-                ],
-              );
-            }).toList(),
-          ),
-        ),
-      ],
-    );
+                        ),
+                      ],
+                    );
+                  }).toList(),
+                ),
+              ),
+            ],
+          );
         },
       ),
     );

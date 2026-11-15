@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:invoz/core/utils/premium_dialog_helper.dart';
 import 'package:invoz/features/ads/ad_banner_widget.dart';
+import 'package:pdf/pdf.dart';
 import 'package:printing/printing.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/services/analytics_service.dart';
@@ -728,6 +729,7 @@ class _PdfPreviewScreenState extends State<PdfPreviewScreen> {
                 // Clean styled Native Interactive PDF Viewer
                 Expanded(
                   child: PdfPreview(
+                    key: ValueKey('$_currentTemplateId-${_document.id}'),
                     build: (format) async {
                       final subState = context.read<SubscriptionBloc>().state;
                       
@@ -783,8 +785,16 @@ class _PdfPreviewScreenState extends State<PdfPreviewScreen> {
                         }
                       });
                     },
+                    initialPageFormat: _currentTemplateId ==
+                            TemplateRegistry.thermalReceipt
+                        ? const PdfPageFormat(340, 560, marginAll: 0)
+                        : (_currentTemplateId == TemplateRegistry.orderReceipt
+                            ? const PdfPageFormat(440, 600, marginAll: 0)
+                            : PdfPageFormat.a4),
                     canChangeOrientation: false,
-                    canChangePageFormat: true,
+                    canChangePageFormat: _currentTemplateId !=
+                            TemplateRegistry.thermalReceipt &&
+                        _currentTemplateId != TemplateRegistry.orderReceipt,
                     canDebug: false,
                     scrollViewDecoration: BoxDecoration(
                       color: isDark
@@ -793,11 +803,15 @@ class _PdfPreviewScreenState extends State<PdfPreviewScreen> {
                     ),
                     pdfPreviewPageDecoration: BoxDecoration(
                       color: Colors.white,
+                      borderRadius: _currentTemplateId ==
+                              TemplateRegistry.orderReceipt
+                          ? BorderRadius.circular(16)
+                          : null,
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withAlpha(isDark ? 60 : 30),
                           blurRadius: 10,
-                          spreadRadius: 5,
+                          spreadRadius: 2,
                           offset: const Offset(0, 4),
                         ),
                       ],

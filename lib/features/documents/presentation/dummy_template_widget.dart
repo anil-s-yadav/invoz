@@ -6,6 +6,8 @@ import 'dummy_templates/premium_modern_dummy.dart';
 import 'dummy_templates/elegant_center_dummy.dart';
 import 'dummy_templates/order_receipt_dummy.dart';
 import 'dummy_templates/receipt_thermal_dummy.dart';
+import 'dummy_templates/warm_quotation_dummy.dart';
+import 'dummy_templates/cyan_quotation_dummy.dart';
 
 class DummyTemplateWidget extends StatelessWidget {
   final String templateId;
@@ -31,6 +33,18 @@ class DummyTemplateWidget extends StatelessWidget {
       documentType,
     );
     switch (effectiveId) {
+      case TemplateRegistry.cyanQuotation:
+        return SizedBox(
+          width: 595,
+          height: 842,
+          child: buildCyanQuotationDummy(documentType, context),
+        );
+      case TemplateRegistry.warmQuotation:
+        return SizedBox(
+          width: 595,
+          height: 842,
+          child: buildWarmQuotationDummy(documentType, context),
+        );
       case TemplateRegistry.premiumModern:
         return SizedBox(
           width: 595,

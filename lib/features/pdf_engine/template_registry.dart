@@ -37,6 +37,8 @@ class TemplateRegistry {
   static const String elegantCenter = 'elegant_center';
   static const String orderReceipt = 'order_receipt';
   static const String thermalReceipt = 'thermal_receipt';
+  static const String warmQuotation = 'warm_quotation';
+  static const String cyanQuotation = 'cyan_quotation';
 
   static const List<TemplateInfo> allTemplates = [
     TemplateInfo(
@@ -55,16 +57,42 @@ class TemplateRegistry {
     ),
     TemplateInfo(
       id: premiumModern,
-      name: 'Modern Free',
+      name: 'Modern Style',
       description:
           'Sleek, colored headers with clean typography and card styling.',
       icon: Icons.auto_awesome,
       accentColor: AppColors.primary,
       thumbnailAssetPath: 'assets/images/templates/paid_template_thumb.png',
-      isPremium: false,
+      isPremium: true,
       supportedTypes: [
         DocumentType.invoice,
         DocumentType.proforma,
+      ],
+    ),
+    TemplateInfo(
+      id: cyanQuotation,
+      name: 'Clean Cyan',
+      description:
+          'Modern cyan quotation with bordered item tables, highlighted total, and enquiry banner.',
+      icon: Icons.request_quote_outlined,
+      accentColor: Color(0xFF00A3E0),
+      thumbnailAssetPath: 'assets/images/templates/paid_template_thumb.png',
+      isPremium: false,
+      supportedTypes: [
+        DocumentType.quotation,
+      ],
+    ),
+    TemplateInfo(
+      id: warmQuotation,
+      name: 'Modern Quotation',
+      description:
+          'Clean orange header quotation layout with info cards and alternating item rows.',
+      icon: Icons.request_quote_rounded,
+      accentColor: Color(0xFFF26522),
+      thumbnailAssetPath: 'assets/images/templates/paid_template_thumb.png',
+      isPremium: true,
+      supportedTypes: [
+        DocumentType.quotation,
       ],
     ),
     TemplateInfo(
@@ -88,7 +116,7 @@ class TemplateRegistry {
       icon: Icons.receipt_rounded,
       accentColor: Color(0xFF00A859),
       thumbnailAssetPath: 'assets/images/templates/order_receipt_thumb.png',
-      isPremium: false,
+      isPremium: true,
       supportedTypes: [
         DocumentType.receipt,
       ],
@@ -101,7 +129,7 @@ class TemplateRegistry {
       icon: Icons.receipt_long_rounded,
       accentColor: Color(0xFF1E293B),
       thumbnailAssetPath: 'assets/images/templates/thermal_receipt_thumb.png',
-      isPremium: false,
+      isPremium: true,
       supportedTypes: [
         DocumentType.receipt,
       ],
@@ -117,7 +145,12 @@ class TemplateRegistry {
     if (available.any((t) => t.id == id)) return id;
 
     // Aliases / Legacy mappings
-    if (type == DocumentType.receipt) {
+    if (type == DocumentType.quotation) {
+      if (id == warmQuotation) {
+        return warmQuotation;
+      }
+      return cyanQuotation;
+    } else if (type == DocumentType.receipt) {
       if (id == thermalReceipt || id == 'compact') {
         return thermalReceipt;
       }
@@ -150,6 +183,12 @@ class TemplateRegistry {
     }
     if (id == 'order') {
       return allTemplates.firstWhere((t) => t.id == orderReceipt);
+    }
+    if (id == 'quotation' || id == 'warm_quotation') {
+      return allTemplates.firstWhere((t) => t.id == warmQuotation);
+    }
+    if (id == 'cyan_quotation' || id == 'cyan') {
+      return allTemplates.firstWhere((t) => t.id == cyanQuotation);
     }
     return allTemplates.first;
   }
