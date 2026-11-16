@@ -2,6 +2,7 @@ import 'package:invoz/core/utils/premium_dialog_helper.dart';
 import 'package:invoz/features/documents/bloc/document_state.dart';
 import 'package:invoz/features/reports/bloc/reports_bloc.dart';
 import 'package:invoz/features/subscription/presentation/plan_info_screen.dart';
+import 'package:invoz/features/subscription/presentation/premium_offer_screen.dart';
 
 import '../../ads/ad_banner_widget.dart';
 import 'package:flutter/material.dart';
@@ -56,6 +57,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   bool _showPromoBanner = false;
+  static bool _hasShownOfferInSession = false;
 
   @override
   void initState() {
@@ -64,7 +66,40 @@ class _HomeScreenState extends State<HomeScreen> {
       InterstitialAdManager.loadAd(context);
     });
     _checkPromoBanner();
+    _checkPremiumOffer();
     if (!kIsWeb && Platform.isAndroid) _checkForUpdates();
+  }
+
+  void _checkPremiumOffer() {
+    if (_hasShownOfferInSession) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted) return;
+      final subState = context.read<SubscriptionBloc>().state;
+      final isPremium = subState is PremiumTierState;
+      if (isPremium) return;
+
+      final prefs = await SharedPreferences.getInstance();
+      final lastShownStr = prefs.getString('premium_offer_last_shown_at');
+      if (lastShownStr != null) {
+        final lastShown = DateTime.tryParse(lastShownStr);
+        if (lastShown != null) {
+          final hoursDiff = DateTime.now().difference(lastShown).inHours;
+          if (hoursDiff < 12) {
+            _hasShownOfferInSession = true;
+            return;
+          }
+        }
+      }
+
+      _hasShownOfferInSession = true;
+      await prefs.setString(
+        'premium_offer_last_shown_at',
+        DateTime.now().toIso8601String(),
+      );
+
+      if (!mounted) return;
+      PremiumOfferScreen.show(context);
+    });
   }
 
   Future<void> _checkForUpdates() async {
@@ -122,8 +157,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<HomeBloc, HomeState>(
-      builder: (context, state) {
+    return BlocListener<SubscriptionBloc, SubscriptionState>(
+      listener: (context, subState) {
+        _checkPremiumOffer();
+      },
+      child: BlocBuilder<HomeBloc, HomeState>(
+        builder: (context, state) {
         final profile = state is HomeLoaded ? state.profile : null;
         final businessName = profile?.businessName;
         final isProfileConfigured =
@@ -719,8 +758,9 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         );
       },
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildOverviewDashboard(SummaryStats? stats) {
     return Container(

@@ -151,6 +151,10 @@ class SubscriptionRepository {
     }
   }
 
+  /// Alias for saving subscription
+  Future<void> saveSubscription(SubscriptionPlanModel plan) =>
+      saveOrUpgradePlan(plan);
+
   /// Toggle Auto-Renewal in Firestore
   Future<void> toggleAutoRenew(bool enabled) async {
     final current = await getCurrentPlan();
