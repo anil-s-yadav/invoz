@@ -23,7 +23,7 @@ class DefaultTemplatesScreen extends StatefulWidget {
 class _DefaultTemplatesScreenState extends State<DefaultTemplatesScreen>
     with SingleTickerProviderStateMixin {
   late final TabController _tabController;
-  final _repo = TemplateSettingsRepository();
+  static final _repo = TemplateSettingsRepository();
 
   static const List<DocumentType> _types = [
     DocumentType.invoice,
@@ -81,15 +81,19 @@ class _DefaultTemplatesScreenState extends State<DefaultTemplatesScreen>
   }
 
   Future<void> _loadDefaults() async {
-    final results = await Future.wait(
-      _types.map((type) => _repo.getDefaultTemplate(type)),
-    );
-    if (!mounted) return;
-    setState(() {
-      _defaults = {
-        for (int i = 0; i < _types.length; i++) _types[i]: results[i],
-      };
-    });
+    try {
+      final results = await Future.wait(
+        _types.map((type) => _repo.getDefaultTemplate(type)),
+      );
+      if (!mounted) return;
+      setState(() {
+        _defaults = {
+          for (int i = 0; i < _types.length; i++) _types[i]: results[i],
+        };
+      });
+    } catch (e) {
+      debugPrint('Error loading default templates: $e');
+    }
   }
 
   @override
@@ -121,6 +125,8 @@ class _DefaultTemplatesScreenState extends State<DefaultTemplatesScreen>
   }
 
   Future<void> _setDefault(DocumentType type, TemplateInfo template) async {
+    if (_defaults[type] == template.id) return;
+
     // Optimistic local state update for instant UI feedback
     setState(() {
       _defaults = Map<DocumentType, String>.from(_defaults)
@@ -160,119 +166,6 @@ class _DefaultTemplatesScreenState extends State<DefaultTemplatesScreen>
       profile: profile,
       isDefault: isDefault,
       onSetDefault: () => _setDefault(type, template),
-    );
-  }
-
-  Widget _buildTabContent({
-    required BuildContext context,
-    required DocumentType type,
-    required BusinessProfile profile,
-    required bool isDark,
-  }) {
-    final templates = _cachedTemplates[type] ?? const [];
-    final currentDefaultId = _resolveCurrentDefaultId(type, templates);
-    final currentTemplate = TemplateRegistry.getById(currentDefaultId);
-    final color = _getDocumentColor(type);
-    final icon = _getDocumentIcon(type);
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        // Active default banner
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            decoration: BoxDecoration(
-              color: isDark ? AppColors.darkSurface : Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: isDark
-                    ? AppColors.darkBorder
-                    : Colors.grey.withValues(alpha: 0.15),
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.02),
-                  blurRadius: 4,
-                  offset: const Offset(0, 1),
-                ),
-              ],
-            ),
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(6),
-                  decoration: BoxDecoration(
-                    color: color.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Icon(icon, color: color, size: 16),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Text.rich(
-                    TextSpan(
-                      text: 'Active Default: ',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: isDark
-                            ? AppColors.darkTextSecondary
-                            : AppColors.textSecondary,
-                      ),
-                      children: [
-                        TextSpan(
-                          text: currentTemplate.name,
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: color,
-                          ),
-                        ),
-                        TextSpan(
-                          text: ' • Tap any design to preview & set default',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: isDark
-                                ? AppColors.darkTextMuted
-                                : AppColors.textSecondary,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-
-        // Curated Templates in 2-column Grid
-        Expanded(
-          child: GridView.builder(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-            gridDelegate: _gridDelegate,
-            itemCount: templates.length,
-            itemBuilder: (context, index) {
-              final t = templates[index];
-              final isSelected = t.id == currentDefaultId;
-
-              return TemplateThumbnailCard(
-                template: t,
-                isSelected: isSelected,
-                documentType: type,
-                onTap: () => _openPreview(
-                  context: context,
-                  template: t,
-                  type: type,
-                  profile: profile,
-                  isDefault: isSelected,
-                ),
-              );
-            },
-          ),
-        ),
-      ],
     );
   }
 
@@ -388,22 +281,167 @@ class _DefaultTemplatesScreenState extends State<DefaultTemplatesScreen>
               Expanded(
                 child: TabBarView(
                   controller: _tabController,
-                  children: _types
-                      .map(
-                        (type) => _buildTabContent(
-                          context: context,
-                          type: type,
-                          profile: profile,
-                          isDark: isDark,
-                        ),
-                      )
-                      .toList(),
+                  children: _types.map((type) {
+                    final templates = _cachedTemplates[type] ?? const [];
+                    final currentDefaultId =
+                        _resolveCurrentDefaultId(type, templates);
+
+                    return _TemplateTabContent(
+                      key: ValueKey(type),
+                      type: type,
+                      currentDefaultId: currentDefaultId,
+                      templates: templates,
+                      color: _getDocumentColor(type),
+                      icon: _getDocumentIcon(type),
+                      profile: profile,
+                      isDark: isDark,
+                      onPreview: (template, isDefault) => _openPreview(
+                        context: context,
+                        template: template,
+                        type: type,
+                        profile: profile,
+                        isDefault: isDefault,
+                      ),
+                    );
+                  }).toList(),
                 ),
               ),
             ],
           );
         },
       ),
+    );
+  }
+}
+
+class _TemplateTabContent extends StatefulWidget {
+  final DocumentType type;
+  final String currentDefaultId;
+  final List<TemplateInfo> templates;
+  final Color color;
+  final IconData icon;
+  final BusinessProfile profile;
+  final bool isDark;
+  final void Function(TemplateInfo template, bool isDefault) onPreview;
+
+  const _TemplateTabContent({
+    super.key,
+    required this.type,
+    required this.currentDefaultId,
+    required this.templates,
+    required this.color,
+    required this.icon,
+    required this.profile,
+    required this.isDark,
+    required this.onPreview,
+  });
+
+  @override
+  State<_TemplateTabContent> createState() => _TemplateTabContentState();
+}
+
+class _TemplateTabContentState extends State<_TemplateTabContent>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+    final currentTemplate = TemplateRegistry.getById(widget.currentDefaultId);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // Active default banner
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            decoration: BoxDecoration(
+              color: widget.isDark ? AppColors.darkSurface : Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: widget.isDark
+                    ? AppColors.darkBorder
+                    : Colors.grey.withValues(alpha: 0.15),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.02),
+                  blurRadius: 4,
+                  offset: const Offset(0, 1),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: widget.color.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(widget.icon, color: widget.color, size: 16),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text.rich(
+                    TextSpan(
+                      text: 'Active Default: ',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: widget.isDark
+                            ? AppColors.darkTextSecondary
+                            : AppColors.textSecondary,
+                      ),
+                      children: [
+                        TextSpan(
+                          text: currentTemplate.name,
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color: widget.color,
+                          ),
+                        ),
+                        TextSpan(
+                          text: ' • Tap any design to preview & set default',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: widget.isDark
+                                ? AppColors.darkTextMuted
+                                : AppColors.textSecondary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+
+        // Curated Templates in 2-column Grid
+        Expanded(
+          child: GridView.builder(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+            gridDelegate: _DefaultTemplatesScreenState._gridDelegate,
+            itemCount: widget.templates.length,
+            itemBuilder: (context, index) {
+              final t = widget.templates[index];
+              final isSelected = t.id == widget.currentDefaultId;
+
+              return TemplateThumbnailCard(
+                template: t,
+                isSelected: isSelected,
+                documentType: widget.type,
+                onTap: () => widget.onPreview(t, isSelected),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 }

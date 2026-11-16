@@ -543,7 +543,7 @@ class _PremiumOfferScreenState extends State<PremiumOfferScreen> {
                                             ),
                                           ),
                                           child: const Text(
-                                            '50% OFF',
+                                            '60% OFF',
                                             style: TextStyle(
                                               color: Colors.white,
                                               fontSize: 9.5,
