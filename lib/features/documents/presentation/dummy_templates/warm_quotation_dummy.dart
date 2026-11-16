@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../domain/document_model.dart';
-import 'dummy_template_utils.dart';
 
 Widget buildWarmQuotationDummy(
   DocumentType documentType, [

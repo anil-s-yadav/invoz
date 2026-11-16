@@ -10,7 +10,6 @@ Widget buildCyanQuotationDummy(
   const textDark = Color(0xFF1E293B);
   const textMuted = Color(0xFF64748B);
   const borderColor = Color(0xFF334155);
-  const lightBorder = Color(0xFFCBD5E1);
 
   return Container(
     color: Colors.white,

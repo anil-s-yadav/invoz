@@ -269,7 +269,7 @@ class _PremiumOfferScreenState extends State<PremiumOfferScreen> {
           Expanded(
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
-              padding: const EdgeInsets.fromLTRB(16, 4, 16, 20),
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -609,7 +609,7 @@ class _PremiumOfferScreenState extends State<PremiumOfferScreen> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(
-                                      'Then ',
+                                      'Actual Price ',
                                       style: TextStyle(
                                         fontSize: 14.5,
                                         fontWeight: FontWeight.w600,
@@ -703,7 +703,7 @@ class _PremiumOfferScreenState extends State<PremiumOfferScreen> {
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  '50% Extra Discount Auto-Applied',
+                                  '10% + 50% Extra Discount Auto-Applied',
                                   style: TextStyle(
                                     fontSize: 12,
                                     color: textMuted,
@@ -719,7 +719,7 @@ class _PremiumOfferScreenState extends State<PremiumOfferScreen> {
                         Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 16,
-                            vertical: 12,
+                            vertical: 8,
                           ),
                           decoration: BoxDecoration(
                             color: isDark
@@ -774,7 +774,7 @@ class _PremiumOfferScreenState extends State<PremiumOfferScreen> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 20),
 
                   // 4. INCLUDED PREMIUM BENEFITS (CONVINCE USER)
                   Container(
@@ -840,73 +840,108 @@ class _PremiumOfferScreenState extends State<PremiumOfferScreen> {
                   ),
                   const SizedBox(height: 16),
 
-                  // 5. ACCEPTED PAYMENT METHODS (Compact Trust Strip - Read Only)
+                  // 5. ACCEPTED PAYMENT METHODS (Clean, Uncrowded & Borderless Items)
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 14,
                       vertical: 12,
                     ),
-                    decoration: BoxDecoration(
-                      color: cardBg,
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: borderColor, width: 1),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(
-                            alpha: isDark ? 0.2 : 0.03,
-                          ),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
+                    // decoration: BoxDecoration(
+                    //   color: cardBg,
+                    //   borderRadius: BorderRadius.circular(16),
+                    //   border: Border.all(color: borderColor, width: 1),
+                    //   boxShadow: [
+                    //     BoxShadow(
+                    //       color: Colors.black.withValues(
+                    //         alpha: isDark ? 0.2 : 0.03,
+                    //       ),
+                    //       blurRadius: 8,
+                    //       offset: const Offset(0, 2),
+                    //     ),
+                    //   ],
+                    // ),
                     child: Column(
                       children: [
+                        // Row(
+                        //   mainAxisAlignment: MainAxisAlignment.center,
+                        //   children: [
+                        //     const Icon(
+                        //       Icons.lock_rounded,
+                        //       size: 13,
+                        //       color: Color(0xFF10B981),
+                        //     ),
+                        //     const SizedBox(width: 5),
+                        //     Text(
+                        //       '100% SECURE CHECKOUT • GLOBAL & INDIA',
+                        //       style: TextStyle(
+                        //         fontSize: 10.5,
+                        //         fontWeight: FontWeight.w800,
+                        //         letterSpacing: 0.5,
+                        //         color: textMuted,
+                        //       ),
+                        //     ),
+                        //   ],
+                        // ),
+                        // const SizedBox(height: 10),
+                        // Clean uncrowded row without border containers
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            const Icon(
-                              Icons.lock_rounded,
-                              size: 13,
-                              color: Color(0xFF10B981),
-                            ),
-                            const SizedBox(width: 5),
-                            Text(
-                              '100% SECURE CHECKOUT • GLOBAL & INDIA',
-                              style: TextStyle(
-                                fontSize: 10.5,
-                                fontWeight: FontWeight.w800,
-                                letterSpacing: 0.5,
-                                color: textMuted,
+                            _buildPaymentItem(
+                              label: 'Cards',
+                              iconWidget: const Icon(
+                                Icons.credit_card_rounded,
+                                size: 16,
+                                color: Color(0xFF2563EB),
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                        // 4 Compact Read-Only Badges
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            _buildPaymentBadge(
-                              label: 'Credit/Dabit Cards',
-                              icon: Icons.credit_card_rounded,
-                              iconColor: const Color(0xFF2563EB),
                               isDark: isDark,
                             ),
-                            const SizedBox(width: 6),
-                            _buildGPayBadge(isDark: isDark),
-                            const SizedBox(width: 6),
-                            _buildUpiBadge(isDark: isDark),
-                            const SizedBox(width: 6),
-                            _buildPaymentBadge(
+                            _buildPaymentItem(
+                              label: 'GPay',
+                              iconWidget: SizedBox(
+                                width: 15,
+                                height: 15,
+                                child: Image.asset(
+                                  'assets/icons/google.png',
+                                  fit: BoxFit.contain,
+                                ),
+                              ),
+                              isDark: isDark,
+                            ),
+                            _buildPaymentItem(
+                              label: 'UPI',
+                              iconWidget: Container(
+                                width: 15,
+                                height: 15,
+                                decoration: const BoxDecoration(
+                                  color: Color(0xFF5F259F),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Center(
+                                  child: Text(
+                                    'पे',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 8,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              isDark: isDark,
+                            ),
+                            _buildPaymentItem(
                               label: 'NetBanking',
-                              icon: Icons.account_balance_rounded,
-                              iconColor: const Color(0xFF059669),
+                              iconWidget: const Icon(
+                                Icons.account_balance_rounded,
+                                size: 15,
+                                color: Color(0xFF059669),
+                              ),
                               isDark: isDark,
                             ),
                           ],
                         ),
-                        const SizedBox(height: 7),
+                        const SizedBox(height: 8),
                         Text(
                           'Visa • Mastercard • Amex • UPI • 50+ Banks',
                           style: TextStyle(
@@ -918,46 +953,45 @@ class _PremiumOfferScreenState extends State<PremiumOfferScreen> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  // const SizedBox(height: 16),
 
-                  // 6. GUARANTEED REFUND & AUTO-RENEW NOTICE
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 10,
-                    ),
-                    decoration: BoxDecoration(
-                      color: isDark
-                          ? const Color(0xFF064E3B).withValues(alpha: 0.3)
-                          : const Color(0xFFECFDF5),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: const Color(0xFF10B981).withValues(alpha: 0.3),
-                        width: 1,
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(
-                          Icons.verified_user_rounded,
-                          color: Color(0xFF047857),
-                          size: 16,
-                        ),
-                        const SizedBox(width: 6),
-                        Text(
-                          _selectedDuration == 1
-                              ? '100% Free Experience • No Risk'
-                              : '100% Guaranteed Refund • 7 Days',
-                          style: const TextStyle(
-                            fontSize: 12.5,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF047857),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  // // 6. GUARANTEED REFUND & AUTO-RENEW NOTICE
+                  // Container(
+                  //   padding: const EdgeInsets.symmetric(
+                  //     horizontal: 16,
+                  //     vertical: 10,
+                  //   ),
+                  //   decoration: BoxDecoration(
+                  //     color: isDark
+                  //         ? const Color(0xFF064E3B).withValues(alpha: 0.3)
+                  //         : const Color(0xFFECFDF5),
+                  //     borderRadius: BorderRadius.circular(12),
+                  //     border: Border.all(
+                  //       color: const Color(0xFF10B981).withValues(alpha: 0.3),
+                  //       width: 1,
+                  //     ),
+                  //   ),
+                  //   child: Row(
+                  //     mainAxisAlignment: MainAxisAlignment.center,
+                  //     children: [
+                  //       const Icon(
+                  //         Icons.verified_user_rounded,
+                  //         color: Color(0xFF047857),
+                  //         size: 16,
+                  //       ),
+                  //       const SizedBox(width: 6),
+                  //       Text(
+                  //         '100% SECURE CHECKOUT',
+
+                  //         style: const TextStyle(
+                  //           fontSize: 12.5,
+                  //           fontWeight: FontWeight.bold,
+                  //           color: Color(0xFF047857),
+                  //         ),
+                  //       ),
+                  //     ],
+                  //   ),
+                  // ),
                   // const SizedBox(height: 8),
 
                   // Text(
@@ -1002,7 +1036,7 @@ class _PremiumOfferScreenState extends State<PremiumOfferScreen> {
 
           // 8. STICKY BOTTOM CHECKOUT BAR (Matches Screenshot Structure)
           Container(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 10),
             decoration: BoxDecoration(
               color: cardBg,
               border: Border(top: BorderSide(color: borderColor, width: 1)),
@@ -1014,86 +1048,121 @@ class _PremiumOfferScreenState extends State<PremiumOfferScreen> {
                 ),
               ],
             ),
-            child: Row(
-              children: [
-                // Left: Price & Status (Clean & Informational)
-                Expanded(
-                  flex: 4,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
+            child: SafeArea(
+              top: false,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
                     children: [
-                      Text(
-                        _selectedDuration == 1 ? 'TOTAL TODAY' : 'ANNUAL PLAN',
-                        style: TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w800,
-                          color: textMuted,
-                          letterSpacing: 0.5,
+                      // Left: Price & Status (Clean & Informational)
+                      Expanded(
+                        flex: 4,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              _selectedDuration == 1
+                                  ? 'TOTAL TODAY'
+                                  : 'ANNUAL PLAN',
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w800,
+                                color: textMuted,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              _selectedDuration == 1 ? '₹0 FREE' : '₹594/yr',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w900,
+                                color: _selectedDuration == 1
+                                    ? const Color(0xFF10B981)
+                                    : (isDark
+                                          ? Colors.white
+                                          : const Color(0xFF0F172A)),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      const SizedBox(height: 2),
-                      Text(
-                        _selectedDuration == 1 ? '₹0 FREE' : '₹594/yr',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w900,
-                          color: _selectedDuration == 1
-                              ? const Color(0xFF10B981)
-                              : (isDark
-                                    ? Colors.white
-                                    : const Color(0xFF0F172A)),
+
+                      // Right: Primary Action Button
+                      Expanded(
+                        flex: 6,
+                        child: SizedBox(
+                          height: 50,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(
+                                0xFFF95721,
+                              ), // Bright Orange
+                              foregroundColor: Colors.white,
+                              elevation: 4,
+                              shadowColor: const Color(
+                                0xFFF95721,
+                              ).withValues(alpha: 0.45),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(25),
+                              ),
+                            ),
+                            onPressed: _isProcessing
+                                ? null
+                                : _handlePrimaryAction,
+                            child: _isProcessing
+                                ? const SizedBox(
+                                    width: 22,
+                                    height: 22,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2.5,
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                        Colors.white,
+                                      ),
+                                    ),
+                                  )
+                                : Text(
+                                    _selectedDuration == 1
+                                        ? 'Claim 1-Month Free @ ₹0'
+                                        : 'Get 1 Year Plan @ ₹594',
+                                    style: const TextStyle(
+                                      fontSize: 13.5,
+                                      fontWeight: FontWeight.w900,
+                                      letterSpacing: -0.2,
+                                    ),
+                                  ),
+                          ),
                         ),
                       ),
                     ],
                   ),
-                ),
+                  const SizedBox(height: 8),
 
-                // Right: Primary Action Button
-                Expanded(
-                  flex: 6,
-                  child: SizedBox(
-                    height: 50,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(
-                          0xFFF95721,
-                        ), // Bright Orange
-                        foregroundColor: Colors.white,
-                        elevation: 4,
-                        shadowColor: const Color(
-                          0xFFF95721,
-                        ).withValues(alpha: 0.45),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25),
+                  // Safety, Security & Trust Convince Text
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(
+                        Icons.verified_user_rounded,
+                        size: 13,
+                        color: Color(0xFF10B981),
+                      ),
+                      const SizedBox(width: 5),
+                      Text(
+                        '100% Secure & Risk-Free  •  Cancel Anytime  •  256-Bit SSL',
+                        style: TextStyle(
+                          fontSize: 10.5,
+                          fontWeight: FontWeight.w600,
+                          color: textMuted,
+                          letterSpacing: 0.2,
                         ),
                       ),
-                      onPressed: _isProcessing ? null : _handlePrimaryAction,
-                      child: _isProcessing
-                          ? const SizedBox(
-                              width: 22,
-                              height: 22,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2.5,
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  Colors.white,
-                                ),
-                              ),
-                            )
-                          : Text(
-                              _selectedDuration == 1
-                                  ? 'Claim 1-Month Free @ ₹0'
-                                  : 'Get 1 Year Plan @ ₹594',
-                              style: const TextStyle(
-                                fontSize: 13.5,
-                                fontWeight: FontWeight.w900,
-                                letterSpacing: -0.2,
-                              ),
-                            ),
-                    ),
+                    ],
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ],
@@ -1139,123 +1208,26 @@ class _PremiumOfferScreenState extends State<PremiumOfferScreen> {
     );
   }
 
-  // READ-ONLY COMPACT PAYMENT BADGES
-  Widget _buildPaymentBadge({
+  // READ-ONLY BORDERLESS PAYMENT ITEMS
+  Widget _buildPaymentItem({
     required String label,
-    required IconData icon,
-    required Color iconColor,
+    required Widget iconWidget,
     required bool isDark,
   }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF8FAFC),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
-          width: 0.8,
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        iconWidget,
+        const SizedBox(width: 5),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 11,
+            fontWeight: FontWeight.w700,
+            color: isDark ? AppColors.darkTextPrimary : const Color(0xFF334155),
+          ),
         ),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 13, color: iconColor),
-          const SizedBox(width: 4),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 10.5,
-              fontWeight: FontWeight.w700,
-              color: isDark
-                  ? AppColors.darkTextPrimary
-                  : const Color(0xFF334155),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildGPayBadge({required bool isDark}) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF8FAFC),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
-          width: 0.8,
-        ),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SizedBox(
-            width: 13,
-            height: 13,
-            child: Image.asset('assets/icons/google.png', fit: BoxFit.contain),
-          ),
-          const SizedBox(width: 4),
-          Text(
-            'GPay',
-            style: TextStyle(
-              fontSize: 10.5,
-              fontWeight: FontWeight.w700,
-              color: isDark
-                  ? AppColors.darkTextPrimary
-                  : const Color(0xFF334155),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildUpiBadge({required bool isDark}) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF8FAFC),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
-          width: 0.8,
-        ),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 13,
-            height: 13,
-            decoration: const BoxDecoration(
-              color: Color(0xFF5F259F),
-              shape: BoxShape.circle,
-            ),
-            child: const Center(
-              child: Text(
-                'पे',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 7,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(width: 4),
-          Text(
-            'UPI',
-            style: TextStyle(
-              fontSize: 10.5,
-              fontWeight: FontWeight.w700,
-              color: isDark
-                  ? AppColors.darkTextPrimary
-                  : const Color(0xFF334155),
-            ),
-          ),
-        ],
-      ),
+      ],
     );
   }
 }

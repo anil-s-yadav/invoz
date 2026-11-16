@@ -503,21 +503,19 @@ class DocumentPdfGenerator {
                         style: pw.TextStyle(fontSize: 9, color: textDark)),
                   ],
                 ),
-                if (doc.dueDate != null) ...[
-                  pw.SizedBox(height: 2),
-                  pw.Row(
-                    mainAxisSize: pw.MainAxisSize.min,
-                    children: [
-                      pw.Text('Due Date:  ',
-                          style: pw.TextStyle(
-                              fontSize: 9,
-                              fontWeight: pw.FontWeight.bold,
-                              color: textDark)),
-                      pw.Text(DateFormatter.format(doc.dueDate!),
-                          style: pw.TextStyle(fontSize: 9, color: textDark)),
-                    ],
-                  ),
-                ],
+                pw.SizedBox(height: 2),
+                pw.Row(
+                  mainAxisSize: pw.MainAxisSize.min,
+                  children: [
+                    pw.Text('Due Date:  ',
+                        style: pw.TextStyle(
+                            fontSize: 9,
+                            fontWeight: pw.FontWeight.bold,
+                            color: textDark)),
+                    pw.Text(DateFormatter.format(doc.dueDate),
+                        style: pw.TextStyle(fontSize: 9, color: textDark)),
+                  ],
+                ),
                 pw.SizedBox(height: 6),
                 pw.Row(
                   mainAxisSize: pw.MainAxisSize.min,

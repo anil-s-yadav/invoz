@@ -1035,9 +1035,7 @@ class _HomeScreenState extends State<HomeScreen> {
       children: [
         GestureDetector(
           onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => const SubscriptionScreen()),
-            );
+            PremiumOfferScreen.show(context);
           },
           child: Container(
             decoration: BoxDecoration(
@@ -1113,7 +1111,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '1 Year Free Premium, Tap to claim!.',
+                        'Get 100% FREE on 1st Month or 50% OFF on 1 Year!',
                         style: TextStyle(
                           color: Colors.white.withValues(alpha: 0.9),
                           fontSize: 13,

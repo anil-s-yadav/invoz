@@ -252,13 +252,10 @@ Widget _buildDummyItemRow(
 }
 
 class _ThermalSawtoothClipper extends CustomClipper<Path> {
-  final double toothWidth;
-  final double toothHeight;
+  static const double toothWidth = 8.0;
+  static const double toothHeight = 5.0;
 
-  const _ThermalSawtoothClipper({
-    this.toothWidth = 8.0,
-    this.toothHeight = 5.0,
-  });
+  const _ThermalSawtoothClipper();
 
   @override
   Path getClip(Size size) {
