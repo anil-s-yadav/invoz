@@ -4,6 +4,7 @@ import 'package:invoz/features/ads/ad_banner_widget.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../business_profile/bloc/business_profile_bloc.dart';
 import '../../business_profile/bloc/business_profile_state.dart';
+import '../../business_profile/domain/business_profile_model.dart';
 import '../../documents/domain/document_model.dart';
 import '../../documents/presentation/template_preview_screen.dart';
 import '../../documents/presentation/widgets/template_thumbnail_card.dart';
@@ -21,9 +22,8 @@ class DefaultTemplatesScreen extends StatefulWidget {
 
 class _DefaultTemplatesScreenState extends State<DefaultTemplatesScreen>
     with SingleTickerProviderStateMixin {
-  late TabController _tabController;
+  late final TabController _tabController;
   final _repo = TemplateSettingsRepository();
-  Map<DocumentType, String> _defaults = {};
 
   static const List<DocumentType> _types = [
     DocumentType.invoice,
@@ -32,9 +32,46 @@ class _DefaultTemplatesScreenState extends State<DefaultTemplatesScreen>
     DocumentType.proforma,
   ];
 
+  static const Map<DocumentType, Color> _typeColors = {
+    DocumentType.invoice: AppColors.primary,
+    DocumentType.quotation: Color(0xFFF26522),
+    DocumentType.receipt: Color(0xFF10B981),
+    DocumentType.proforma: Color(0xFF0284C7),
+  };
+
+  static const Map<DocumentType, IconData> _typeIcons = {
+    DocumentType.invoice: Icons.receipt_long_rounded,
+    DocumentType.quotation: Icons.request_quote_rounded,
+    DocumentType.receipt: Icons.task_alt_rounded,
+    DocumentType.proforma: Icons.description_rounded,
+  };
+
+  static const Map<DocumentType, String> _defaultFallbacks = {
+    DocumentType.invoice: TemplateRegistry.freeClassic,
+    DocumentType.quotation: TemplateRegistry.freeClassic,
+    DocumentType.receipt: TemplateRegistry.elegantCenter,
+    DocumentType.proforma: TemplateRegistry.freeClassic,
+  };
+
+  static const SliverGridDelegateWithFixedCrossAxisCount _gridDelegate =
+      SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        childAspectRatio: 0.72,
+        crossAxisSpacing: 16,
+        mainAxisSpacing: 20,
+      );
+
+  // Cached template lists per document type to avoid redundant registry filtering on every build
+  static final Map<DocumentType, List<TemplateInfo>> _cachedTemplates = {
+    for (final type in _types) type: TemplateRegistry.getTemplatesFor(type),
+  };
+
+  late Map<DocumentType, String> _defaults;
+
   @override
   void initState() {
     super.initState();
+    _defaults = Map<DocumentType, String>.from(_defaultFallbacks);
     _tabController = TabController(
       length: _types.length,
       vsync: this,
@@ -44,20 +81,15 @@ class _DefaultTemplatesScreenState extends State<DefaultTemplatesScreen>
   }
 
   Future<void> _loadDefaults() async {
-    final inv = await _repo.getDefaultTemplate(DocumentType.invoice);
-    final quo = await _repo.getDefaultTemplate(DocumentType.quotation);
-    final rec = await _repo.getDefaultTemplate(DocumentType.receipt);
-    final pro = await _repo.getDefaultTemplate(DocumentType.proforma);
-    if (mounted) {
-      setState(() {
-        _defaults = {
-          DocumentType.invoice: inv,
-          DocumentType.quotation: quo,
-          DocumentType.receipt: rec,
-          DocumentType.proforma: pro,
-        };
-      });
-    }
+    final results = await Future.wait(
+      _types.map((type) => _repo.getDefaultTemplate(type)),
+    );
+    if (!mounted) return;
+    setState(() {
+      _defaults = {
+        for (int i = 0; i < _types.length; i++) _types[i]: results[i],
+      };
+    });
   }
 
   @override
@@ -66,30 +98,182 @@ class _DefaultTemplatesScreenState extends State<DefaultTemplatesScreen>
     super.dispose();
   }
 
-  Color _getDocumentColor(DocumentType type) {
-    switch (type) {
-      case DocumentType.invoice:
-        return AppColors.primary;
-      case DocumentType.quotation:
-        return const Color(0xFFF26522);
-      case DocumentType.receipt:
-        return const Color(0xFF10B981);
-      case DocumentType.proforma:
-        return const Color(0xFF0284C7);
+  static Color _getDocumentColor(DocumentType type) =>
+      _typeColors[type] ?? AppColors.primary;
+
+  static IconData _getDocumentIcon(DocumentType type) =>
+      _typeIcons[type] ?? Icons.receipt_long_rounded;
+
+  String _resolveCurrentDefaultId(
+    DocumentType type,
+    List<TemplateInfo> templates,
+  ) {
+    final savedId = _defaults[type];
+    if (savedId != null && savedId.isNotEmpty) {
+      return TemplateRegistry.resolveTemplateId(savedId, type);
     }
+    if (type == DocumentType.receipt) {
+      return TemplateRegistry.elegantCenter;
+    }
+    return templates.isNotEmpty
+        ? templates.first.id
+        : TemplateRegistry.freeClassic;
   }
 
-  IconData _getDocumentIcon(DocumentType type) {
-    switch (type) {
-      case DocumentType.invoice:
-        return Icons.receipt_long_rounded;
-      case DocumentType.quotation:
-        return Icons.request_quote_rounded;
-      case DocumentType.receipt:
-        return Icons.task_alt_rounded;
-      case DocumentType.proforma:
-        return Icons.description_rounded;
+  Future<void> _setDefault(DocumentType type, TemplateInfo template) async {
+    // Optimistic local state update for instant UI feedback
+    setState(() {
+      _defaults = Map<DocumentType, String>.from(_defaults)
+        ..[type] = template.id;
+    });
+
+    try {
+      await _repo.setDefaultTemplate(type, template.id);
+    } catch (e) {
+      debugPrint('Failed to save default template: $e');
     }
+
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          '${template.name} set as default for ${type.displayName}',
+        ),
+        duration: const Duration(seconds: 2),
+        backgroundColor: AppColors.statusPaidText,
+      ),
+    );
+  }
+
+  void _openPreview({
+    required BuildContext context,
+    required TemplateInfo template,
+    required DocumentType type,
+    required BusinessProfile profile,
+    required bool isDefault,
+  }) {
+    TemplatePreviewScreen.show(
+      context: context,
+      template: template,
+      documentType: type,
+      profile: profile,
+      isDefault: isDefault,
+      onSetDefault: () => _setDefault(type, template),
+    );
+  }
+
+  Widget _buildTabContent({
+    required BuildContext context,
+    required DocumentType type,
+    required BusinessProfile profile,
+    required bool isDark,
+  }) {
+    final templates = _cachedTemplates[type] ?? const [];
+    final currentDefaultId = _resolveCurrentDefaultId(type, templates);
+    final currentTemplate = TemplateRegistry.getById(currentDefaultId);
+    final color = _getDocumentColor(type);
+    final icon = _getDocumentIcon(type);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // Active default banner
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            decoration: BoxDecoration(
+              color: isDark ? AppColors.darkSurface : Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: isDark
+                    ? AppColors.darkBorder
+                    : Colors.grey.withValues(alpha: 0.15),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.02),
+                  blurRadius: 4,
+                  offset: const Offset(0, 1),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: color.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(icon, color: color, size: 16),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text.rich(
+                    TextSpan(
+                      text: 'Active Default: ',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: isDark
+                            ? AppColors.darkTextSecondary
+                            : AppColors.textSecondary,
+                      ),
+                      children: [
+                        TextSpan(
+                          text: currentTemplate.name,
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color: color,
+                          ),
+                        ),
+                        TextSpan(
+                          text: ' • Tap any design to preview & set default',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: isDark
+                                ? AppColors.darkTextMuted
+                                : AppColors.textSecondary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+
+        // Curated Templates in 2-column Grid
+        Expanded(
+          child: GridView.builder(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+            gridDelegate: _gridDelegate,
+            itemCount: templates.length,
+            itemBuilder: (context, index) {
+              final t = templates[index];
+              final isSelected = t.id == currentDefaultId;
+
+              return TemplateThumbnailCard(
+                template: t,
+                isSelected: isSelected,
+                documentType: type,
+                onTap: () => _openPreview(
+                  context: context,
+                  template: t,
+                  type: type,
+                  profile: profile,
+                  isDefault: isSelected,
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
   }
 
   @override
@@ -177,6 +361,14 @@ class _DefaultTemplatesScreenState extends State<DefaultTemplatesScreen>
         ),
       ),
       body: BlocBuilder<BusinessProfileBloc, BusinessProfileState>(
+        buildWhen: (previous, current) {
+          if (previous.runtimeType != current.runtimeType) return true;
+          if (previous is BusinessProfileLoaded &&
+              current is BusinessProfileLoaded) {
+            return previous.profile != current.profile;
+          }
+          return false;
+        },
         builder: (context, state) {
           if (state is BusinessProfileError) {
             return Center(child: Text('Error: ${state.message}'));
@@ -192,168 +384,20 @@ class _DefaultTemplatesScreenState extends State<DefaultTemplatesScreen>
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Center(child: AdBannerWidget()),
+              const Center(child: AdBannerWidget()),
               Expanded(
                 child: TabBarView(
                   controller: _tabController,
-                  children: _types.map((type) {
-                    final templates = TemplateRegistry.getTemplatesFor(type);
-                    final currentDefaultId = _defaults[type] != null
-                        ? TemplateRegistry.resolveTemplateId(
-                            _defaults[type],
-                            type,
-                          )
-                        : (type == DocumentType.receipt
-                              ? TemplateRegistry.elegantCenter
-                              : (templates.isNotEmpty
-                                    ? templates.first.id
-                                    : TemplateRegistry.freeClassic));
-                    final currentTemplate = TemplateRegistry.getById(
-                      currentDefaultId,
-                    );
-                    final color = _getDocumentColor(type);
-                    final icon = _getDocumentIcon(type);
-
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        // Active default banner
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 14,
-                              vertical: 10,
-                            ),
-                            decoration: BoxDecoration(
-                              color: isDark
-                                  ? AppColors.darkSurface
-                                  : Colors.white,
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(
-                                color: isDark
-                                    ? AppColors.darkBorder
-                                    : Colors.grey.withValues(alpha: 0.15),
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withValues(alpha: 0.02),
-                                  blurRadius: 4,
-                                  offset: const Offset(0, 1),
-                                ),
-                              ],
-                            ),
-                            child: Row(
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.all(6),
-                                  decoration: BoxDecoration(
-                                    color: color.withValues(alpha: 0.1),
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Icon(icon, color: color, size: 16),
-                                ),
-                                const SizedBox(width: 10),
-                                Expanded(
-                                  child: Text.rich(
-                                    TextSpan(
-                                      text: 'Active Default: ',
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: isDark
-                                            ? AppColors.darkTextSecondary
-                                            : AppColors.textSecondary,
-                                      ),
-                                      children: [
-                                        TextSpan(
-                                          text: currentTemplate.name,
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.bold,
-                                            color: color,
-                                          ),
-                                        ),
-                                        TextSpan(
-                                          text:
-                                              ' • Tap any design to preview & set default',
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            color: isDark
-                                                ? AppColors.darkTextMuted
-                                                : AppColors.textSecondary,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+                  children: _types
+                      .map(
+                        (type) => _buildTabContent(
+                          context: context,
+                          type: type,
+                          profile: profile,
+                          isDark: isDark,
                         ),
-
-                        // 5 Curated Templates in 2-column Grid
-                        Expanded(
-                          child: GridView.builder(
-                            padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-                            gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 2,
-                                  childAspectRatio: 0.72,
-                                  crossAxisSpacing: 16,
-                                  mainAxisSpacing: 20,
-                                ),
-                            itemCount: templates.length,
-
-                            itemBuilder: (context, index) {
-                              final t = templates[index];
-                              final isSelected = t.id == currentDefaultId;
-
-                              return TemplateThumbnailCard(
-                                template: t,
-                                isSelected: isSelected,
-                                documentType: type,
-
-                                onTap: () {
-                                  TemplatePreviewScreen.show(
-                                    context: context,
-                                    template: t,
-                                    documentType: type,
-                                    profile: profile,
-                                    isDefault: isSelected,
-
-                                    onSetDefault: () async {
-                                      final messenger = ScaffoldMessenger.of(
-                                        context,
-                                      );
-                                      await _repo.setDefaultTemplate(
-                                        type,
-                                        t.id,
-                                      );
-                                      if (!mounted) return;
-                                      setState(() {
-                                        _defaults[type] = t.id;
-                                      });
-                                      messenger.showSnackBar(
-                                        SnackBar(
-                                          content: Text(
-                                            '${t.name} set as default for ${type.displayName}',
-                                          ),
-                                          duration: const Duration(seconds: 2),
-                                          backgroundColor:
-                                              AppColors.statusPaidText,
-                                        ),
-                                      );
-                                    },
-                                  );
-                                },
-                              );
-                            },
-                          ),
-                        ),
-                      ],
-                    );
-                  }).toList(),
+                      )
+                      .toList(),
                 ),
               ),
             ],
