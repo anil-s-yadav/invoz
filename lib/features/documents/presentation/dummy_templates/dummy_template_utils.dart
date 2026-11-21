@@ -6,6 +6,7 @@ class DummyProductItem {
   final String title;
   final String description;
   final String hsn;
+  final String itemCode;
   final double qty;
   final double rate;
   final double taxPercent;
@@ -15,6 +16,7 @@ class DummyProductItem {
     required this.title,
     required this.description,
     this.hsn = '',
+    this.itemCode = 'PRD-001',
     required this.qty,
     required this.rate,
     this.taxPercent = 12.0,
@@ -45,8 +47,8 @@ class DummyProductItem {
 class DummyTemplateData {
   DummyTemplateData._();
 
-  // Company / From Information (Our app logo + Fictional company)
-  static const String logoAsset = 'assets/icons/applogo.png';
+  // Company / From Information (Dummy company logo + Fictional company)
+  static const String logoAsset = 'assets/icons/dummy_company_logo.png';
   static const double logoRadius = 8.0;
 
   static const String companyName = 'Acme Innovations Pvt. Ltd.';
@@ -113,6 +115,7 @@ class DummyTemplateData {
     title: 'Riding Safety Gloves',
     description: 'All-weather grip, touchscreen compatible',
     hsn: '6216',
+    itemCode: 'PRD-002',
     qty: 2.0,
     rate: 500.00,
     taxPercent: 12.0,
@@ -193,7 +196,7 @@ Widget buildDummyText(
   );
 }
 
-/// Reusable Company Logo Widget (always uses app logo with circular radius of 8)
+/// Reusable Company Logo Widget (uses dummy company logo with circular radius of 8)
 Widget buildDummyLogo({
   double size = 44,
   double radius = DummyTemplateData.logoRadius,
@@ -206,6 +209,20 @@ Widget buildDummyLogo({
       width: size,
       height: size,
       fit: fit,
+      errorBuilder: (_, _, _) => Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          color: const Color(0xFF0F172A),
+          borderRadius: BorderRadius.circular(radius),
+        ),
+        alignment: Alignment.center,
+        child: Icon(
+          Icons.business_rounded,
+          size: size * 0.6,
+          color: Colors.white,
+        ),
+      ),
     ),
   );
 }
@@ -242,6 +259,21 @@ Widget buildDummySignature({
       ],
       buildDummyText(label, size: 9, bold: true, color: labelColor),
     ],
+  );
+}
+
+/// Standalone dummy QR code box
+Widget buildDummyQrCode({double size = 58, double iconSize = 46}) {
+  return Container(
+    width: size,
+    height: size,
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(4),
+      border: Border.all(color: Colors.grey.shade400, width: 0.8),
+    ),
+    alignment: Alignment.center,
+    child: Icon(Icons.qr_code_2, size: iconSize, color: Colors.black87),
   );
 }
 

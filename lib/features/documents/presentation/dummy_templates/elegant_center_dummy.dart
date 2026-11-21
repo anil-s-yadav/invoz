@@ -14,7 +14,7 @@ Widget buildElegantCenterDummy([
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // Centered Header: App Logo (radius 8) + Company Name
+        // Centered Header: Dummy Company Logo (radius 8) + Company Name
         FittedBox(
           fit: BoxFit.scaleDown,
           child: Row(

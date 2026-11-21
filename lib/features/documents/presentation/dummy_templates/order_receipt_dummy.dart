@@ -48,7 +48,7 @@ Widget buildOrderReceiptDummy(
               padding: const EdgeInsets.fromLTRB(28, 24, 28, 16),
               child: Column(
                 children: [
-                  // Company Logo: App logo with circular radius of 8
+                  // Dummy Company Logo with circular radius of 8
                   Container(
                     margin: const EdgeInsets.only(bottom: 12),
                     child: buildDummyLogo(size: 44, radius: 8),

@@ -207,6 +207,17 @@ class DocumentPdfGenerator {
               stampBytes: stampBytes,
             );
           }
+          if (selectedTemplate == TemplateRegistry.formalQuotation) {
+            return _buildFormalQuotation(
+              context,
+              document,
+              profile,
+              payments: payments,
+              logoBytes: logoBytes,
+              signatureBytes: signatureBytes,
+              stampBytes: stampBytes,
+            );
+          }
           if (selectedTemplate == TemplateRegistry.thermalReceipt) {
             return _buildReceiptThermal(
               context,
@@ -296,8 +307,10 @@ class DocumentPdfGenerator {
     String placeOfSupply = 'Karnataka';
     if (bAddress.isNotEmpty) {
       final parts = bAddress.split(RegExp(r'[\n,]'));
-      final nonEmpty =
-          parts.map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
+      final nonEmpty = parts
+          .map((e) => e.trim())
+          .where((e) => e.isNotEmpty)
+          .toList();
       if (nonEmpty.isNotEmpty) {
         placeOfSupply = nonEmpty.last;
       }
@@ -336,8 +349,9 @@ class DocumentPdfGenerator {
                   margin: const pw.EdgeInsets.only(right: 8),
                   decoration: pw.BoxDecoration(
                     color: cyanPrimary,
-                    borderRadius:
-                        const pw.BorderRadius.all(pw.Radius.circular(4)),
+                    borderRadius: const pw.BorderRadius.all(
+                      pw.Radius.circular(4),
+                    ),
                   ),
                   child: pw.Center(
                     child: pw.Text(
@@ -481,13 +495,18 @@ class DocumentPdfGenerator {
                 pw.Row(
                   mainAxisSize: pw.MainAxisSize.min,
                   children: [
-                    pw.Text('${doc.docType.displayName} No:  ',
-                        style: pw.TextStyle(
-                            fontSize: 9,
-                            fontWeight: pw.FontWeight.bold,
-                            color: textDark)),
-                    pw.Text(doc.docNumber,
-                        style: pw.TextStyle(fontSize: 9, color: textDark)),
+                    pw.Text(
+                      '${doc.docType.displayName} No:  ',
+                      style: pw.TextStyle(
+                        fontSize: 9,
+                        fontWeight: pw.FontWeight.bold,
+                        color: textDark,
+                      ),
+                    ),
+                    pw.Text(
+                      doc.docNumber,
+                      style: pw.TextStyle(fontSize: 9, color: textDark),
+                    ),
                   ],
                 ),
                 pw.SizedBox(height: 2),
@@ -495,13 +514,18 @@ class DocumentPdfGenerator {
                   pw.Row(
                     mainAxisSize: pw.MainAxisSize.min,
                     children: [
-                      pw.Text('Payment Date:  ',
-                          style: pw.TextStyle(
-                              fontSize: 9,
-                              fontWeight: pw.FontWeight.bold,
-                              color: textDark)),
-                      pw.Text(DateFormatter.format(doc.issueDate),
-                          style: pw.TextStyle(fontSize: 9, color: textDark)),
+                      pw.Text(
+                        'Payment Date:  ',
+                        style: pw.TextStyle(
+                          fontSize: 9,
+                          fontWeight: pw.FontWeight.bold,
+                          color: textDark,
+                        ),
+                      ),
+                      pw.Text(
+                        DateFormatter.format(doc.issueDate),
+                        style: pw.TextStyle(fontSize: 9, color: textDark),
+                      ),
                     ],
                   )
                 else ...[
@@ -509,16 +533,20 @@ class DocumentPdfGenerator {
                     mainAxisSize: pw.MainAxisSize.min,
                     children: [
                       pw.Text(
-                          doc.docType == DocumentType.quotation ||
-                                  doc.docType == DocumentType.proforma
-                              ? 'Issue Date:  '
-                              : '${doc.docType.displayName} Date:  ',
-                          style: pw.TextStyle(
-                              fontSize: 9,
-                              fontWeight: pw.FontWeight.bold,
-                              color: textDark)),
-                      pw.Text(DateFormatter.format(doc.issueDate),
-                          style: pw.TextStyle(fontSize: 9, color: textDark)),
+                        doc.docType == DocumentType.quotation ||
+                                doc.docType == DocumentType.proforma
+                            ? 'Issue Date:  '
+                            : '${doc.docType.displayName} Date:  ',
+                        style: pw.TextStyle(
+                          fontSize: 9,
+                          fontWeight: pw.FontWeight.bold,
+                          color: textDark,
+                        ),
+                      ),
+                      pw.Text(
+                        DateFormatter.format(doc.issueDate),
+                        style: pw.TextStyle(fontSize: 9, color: textDark),
+                      ),
                     ],
                   ),
                   pw.SizedBox(height: 2),
@@ -526,16 +554,20 @@ class DocumentPdfGenerator {
                     mainAxisSize: pw.MainAxisSize.min,
                     children: [
                       pw.Text(
-                          doc.docType == DocumentType.quotation ||
-                                  doc.docType == DocumentType.proforma
-                              ? 'Valid Until:  '
-                              : 'Due Date:  ',
-                          style: pw.TextStyle(
-                              fontSize: 9,
-                              fontWeight: pw.FontWeight.bold,
-                              color: textDark)),
-                      pw.Text(DateFormatter.format(doc.dueDate),
-                          style: pw.TextStyle(fontSize: 9, color: textDark)),
+                        doc.docType == DocumentType.quotation ||
+                                doc.docType == DocumentType.proforma
+                            ? 'Valid Until:  '
+                            : 'Due Date:  ',
+                        style: pw.TextStyle(
+                          fontSize: 9,
+                          fontWeight: pw.FontWeight.bold,
+                          color: textDark,
+                        ),
+                      ),
+                      pw.Text(
+                        DateFormatter.format(doc.dueDate),
+                        style: pw.TextStyle(fontSize: 9, color: textDark),
+                      ),
                     ],
                   ),
                 ],
@@ -543,26 +575,36 @@ class DocumentPdfGenerator {
                 pw.Row(
                   mainAxisSize: pw.MainAxisSize.min,
                   children: [
-                    pw.Text('Country of supply:  ',
-                        style: pw.TextStyle(
-                            fontSize: 9,
-                            fontWeight: pw.FontWeight.bold,
-                            color: textDark)),
-                    pw.Text(countryOfSupply,
-                        style: pw.TextStyle(fontSize: 9, color: textDark)),
+                    pw.Text(
+                      'Country of supply:  ',
+                      style: pw.TextStyle(
+                        fontSize: 9,
+                        fontWeight: pw.FontWeight.bold,
+                        color: textDark,
+                      ),
+                    ),
+                    pw.Text(
+                      countryOfSupply,
+                      style: pw.TextStyle(fontSize: 9, color: textDark),
+                    ),
                   ],
                 ),
                 pw.SizedBox(height: 2),
                 pw.Row(
                   mainAxisSize: pw.MainAxisSize.min,
                   children: [
-                    pw.Text('Place of supply:  ',
-                        style: pw.TextStyle(
-                            fontSize: 9,
-                            fontWeight: pw.FontWeight.bold,
-                            color: textDark)),
-                    pw.Text(placeOfSupply,
-                        style: pw.TextStyle(fontSize: 9, color: textDark)),
+                    pw.Text(
+                      'Place of supply:  ',
+                      style: pw.TextStyle(
+                        fontSize: 9,
+                        fontWeight: pw.FontWeight.bold,
+                        color: textDark,
+                      ),
+                    ),
+                    pw.Text(
+                      placeOfSupply,
+                      style: pw.TextStyle(fontSize: 9, color: textDark),
+                    ),
                   ],
                 ),
               ],
@@ -587,7 +629,7 @@ class DocumentPdfGenerator {
           pw.SizedBox(height: 2),
           pw.Text(
             'Please find below a cost-breakdown for the quotation. Please consider this, and do not hesitate to contact us with any questions.',
-            style: const pw.TextStyle(
+            style: pw.TextStyle(
               fontSize: 8.5,
               color: textDark,
               lineSpacing: 1.25,
@@ -596,7 +638,7 @@ class DocumentPdfGenerator {
           pw.SizedBox(height: 2),
           pw.Text(
             'Many thanks,',
-            style: const pw.TextStyle(fontSize: 8.5, color: textDark),
+            style: pw.TextStyle(fontSize: 8.5, color: textDark),
           ),
           pw.Text(
             profile.businessName.isNotEmpty
@@ -622,8 +664,10 @@ class DocumentPdfGenerator {
             // Table Header
             pw.Container(
               color: cyanHeaderBg,
-              padding:
-                  const pw.EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+              padding: const pw.EdgeInsets.symmetric(
+                horizontal: 8,
+                vertical: 6,
+              ),
               decoration: pw.BoxDecoration(
                 border: pw.Border(
                   bottom: pw.BorderSide(color: borderColor, width: 0.8),
@@ -726,12 +770,13 @@ class DocumentPdfGenerator {
 
               return pw.Container(
                 padding: const pw.EdgeInsets.symmetric(
-                    horizontal: 8, vertical: 6),
+                  horizontal: 8,
+                  vertical: 6,
+                ),
                 decoration: pw.BoxDecoration(
                   border: hasBottom
                       ? pw.Border(
-                          bottom:
-                              pw.BorderSide(color: borderColor, width: 0.8),
+                          bottom: pw.BorderSide(color: borderColor, width: 0.8),
                         )
                       : null,
                 ),
@@ -791,8 +836,10 @@ class DocumentPdfGenerator {
                     pw.SizedBox(
                       width: 60,
                       child: pw.Text(
-                        CurrencyFormatter.format(item.unitPrice,
-                            symbol: currency),
+                        CurrencyFormatter.format(
+                          item.unitPrice,
+                          symbol: currency,
+                        ),
                         textAlign: pw.TextAlign.center,
                         style: pw.TextStyle(fontSize: 9, color: textDark),
                       ),
@@ -822,8 +869,10 @@ class DocumentPdfGenerator {
                     pw.SizedBox(
                       width: 75,
                       child: pw.Text(
-                        CurrencyFormatter.format(item.lineTotal,
-                            symbol: currency),
+                        CurrencyFormatter.format(
+                          item.lineTotal,
+                          symbol: currency,
+                        ),
                         textAlign: pw.TextAlign.center,
                         style: pw.TextStyle(
                           fontSize: 9,
@@ -853,7 +902,7 @@ class DocumentPdfGenerator {
               children: [
                 pw.Text(
                   'Many thanks for your custom! We look forward to doing business with you.',
-                  style: const pw.TextStyle(
+                  style: pw.TextStyle(
                     fontSize: 8.5,
                     color: textDark,
                     lineSpacing: 1.25,
@@ -893,11 +942,15 @@ class DocumentPdfGenerator {
                       // Subtotal
                       pw.Container(
                         padding: const pw.EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 4),
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
                         decoration: pw.BoxDecoration(
                           border: pw.Border(
                             bottom: pw.BorderSide(
-                                color: borderColor, width: 0.8),
+                              color: borderColor,
+                              width: 0.8,
+                            ),
                           ),
                         ),
                         child: pw.Row(
@@ -920,8 +973,10 @@ class DocumentPdfGenerator {
                             ),
                             pw.Expanded(
                               child: pw.Text(
-                                CurrencyFormatter.format(doc.subtotal,
-                                    symbol: currency),
+                                CurrencyFormatter.format(
+                                  doc.subtotal,
+                                  symbol: currency,
+                                ),
                                 textAlign: pw.TextAlign.center,
                                 style: pw.TextStyle(
                                   fontSize: 9.5,
@@ -935,16 +990,19 @@ class DocumentPdfGenerator {
                       ),
 
                       // Discount
-                      if ((doc.overallDiscountAmount +
-                              doc.itemDiscountsTotal) >
+                      if ((doc.overallDiscountAmount + doc.itemDiscountsTotal) >
                           0)
                         pw.Container(
                           padding: const pw.EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 4),
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
                           decoration: pw.BoxDecoration(
                             border: pw.Border(
                               bottom: pw.BorderSide(
-                                  color: borderColor, width: 0.8),
+                                color: borderColor,
+                                width: 0.8,
+                              ),
                             ),
                           ),
                           child: pw.Row(
@@ -984,7 +1042,9 @@ class DocumentPdfGenerator {
                       pw.Container(
                         color: cyanPrimary,
                         padding: const pw.EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 5),
+                          horizontal: 8,
+                          vertical: 5,
+                        ),
                         child: pw.Row(
                           children: [
                             pw.Expanded(
@@ -1005,8 +1065,10 @@ class DocumentPdfGenerator {
                             ),
                             pw.Expanded(
                               child: pw.Text(
-                                CurrencyFormatter.format(doc.totalAmount,
-                                    symbol: currency),
+                                CurrencyFormatter.format(
+                                  doc.totalAmount,
+                                  symbol: currency,
+                                ),
                                 textAlign: pw.TextAlign.center,
                                 style: pw.TextStyle(
                                   fontSize: 10,
@@ -1102,8 +1164,7 @@ class DocumentPdfGenerator {
 
       // Full Width Enquiry Box
       pw.Container(
-        padding:
-            const pw.EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        padding: const pw.EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: pw.BoxDecoration(
           border: pw.Border.all(color: borderColor, width: 0.8),
         ),
@@ -1538,7 +1599,7 @@ class DocumentPdfGenerator {
             pw.SizedBox(height: 2),
             pw.Text(
               'Please find below a cost-breakdown for the quotation. Please consider this, and do not hesitate to contact us with any questions.',
-              style: const pw.TextStyle(
+              style: pw.TextStyle(
                 fontSize: 8.5,
                 color: textDark,
                 lineSpacing: 1.25,
@@ -1547,7 +1608,7 @@ class DocumentPdfGenerator {
             pw.SizedBox(height: 2),
             pw.Text(
               'Many thanks,',
-              style: const pw.TextStyle(fontSize: 8.5, color: textDark),
+              style: pw.TextStyle(fontSize: 8.5, color: textDark),
             ),
             pw.Text(
               profile.businessName.isNotEmpty
@@ -1686,7 +1747,7 @@ class DocumentPdfGenerator {
               children: [
                 pw.Text(
                   'Many thanks for your custom! We look forward to doing business with you.',
-                  style: const pw.TextStyle(
+                  style: pw.TextStyle(
                     fontSize: 9,
                     color: textDark,
                     lineSpacing: 1.3,
@@ -1863,10 +1924,7 @@ class DocumentPdfGenerator {
                         pw.SizedBox(height: 2),
                         pw.Text(
                           'Company Stamp',
-                          style: pw.TextStyle(
-                            fontSize: 8,
-                            color: textMuted,
-                          ),
+                          style: pw.TextStyle(fontSize: 8, color: textMuted),
                         ),
                       ],
                     ),
@@ -1925,6 +1983,854 @@ class DocumentPdfGenerator {
             ),
           ),
         ),
+    ];
+  }
+
+  static List<pw.Widget> _buildFormalQuotation(
+    pw.Context context,
+    DocumentModel doc,
+    BusinessProfile profile, {
+    required List<PaymentDetail> payments,
+    Uint8List? logoBytes,
+    Uint8List? signatureBytes,
+    Uint8List? stampBytes,
+  }) {
+    String currency = profile.currencySymbol.isNotEmpty
+        ? profile.currencySymbol
+        : 'Rs.';
+    if (currency == '\u20B9') {
+      currency = 'Rs.';
+    }
+
+    final borderColor = PdfColor.fromHex('#64748B');
+    final textDark = PdfColor.fromHex('#0F172A');
+    final textMuted = PdfColor.fromHex('#475569');
+    final tableHeaderBg = PdfColor.fromHex('#F1F5F9');
+
+    final cName = doc.customerSnapshot?.name ?? 'Valued Customer';
+    final cAddress = doc.customerSnapshot?.billingAddress ?? '';
+    final cGstin = doc.customerSnapshot?.gstin ?? '';
+    final cPhone = doc.customerSnapshot?.phone ?? '';
+    final cEmail = doc.customerSnapshot?.email ?? '';
+
+    final bAddress = profile.address?.trim() ?? '';
+    final bGstin = profile.gstin?.trim() ?? '';
+    final bPhone = profile.phone?.trim() ?? '';
+    final bEmail = profile.email?.trim() ?? '';
+
+    return [
+      // Top Header Row: Logo on Left, Quotation & Company on Right
+      pw.Row(
+        crossAxisAlignment: pw.CrossAxisAlignment.start,
+        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+        children: [
+          // Left: Logo (radius 8)
+          if (logoBytes != null)
+            pw.ClipRRect(
+              horizontalRadius: 8,
+              verticalRadius: 8,
+              child: pw.Image(
+                pw.MemoryImage(logoBytes),
+                width: 58,
+                height: 58,
+                fit: pw.BoxFit.contain,
+              ),
+            )
+          else
+            pw.Container(
+              width: 58,
+              height: 58,
+              decoration: const pw.BoxDecoration(
+                color: PdfColors.blueGrey800,
+                borderRadius: pw.BorderRadius.all(pw.Radius.circular(8)),
+              ),
+              child: pw.Center(
+                child: pw.Text(
+                  profile.businessName.isNotEmpty
+                      ? profile.businessName[0].toUpperCase()
+                      : 'Q',
+                  style: pw.TextStyle(
+                    color: PdfColors.white,
+                    fontSize: 26,
+                    fontWeight: pw.FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          pw.SizedBox(width: 16),
+
+          // Right: Quotation & Company Details
+          pw.Expanded(
+            child: pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.end,
+              children: [
+                pw.Text(
+                  'Quotation',
+                  style: pw.TextStyle(
+                    fontSize: 22,
+                    fontWeight: pw.FontWeight.bold,
+                    color: textDark,
+                    letterSpacing: 0.2,
+                  ),
+                ),
+                pw.SizedBox(height: 2),
+                pw.Text(
+                  profile.businessName.isNotEmpty
+                      ? profile.businessName
+                      : 'Acme Innovations Pvt. Ltd.',
+                  textAlign: pw.TextAlign.right,
+                  style: pw.TextStyle(
+                    fontSize: 11,
+                    fontWeight: pw.FontWeight.bold,
+                    color: textDark,
+                  ),
+                ),
+                if (bGstin.isNotEmpty) ...[
+                  pw.SizedBox(height: 1),
+                  pw.Text(
+                    'GSTIN: $bGstin',
+                    textAlign: pw.TextAlign.right,
+                    style: pw.TextStyle(fontSize: 9, color: textMuted),
+                  ),
+                ],
+                if (bAddress.isNotEmpty)
+                  pw.Text(
+                    bAddress,
+                    textAlign: pw.TextAlign.right,
+                    style: pw.TextStyle(fontSize: 8.5, color: textMuted),
+                  ),
+                if (bPhone.isNotEmpty)
+                  pw.Text(
+                    'Mobile: $bPhone',
+                    textAlign: pw.TextAlign.right,
+                    style: pw.TextStyle(fontSize: 8.5, color: textMuted),
+                  ),
+                if (bEmail.isNotEmpty)
+                  pw.Text(
+                    'Email Id: $bEmail',
+                    textAlign: pw.TextAlign.right,
+                    style: pw.TextStyle(fontSize: 8.5, color: textMuted),
+                  ),
+              ],
+            ),
+          ),
+        ],
+      ),
+
+      pw.SizedBox(height: 10),
+      pw.Container(height: 0.8, color: borderColor),
+      pw.SizedBox(height: 10),
+
+      // Parties & Metadata Row: 'To' on Left, 'Date / No / Grand Total' on Right
+      pw.Row(
+        crossAxisAlignment: pw.CrossAxisAlignment.start,
+        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+        children: [
+          // Left: To Client
+          pw.Expanded(
+            flex: 5,
+            child: pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
+                pw.Text(
+                  'To',
+                  style: pw.TextStyle(
+                    fontSize: 10.5,
+                    fontWeight: pw.FontWeight.bold,
+                    color: textDark,
+                  ),
+                ),
+                pw.SizedBox(height: 2),
+                pw.Text(
+                  cName,
+                  style: pw.TextStyle(
+                    fontSize: 10.5,
+                    fontWeight: pw.FontWeight.bold,
+                    color: textDark,
+                  ),
+                ),
+                if (cGstin.isNotEmpty) ...[
+                  pw.SizedBox(height: 1),
+                  pw.Text(
+                    'GSTIN: $cGstin',
+                    style: pw.TextStyle(fontSize: 8.5, color: textMuted),
+                  ),
+                ],
+                if (cPhone.isNotEmpty)
+                  pw.Text(
+                    'Mobile: $cPhone',
+                    style: pw.TextStyle(fontSize: 8.5, color: textMuted),
+                  ),
+                if (cEmail.isNotEmpty)
+                  pw.Text(
+                    'Email Id: $cEmail',
+                    style: pw.TextStyle(fontSize: 8.5, color: textMuted),
+                  ),
+                if (cAddress.isNotEmpty)
+                  pw.Text(
+                    cAddress,
+                    style: pw.TextStyle(fontSize: 8.5, color: textMuted),
+                  ),
+              ],
+            ),
+          ),
+
+          pw.SizedBox(width: 16),
+
+          // Right: Date, Quotation No, Grand Total
+          pw.Expanded(
+            flex: 5,
+            child: pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.end,
+              children: [
+                pw.Row(
+                  mainAxisAlignment: pw.MainAxisAlignment.end,
+                  children: [
+                    pw.Text(
+                      'Date : ',
+                      style: pw.TextStyle(
+                        fontSize: 9.5,
+                        fontWeight: pw.FontWeight.bold,
+                        color: textDark,
+                      ),
+                    ),
+                    pw.Text(
+                      DateFormatter.format(doc.issueDate),
+                      style: pw.TextStyle(fontSize: 9.5, color: textDark),
+                    ),
+                  ],
+                ),
+                pw.SizedBox(height: 4),
+                pw.Row(
+                  mainAxisAlignment: pw.MainAxisAlignment.end,
+                  children: [
+                    pw.Text(
+                      'Quotation No. : ',
+                      style: pw.TextStyle(
+                        fontSize: 9.5,
+                        fontWeight: pw.FontWeight.bold,
+                        color: textDark,
+                      ),
+                    ),
+                    pw.Text(
+                      doc.docNumber,
+                      style: pw.TextStyle(fontSize: 9.5, color: textDark),
+                    ),
+                  ],
+                ),
+                pw.SizedBox(height: 4),
+                pw.Row(
+                  mainAxisAlignment: pw.MainAxisAlignment.end,
+                  children: [
+                    pw.Text(
+                      'Grand Total : ',
+                      style: pw.TextStyle(
+                        fontSize: 10,
+                        fontWeight: pw.FontWeight.bold,
+                        color: textDark,
+                      ),
+                    ),
+                    pw.Text(
+                      CurrencyFormatter.format(
+                        doc.totalAmount,
+                        symbol: currency,
+                      ),
+                      style: pw.TextStyle(
+                        fontSize: 10,
+                        fontWeight: pw.FontWeight.bold,
+                        color: textDark,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+
+      pw.SizedBox(height: 10),
+      pw.Container(height: 0.8, color: borderColor),
+      pw.SizedBox(height: 8),
+
+      // Quotation Intro Greeting Message
+      pw.Column(
+        crossAxisAlignment: pw.CrossAxisAlignment.start,
+        children: [
+          pw.Text(
+            'Dear ${cName.isNotEmpty ? cName : "Valued Client"},',
+            style: pw.TextStyle(
+              fontSize: 9.5,
+              fontWeight: pw.FontWeight.bold,
+              color: textDark,
+            ),
+          ),
+          pw.SizedBox(height: 2),
+          pw.Text(
+            'Please find below a cost-breakdown for the quotation. Please consider this, and do not hesitate to contact us with any questions.',
+            style: pw.TextStyle(
+              fontSize: 8.5,
+              color: textDark,
+              lineSpacing: 1.25,
+            ),
+          ),
+          pw.SizedBox(height: 2),
+          pw.Text(
+            'Many thanks,',
+            style: pw.TextStyle(fontSize: 8.5, color: textDark),
+          ),
+          pw.Text(
+            profile.businessName.isNotEmpty
+                ? profile.businessName
+                : 'Acme Innovations',
+            style: pw.TextStyle(
+              fontSize: 9,
+              fontWeight: pw.FontWeight.bold,
+              color: textDark,
+            ),
+          ),
+        ],
+      ),
+
+      pw.SizedBox(height: 8),
+      pw.Container(height: 0.8, color: borderColor),
+      pw.SizedBox(height: 10),
+
+      // Bordered Item Table with Attached Summary Rows
+      pw.Container(
+        decoration: pw.BoxDecoration(
+          border: pw.Border.all(color: borderColor, width: 0.8),
+        ),
+        child: pw.Column(
+          children: [
+            // Header Row
+            pw.Container(
+              color: tableHeaderBg,
+              padding: const pw.EdgeInsets.symmetric(
+                horizontal: 6,
+                vertical: 6,
+              ),
+              decoration: pw.BoxDecoration(
+                border: pw.Border(
+                  bottom: pw.BorderSide(color: borderColor, width: 0.8),
+                ),
+              ),
+              child: pw.Row(
+                children: [
+                  pw.SizedBox(
+                    width: 36,
+                    child: pw.Text(
+                      'S.No.',
+                      textAlign: pw.TextAlign.center,
+                      style: pw.TextStyle(
+                        fontSize: 9,
+                        fontWeight: pw.FontWeight.bold,
+                        color: textDark,
+                      ),
+                    ),
+                  ),
+                  pw.Container(
+                    width: 0.8,
+                    height: 16,
+                    color: borderColor,
+                    margin: const pw.EdgeInsets.symmetric(horizontal: 2),
+                  ),
+                  pw.SizedBox(
+                    width: 60,
+                    child: pw.Text(
+                      'Item Code',
+                      textAlign: pw.TextAlign.center,
+                      style: pw.TextStyle(
+                        fontSize: 9,
+                        fontWeight: pw.FontWeight.bold,
+                        color: textDark,
+                      ),
+                    ),
+                  ),
+                  pw.Container(
+                    width: 0.8,
+                    height: 16,
+                    color: borderColor,
+                    margin: const pw.EdgeInsets.symmetric(horizontal: 2),
+                  ),
+                  pw.Expanded(
+                    flex: 4,
+                    child: pw.Text(
+                      'Item Details',
+                      style: pw.TextStyle(
+                        fontSize: 9,
+                        fontWeight: pw.FontWeight.bold,
+                        color: textDark,
+                      ),
+                    ),
+                  ),
+                  pw.Container(
+                    width: 0.8,
+                    height: 16,
+                    color: borderColor,
+                    margin: const pw.EdgeInsets.symmetric(horizontal: 2),
+                  ),
+                  pw.SizedBox(
+                    width: 55,
+                    child: pw.Text(
+                      'Quantity',
+                      textAlign: pw.TextAlign.center,
+                      style: pw.TextStyle(
+                        fontSize: 9,
+                        fontWeight: pw.FontWeight.bold,
+                        color: textDark,
+                      ),
+                    ),
+                  ),
+                  pw.Container(
+                    width: 0.8,
+                    height: 16,
+                    color: borderColor,
+                    margin: const pw.EdgeInsets.symmetric(horizontal: 2),
+                  ),
+                  pw.SizedBox(
+                    width: 65,
+                    child: pw.Text(
+                      'Price',
+                      textAlign: pw.TextAlign.right,
+                      style: pw.TextStyle(
+                        fontSize: 9,
+                        fontWeight: pw.FontWeight.bold,
+                        color: textDark,
+                      ),
+                    ),
+                  ),
+                  pw.Container(
+                    width: 0.8,
+                    height: 16,
+                    color: borderColor,
+                    margin: const pw.EdgeInsets.symmetric(horizontal: 2),
+                  ),
+                  pw.SizedBox(
+                    width: 70,
+                    child: pw.Text(
+                      'Total',
+                      textAlign: pw.TextAlign.right,
+                      style: pw.TextStyle(
+                        fontSize: 9,
+                        fontWeight: pw.FontWeight.bold,
+                        color: textDark,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Product rows
+            ...doc.items.asMap().entries.map((entry) {
+              final idx = entry.key;
+              final item = entry.value;
+              final itemCode = item.hsnSacCode?.isNotEmpty == true
+                  ? item.hsnSacCode!
+                  : 'PRD-${(idx + 1).toString().padLeft(3, '0')}';
+
+              return pw.Container(
+                padding: const pw.EdgeInsets.symmetric(
+                  horizontal: 6,
+                  vertical: 6,
+                ),
+                decoration: pw.BoxDecoration(
+                  border: pw.Border(
+                    bottom: pw.BorderSide(color: borderColor, width: 0.8),
+                  ),
+                ),
+                child: pw.Row(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  children: [
+                    pw.SizedBox(
+                      width: 36,
+                      child: pw.Text(
+                        '${idx + 1}.',
+                        textAlign: pw.TextAlign.center,
+                        style: pw.TextStyle(fontSize: 8.5, color: textDark),
+                      ),
+                    ),
+                    pw.Container(
+                      width: 0.8,
+                      height: 16,
+                      color: borderColor,
+                      margin: const pw.EdgeInsets.symmetric(horizontal: 2),
+                    ),
+                    pw.SizedBox(
+                      width: 60,
+                      child: pw.Text(
+                        itemCode,
+                        textAlign: pw.TextAlign.center,
+                        style: pw.TextStyle(fontSize: 8.5, color: textDark),
+                      ),
+                    ),
+                    pw.Container(
+                      width: 0.8,
+                      height: 16,
+                      color: borderColor,
+                      margin: const pw.EdgeInsets.symmetric(horizontal: 2),
+                    ),
+                    pw.Expanded(
+                      flex: 4,
+                      child: pw.Column(
+                        crossAxisAlignment: pw.CrossAxisAlignment.start,
+                        children: [
+                          pw.Text(
+                            item.title,
+                            style: pw.TextStyle(
+                              fontSize: 8.5,
+                              fontWeight: pw.FontWeight.bold,
+                              color: textDark,
+                            ),
+                          ),
+                          if (item.description != null &&
+                              item.description!.isNotEmpty) ...[
+                            pw.SizedBox(height: 1),
+                            pw.Text(
+                              item.description!,
+                              style: pw.TextStyle(
+                                fontSize: 7.5,
+                                color: textMuted,
+                                lineSpacing: 1.2,
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                    pw.Container(
+                      width: 0.8,
+                      height: 16,
+                      color: borderColor,
+                      margin: const pw.EdgeInsets.symmetric(horizontal: 2),
+                    ),
+                    pw.SizedBox(
+                      width: 55,
+                      child: pw.Text(
+                        item.quantity == item.quantity.roundToDouble()
+                            ? '${item.quantity.toInt()} ${item.unit.isNotEmpty ? item.unit : "Units"}'
+                            : '${item.quantity} ${item.unit.isNotEmpty ? item.unit : "Units"}',
+                        textAlign: pw.TextAlign.center,
+                        style: pw.TextStyle(fontSize: 8.5, color: textDark),
+                      ),
+                    ),
+                    pw.Container(
+                      width: 0.8,
+                      height: 16,
+                      color: borderColor,
+                      margin: const pw.EdgeInsets.symmetric(horizontal: 2),
+                    ),
+                    pw.SizedBox(
+                      width: 65,
+                      child: pw.Text(
+                        CurrencyFormatter.format(
+                          item.unitPrice,
+                          symbol: currency,
+                        ),
+                        textAlign: pw.TextAlign.right,
+                        style: pw.TextStyle(fontSize: 8.5, color: textDark),
+                      ),
+                    ),
+                    pw.Container(
+                      width: 0.8,
+                      height: 16,
+                      color: borderColor,
+                      margin: const pw.EdgeInsets.symmetric(horizontal: 2),
+                    ),
+                    pw.SizedBox(
+                      width: 70,
+                      child: pw.Text(
+                        CurrencyFormatter.format(
+                          item.lineTotal,
+                          symbol: currency,
+                        ),
+                        textAlign: pw.TextAlign.right,
+                        style: pw.TextStyle(
+                          fontSize: 8.5,
+                          fontWeight: pw.FontWeight.bold,
+                          color: textDark,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }),
+
+            // Summary: Subtotal
+            pw.Container(
+              padding: const pw.EdgeInsets.symmetric(
+                horizontal: 6,
+                vertical: 5,
+              ),
+              decoration: pw.BoxDecoration(
+                border: pw.Border(
+                  bottom: pw.BorderSide(color: borderColor, width: 0.8),
+                ),
+              ),
+              child: pw.Row(
+                children: [
+                  pw.Spacer(),
+                  pw.SizedBox(
+                    width: 70,
+                    child: pw.Text(
+                      'Subtotal',
+                      textAlign: pw.TextAlign.right,
+                      style: pw.TextStyle(fontSize: 8.5, color: textDark),
+                    ),
+                  ),
+                  pw.SizedBox(width: 8),
+                  pw.SizedBox(
+                    width: 75,
+                    child: pw.Text(
+                      CurrencyFormatter.format(doc.subtotal, symbol: currency),
+                      textAlign: pw.TextAlign.right,
+                      style: pw.TextStyle(fontSize: 8.5, color: textDark),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            if (doc.overallDiscountAmount > 0)
+              pw.Container(
+                padding: const pw.EdgeInsets.symmetric(
+                  horizontal: 6,
+                  vertical: 5,
+                ),
+                decoration: pw.BoxDecoration(
+                  border: pw.Border(
+                    bottom: pw.BorderSide(color: borderColor, width: 0.8),
+                  ),
+                ),
+                child: pw.Row(
+                  children: [
+                    pw.Spacer(),
+                    pw.SizedBox(
+                      width: 70,
+                      child: pw.Text(
+                        'Discount',
+                        textAlign: pw.TextAlign.right,
+                        style: pw.TextStyle(fontSize: 8.5, color: textDark),
+                      ),
+                    ),
+                    pw.SizedBox(width: 8),
+                    pw.SizedBox(
+                      width: 75,
+                      child: pw.Text(
+                        '-${CurrencyFormatter.format(doc.overallDiscountAmount, symbol: currency)}',
+                        textAlign: pw.TextAlign.right,
+                        style: pw.TextStyle(fontSize: 8.5, color: textDark),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+            if (doc.totalTaxAmount > 0)
+              pw.Container(
+                padding: const pw.EdgeInsets.symmetric(
+                  horizontal: 6,
+                  vertical: 5,
+                ),
+                decoration: pw.BoxDecoration(
+                  border: pw.Border(
+                    bottom: pw.BorderSide(color: borderColor, width: 0.8),
+                  ),
+                ),
+                child: pw.Row(
+                  children: [
+                    pw.Spacer(),
+                    pw.SizedBox(
+                      width: 70,
+                      child: pw.Text(
+                        'Tax',
+                        textAlign: pw.TextAlign.right,
+                        style: pw.TextStyle(fontSize: 8.5, color: textDark),
+                      ),
+                    ),
+                    pw.SizedBox(width: 8),
+                    pw.SizedBox(
+                      width: 75,
+                      child: pw.Text(
+                        CurrencyFormatter.format(
+                          doc.totalTaxAmount,
+                          symbol: currency,
+                        ),
+                        textAlign: pw.TextAlign.right,
+                        style: pw.TextStyle(fontSize: 8.5, color: textDark),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+            // Summary: Total
+            pw.Container(
+              padding: const pw.EdgeInsets.symmetric(
+                horizontal: 6,
+                vertical: 5,
+              ),
+              child: pw.Row(
+                children: [
+                  pw.Spacer(),
+                  pw.SizedBox(
+                    width: 70,
+                    child: pw.Text(
+                      'Total',
+                      textAlign: pw.TextAlign.right,
+                      style: pw.TextStyle(
+                        fontSize: 9.5,
+                        fontWeight: pw.FontWeight.bold,
+                        color: textDark,
+                      ),
+                    ),
+                  ),
+                  pw.SizedBox(width: 8),
+                  pw.SizedBox(
+                    width: 75,
+                    child: pw.Text(
+                      CurrencyFormatter.format(
+                        doc.totalAmount,
+                        symbol: currency,
+                      ),
+                      textAlign: pw.TextAlign.right,
+                      style: pw.TextStyle(
+                        fontSize: 9.5,
+                        fontWeight: pw.FontWeight.bold,
+                        color: textDark,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+
+      pw.SizedBox(height: 10),
+
+      // Quotation Closing & Terms
+      pw.Column(
+        crossAxisAlignment: pw.CrossAxisAlignment.start,
+        children: [
+          pw.Text(
+            'Many thanks for your custom! I look forward to doing business with you.',
+            style: pw.TextStyle(fontSize: 8.5, color: textDark),
+          ),
+          pw.SizedBox(height: 4),
+          pw.Text(
+            doc.terms?.isNotEmpty == true
+                ? 'Quotation terms: ${doc.terms!}'
+                : 'Quotation terms: Valid up to 15 days.',
+            style: pw.TextStyle(
+              fontSize: 8.5,
+              fontWeight: pw.FontWeight.bold,
+              color: textDark,
+            ),
+          ),
+        ],
+      ),
+
+      pw.Spacer(),
+
+      // Bottom Signatures & Seal
+      pw.Row(
+        crossAxisAlignment: pw.CrossAxisAlignment.end,
+        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+        children: [
+          // Left: Company Seal with QR Code
+          pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.center,
+            children: [
+              if (stampBytes != null && doc.showStamp)
+                pw.Container(
+                  height: 52,
+                  width: 52,
+                  child: pw.Image(
+                    pw.MemoryImage(stampBytes),
+                    fit: pw.BoxFit.contain,
+                  ),
+                )
+              else
+                pw.Container(
+                  width: 52,
+                  height: 52,
+                  padding: const pw.EdgeInsets.all(3),
+                  decoration: pw.BoxDecoration(
+                    color: PdfColors.white,
+                    border: pw.Border.all(color: PdfColors.grey400, width: 0.8),
+                    borderRadius: const pw.BorderRadius.all(
+                      pw.Radius.circular(4),
+                    ),
+                  ),
+                  child: pw.BarcodeWidget(
+                    barcode: pw.Barcode.qrCode(),
+                    data: 'https://invoz-d9222.web.app',
+                  ),
+                ),
+              pw.SizedBox(height: 4),
+              pw.Text(
+                'Company Seal',
+                style: pw.TextStyle(
+                  fontSize: 9,
+                  fontWeight: pw.FontWeight.bold,
+                  color: textDark,
+                ),
+              ),
+            ],
+          ),
+
+          // Right: Authorised Signatory
+          pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.center,
+            children: [
+              if (signatureBytes != null && doc.showSignature)
+                pw.Container(
+                  height: 36,
+                  child: pw.Image(
+                    pw.MemoryImage(signatureBytes),
+                    fit: pw.BoxFit.contain,
+                  ),
+                )
+              else
+                pw.SizedBox(height: 36),
+              pw.SizedBox(height: 2),
+              pw.Container(width: 140, height: 1, color: borderColor),
+              pw.SizedBox(height: 4),
+              pw.Text(
+                'Authorised Signatory',
+                style: pw.TextStyle(
+                  fontSize: 9,
+                  fontWeight: pw.FontWeight.bold,
+                  color: textDark,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+
+      pw.SizedBox(height: 12),
+      pw.Container(height: 0.8, color: borderColor),
+      pw.SizedBox(height: 6),
+
+      // Footer: Computer generated & Page count
+      pw.Row(
+        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+        children: [
+          pw.Text(
+            'This is a computer generated Quotation',
+            style: pw.TextStyle(fontSize: 8, color: textMuted),
+          ),
+          pw.Text(
+            'Page 1 of 1',
+            style: pw.TextStyle(fontSize: 8, color: textMuted),
+          ),
+        ],
+      ),
     ];
   }
 
@@ -3434,7 +4340,10 @@ class DocumentPdfGenerator {
           if (profile.phone != null && profile.phone!.isNotEmpty)
             pw.Text(
               profile.phone!,
-              style: const pw.TextStyle(fontSize: 9.5, color: PdfColors.grey600),
+              style: const pw.TextStyle(
+                fontSize: 9.5,
+                color: PdfColors.grey600,
+              ),
             ),
           if (profile.phone != null &&
               profile.email != null &&
@@ -3442,12 +4351,18 @@ class DocumentPdfGenerator {
               profile.email!.isNotEmpty)
             pw.Text(
               '   |   ',
-              style: const pw.TextStyle(fontSize: 9.5, color: PdfColors.grey600),
+              style: const pw.TextStyle(
+                fontSize: 9.5,
+                color: PdfColors.grey600,
+              ),
             ),
           if (profile.email != null && profile.email!.isNotEmpty)
             pw.Text(
               profile.email!,
-              style: const pw.TextStyle(fontSize: 9.5, color: PdfColors.grey600),
+              style: const pw.TextStyle(
+                fontSize: 9.5,
+                color: PdfColors.grey600,
+              ),
             ),
         ],
       ),

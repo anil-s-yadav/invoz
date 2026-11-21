@@ -8,6 +8,7 @@ import 'dummy_templates/order_receipt_dummy.dart';
 import 'dummy_templates/receipt_thermal_dummy.dart';
 import 'dummy_templates/warm_quotation_dummy.dart';
 import 'dummy_templates/cyan_quotation_dummy.dart';
+import 'dummy_templates/formal_quotation_dummy.dart';
 
 class DummyTemplateWidget extends StatelessWidget {
   final String templateId;
@@ -44,6 +45,12 @@ class DummyTemplateWidget extends StatelessWidget {
           width: 595,
           height: 842,
           child: buildWarmQuotationDummy(documentType, context),
+        );
+      case TemplateRegistry.formalQuotation:
+        return SizedBox(
+          width: 595,
+          height: 842,
+          child: buildFormalQuotationDummy(documentType, context),
         );
       case TemplateRegistry.premiumModern:
         return SizedBox(

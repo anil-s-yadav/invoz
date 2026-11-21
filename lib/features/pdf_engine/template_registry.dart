@@ -39,6 +39,7 @@ class TemplateRegistry {
   static const String thermalReceipt = 'thermal_receipt';
   static const String warmQuotation = 'warm_quotation';
   static const String cyanQuotation = 'cyan_quotation';
+  static const String formalQuotation = 'formal_quotation';
 
   static const List<TemplateInfo> allTemplates = [
     TemplateInfo(
@@ -91,6 +92,19 @@ class TemplateRegistry {
       accentColor: Color(0xFFF26522),
       thumbnailAssetPath: 'assets/images/templates/paid_template_thumb.png',
       isPremium: true,
+      supportedTypes: [
+        DocumentType.quotation,
+      ],
+    ),
+    TemplateInfo(
+      id: formalQuotation,
+      name: 'Formal Quotation',
+      description:
+          'Classic letterhead quotation with introductory letter, item table, and company seal.',
+      icon: Icons.assignment_outlined,
+      accentColor: Color(0xFF1E293B),
+      thumbnailAssetPath: 'assets/images/templates/free_template_thumb.png',
+      isPremium: false,
       supportedTypes: [
         DocumentType.quotation,
       ],
@@ -149,6 +163,9 @@ class TemplateRegistry {
       if (id == warmQuotation) {
         return warmQuotation;
       }
+      if (id == formalQuotation || id == 'formal' || id == 'letterhead') {
+        return formalQuotation;
+      }
       return cyanQuotation;
     } else if (type == DocumentType.receipt) {
       if (id == thermalReceipt || id == 'compact') {
@@ -186,6 +203,9 @@ class TemplateRegistry {
     }
     if (id == 'quotation' || id == 'warm_quotation') {
       return allTemplates.firstWhere((t) => t.id == warmQuotation);
+    }
+    if (id == formalQuotation || id == 'formal' || id == 'letterhead') {
+      return allTemplates.firstWhere((t) => t.id == formalQuotation);
     }
     if (id == 'cyan_quotation' || id == 'cyan') {
       return allTemplates.firstWhere((t) => t.id == cyanQuotation);

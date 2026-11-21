@@ -182,16 +182,16 @@ Widget buildCyanQuotationDummy(
                           : DummyTemplateData.dueDate,
                     ),
                   ],
-                  const SizedBox(height: 6),
-                  _buildMetaRow(
-                    'Country of supply:',
-                    DummyTemplateData.countryOfSupply,
-                  ),
-                  const SizedBox(height: 3),
-                  _buildMetaRow(
-                    'Place of supply:',
-                    DummyTemplateData.placeOfSupply,
-                  ),
+                  // const SizedBox(height: 6),
+                  // _buildMetaRow(
+                  //   'Country of supply:',
+                  //   DummyTemplateData.countryOfSupply,
+                  // ),
+                  // const SizedBox(height: 3),
+                  // _buildMetaRow(
+                  //   'Place of supply:',
+                  //   DummyTemplateData.placeOfSupply,
+                  // ),
                 ],
               ),
             ),
@@ -214,11 +214,7 @@ Widget buildCyanQuotationDummy(
             const SizedBox(height: 2),
             const Text(
               DummyTemplateData.quotationIntroBody,
-              style: TextStyle(
-                fontSize: 8.5,
-                color: textDark,
-                height: 1.25,
-              ),
+              style: TextStyle(fontSize: 8.5, color: textDark, height: 1.25),
             ),
             const SizedBox(height: 2),
             const Text(
