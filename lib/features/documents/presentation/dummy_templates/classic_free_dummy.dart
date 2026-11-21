@@ -26,22 +26,17 @@ Widget buildClassicFreeDummy(DocumentType documentType) {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Image.asset(
-                    'assets/icons/applogo.png',
-                    width: 44,
-                    height: 44,
-                    fit: BoxFit.contain,
-                  ),
+                  buildDummyLogo(size: 44, radius: 8),
                   const SizedBox(height: 10),
                   buildDummyText(
-                    'Tesla Inc.',
+                    DummyTemplateData.companyName,
                     size: 18,
                     bold: true,
                     color: primarySlate,
                   ),
                   const SizedBox(height: 4),
                   buildDummyText(
-                    'teslacom@gmail.com  •  +1 987-654-3210\nRoad no. 397, West City, NY - 10001\nGSTIN: 27AABCU9603R1ZM',
+                    DummyTemplateData.companyFullAddress,
                     color: secondarySlate,
                     size: 9.5,
                   ),
@@ -79,7 +74,7 @@ Widget buildClassicFreeDummy(DocumentType documentType) {
                       border: Border.all(color: borderColor),
                     ),
                     child: buildDummyText(
-                      '# ${documentType.prefix}2026-0001',
+                      DummyTemplateData.getDocNumber(documentType),
                       bold: true,
                       size: 11,
                       color: primarySlate,
@@ -98,7 +93,7 @@ Widget buildClassicFreeDummy(DocumentType documentType) {
                           color: mutedSlate,
                         ),
                         buildDummyText(
-                          '28 Sep 2026',
+                          DummyTemplateData.issueDate,
                           size: 10,
                           bold: true,
                           color: primarySlate,
@@ -121,7 +116,9 @@ Widget buildClassicFreeDummy(DocumentType documentType) {
                           color: mutedSlate,
                         ),
                         buildDummyText(
-                          '13 Oct 2026',
+                          documentType == DocumentType.proforma
+                              ? DummyTemplateData.validUntil
+                              : DummyTemplateData.dueDate,
                           size: 10,
                           bold: true,
                           color: primarySlate,
@@ -135,16 +132,17 @@ Widget buildClassicFreeDummy(DocumentType documentType) {
           ],
         ),
 
-        const SizedBox(height: 18),
+        const SizedBox(height: 16),
         Container(height: 1, color: borderColor),
-        const SizedBox(height: 18),
+        const SizedBox(height: 16),
 
-        // Bill To & Summary Card Row
+        // Bill To, Ship To & Summary Card Row
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            // Billed To
             Expanded(
+              flex: 5,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -156,26 +154,56 @@ Widget buildClassicFreeDummy(DocumentType documentType) {
                   ),
                   const SizedBox(height: 4),
                   buildDummyText(
-                    'Georgo graph LTD',
-                    size: 13,
+                    DummyTemplateData.clientName,
+                    size: 12,
                     bold: true,
                     color: primarySlate,
                   ),
                   const SizedBox(height: 2),
                   buildDummyText(
-                    'vajsisi@shjs.com  •  +1 987-654-3210',
-                    size: 9.5,
+                    DummyTemplateData.clientContactLine,
+                    size: 9,
                     color: secondarySlate,
                   ),
                   buildDummyText(
-                    '742 Evergreen Terrace, Brooklyn, NY 11201',
-                    size: 9.5,
+                    DummyTemplateData.clientAddress,
+                    size: 9,
                     color: secondarySlate,
                   ),
                 ],
               ),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: 8),
+            // Shipped To
+            Expanded(
+              flex: 5,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  buildDummyText(
+                    'SHIPPED TO',
+                    size: 9,
+                    bold: true,
+                    color: mutedSlate,
+                  ),
+                  const SizedBox(height: 4),
+                  buildDummyText(
+                    DummyTemplateData.shippingName,
+                    size: 12,
+                    bold: true,
+                    color: primarySlate,
+                  ),
+                  const SizedBox(height: 2),
+                  buildDummyText(
+                    DummyTemplateData.shippingAddress,
+                    size: 9,
+                    color: secondarySlate,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            // Total Due Badge
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
               decoration: BoxDecoration(
@@ -198,7 +226,7 @@ Widget buildClassicFreeDummy(DocumentType documentType) {
                   FittedBox(
                     fit: BoxFit.scaleDown,
                     child: buildDummyText(
-                      'Rs. 1,120.00',
+                      DummyTemplateData.grandTotalRs,
                       size: 15,
                       bold: true,
                       color: primarySlate,
@@ -210,11 +238,11 @@ Widget buildClassicFreeDummy(DocumentType documentType) {
           ],
         ),
 
-        const SizedBox(height: 22),
+        const SizedBox(height: 18),
 
         // Table Header
         Container(
-          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+          padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 10),
           decoration: BoxDecoration(
             color: badgeBg,
             borderRadius: BorderRadius.circular(6),
@@ -283,87 +311,92 @@ Widget buildClassicFreeDummy(DocumentType documentType) {
           ),
         ),
 
-        // Table Row
-        Container(
-          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-          decoration: const BoxDecoration(
-            border: Border(bottom: BorderSide(color: badgeBg)),
-          ),
-          child: Row(
-            children: [
-              Expanded(
-                flex: 4,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    buildDummyText(
-                      'Premium Protective Helmet',
-                      bold: true,
-                      size: 11,
+        // 2 Dummy Products
+        for (final item in DummyTemplateData.items)
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+            decoration: const BoxDecoration(
+              border: Border(bottom: BorderSide(color: badgeBg)),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  flex: 4,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      buildDummyText(
+                        item.title,
+                        bold: true,
+                        size: 10.5,
+                        color: primarySlate,
+                      ),
+                      const SizedBox(height: 2),
+                      buildDummyText(
+                        item.description,
+                        size: 8.5,
+                        color: const Color(0xFF94A3B8),
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: buildDummyText(
+                      item.qtyString,
+                      size: 10.5,
                       color: primarySlate,
                     ),
-                    const SizedBox(height: 2),
-                    buildDummyText(
-                      'Matte finish, ISI certified',
-                      size: 9,
-                      color: const Color(0xFF94A3B8),
+                  ),
+                ),
+                Expanded(
+                  flex: 2,
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: buildDummyText(
+                      item.rateRs,
+                      size: 10.5,
+                      color: primarySlate,
                     ),
-                  ],
-                ),
-              ),
-              Expanded(
-                flex: 1,
-                child: Align(
-                  alignment: Alignment.center,
-                  child: buildDummyText('1.0', size: 11, color: primarySlate),
-                ),
-              ),
-              Expanded(
-                flex: 2,
-                child: Align(
-                  alignment: Alignment.centerRight,
-                  child: buildDummyText(
-                    'Rs. 1,000.00',
-                    size: 11,
-                    color: primarySlate,
                   ),
                 ),
-              ),
-              Expanded(
-                flex: 1,
-                child: Align(
-                  alignment: Alignment.centerRight,
-                  child: buildDummyText(
-                    '12.0%',
-                    size: 11,
-                    color: secondarySlate,
+                Expanded(
+                  flex: 1,
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: buildDummyText(
+                      item.taxPercentString,
+                      size: 10.5,
+                      color: secondarySlate,
+                    ),
                   ),
                 ),
-              ),
-              Expanded(
-                flex: 2,
-                child: Align(
-                  alignment: Alignment.centerRight,
-                  child: buildDummyText(
-                    'Rs. 1,120.00',
-                    bold: true,
-                    size: 11,
-                    color: primarySlate,
+                Expanded(
+                  flex: 2,
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: buildDummyText(
+                      item.amountRs,
+                      bold: true,
+                      size: 10.5,
+                      color: primarySlate,
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
 
-        const SizedBox(height: 18),
+        const SizedBox(height: 14),
 
         // Summary Card
         Align(
           alignment: Alignment.centerRight,
           child: Container(
             width: 240,
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
               color: bgLight,
               borderRadius: BorderRadius.circular(8),
@@ -376,7 +409,7 @@ Widget buildClassicFreeDummy(DocumentType documentType) {
                     Expanded(
                       child: buildDummyText(
                         'Subtotal',
-                        size: 10.5,
+                        size: 10,
                         color: secondarySlate,
                       ),
                     ),
@@ -386,8 +419,33 @@ Widget buildClassicFreeDummy(DocumentType documentType) {
                         child: FittedBox(
                           fit: BoxFit.scaleDown,
                           child: buildDummyText(
-                            'Rs. 1,000.00',
-                            size: 10.5,
+                            DummyTemplateData.subtotalRs,
+                            size: 10,
+                            color: primarySlate,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    Expanded(
+                      child: buildDummyText(
+                        'Tax (12%)',
+                        size: 10,
+                        color: secondarySlate,
+                      ),
+                    ),
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: buildDummyText(
+                            DummyTemplateData.taxRs,
+                            size: 10,
                             color: primarySlate,
                           ),
                         ),
@@ -396,40 +454,15 @@ Widget buildClassicFreeDummy(DocumentType documentType) {
                   ],
                 ),
                 const SizedBox(height: 6),
-                Row(
-                  children: [
-                    Expanded(
-                      child: buildDummyText(
-                        'Tax (12%)',
-                        size: 10.5,
-                        color: secondarySlate,
-                      ),
-                    ),
-                    Expanded(
-                      child: Align(
-                        alignment: Alignment.centerRight,
-                        child: FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: buildDummyText(
-                            'Rs. 120.00',
-                            size: 10.5,
-                            color: primarySlate,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
                 Container(height: 1, color: borderColor),
-                const SizedBox(height: 8),
+                const SizedBox(height: 6),
                 Row(
                   children: [
                     Expanded(
                       child: buildDummyText(
                         'Total',
                         bold: true,
-                        size: 13,
+                        size: 12,
                         color: primarySlate,
                       ),
                     ),
@@ -439,9 +472,9 @@ Widget buildClassicFreeDummy(DocumentType documentType) {
                         child: FittedBox(
                           fit: BoxFit.scaleDown,
                           child: buildDummyText(
-                            'Rs. 1,120.00',
+                            DummyTemplateData.grandTotalRs,
                             bold: true,
-                            size: 14,
+                            size: 13,
                             color: primarySlate,
                           ),
                         ),
@@ -454,11 +487,11 @@ Widget buildClassicFreeDummy(DocumentType documentType) {
           ),
         ),
 
-        const SizedBox(height: 16),
+        const SizedBox(height: 12),
 
         // Notes & Terms Callout
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: const BoxDecoration(
             color: bgLight,
             borderRadius: BorderRadius.all(Radius.circular(6)),
@@ -470,13 +503,13 @@ Widget buildClassicFreeDummy(DocumentType documentType) {
               buildDummyText(
                 'Notes & Terms',
                 bold: true,
-                size: 9.5,
+                size: 9,
                 color: primarySlate,
               ),
               const SizedBox(height: 2),
               buildDummyText(
-                'Thank you for your business! Payment is due as specified above.',
-                size: 9.5,
+                DummyTemplateData.notes,
+                size: 9,
                 color: secondarySlate,
               ),
             ],
@@ -495,27 +528,10 @@ Widget buildClassicFreeDummy(DocumentType documentType) {
                 primary: primarySlate,
               ),
             ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Image.asset(
-                  'assets/icons/signature.png',
-                  width: 80,
-                  height: 32,
-                ),
-                Container(
-                  width: 120,
-                  height: 1.5,
-                  color: const Color(0xFF94A3B8),
-                ),
-                const SizedBox(height: 4),
-                buildDummyText(
-                  'Authorized Signature',
-                  bold: true,
-                  color: mutedSlate,
-                  size: 9,
-                ),
-              ],
+            buildDummySignature(
+              lineColor: const Color(0xFF94A3B8),
+              labelColor: mutedSlate,
+              showName: true,
             ),
           ],
         ),

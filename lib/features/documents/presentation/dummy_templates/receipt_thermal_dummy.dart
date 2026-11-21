@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../domain/document_model.dart';
+import 'dummy_template_utils.dart';
 
 Widget buildReceiptThermalDummy(
   DocumentType documentType, [
@@ -10,12 +11,10 @@ Widget buildReceiptThermalDummy(
       context != null && Theme.of(context).brightness == Brightness.dark;
 
   final paperBg = isDark ? AppColors.darkSurface : AppColors.surface;
-  final textPrimary = isDark
-      ? AppColors.darkTextPrimary
-      : AppColors.textPrimary;
-  final textSecondary = isDark
-      ? AppColors.darkTextSecondary
-      : AppColors.textSecondary;
+  final textPrimary =
+      isDark ? AppColors.darkTextPrimary : AppColors.textPrimary;
+  final textSecondary =
+      isDark ? AppColors.darkTextSecondary : AppColors.textSecondary;
   final dividerColor = isDark ? AppColors.darkBorder : AppColors.borderStrong;
   final shadowColor = isDark
       ? Colors.black.withValues(alpha: 0.45)
@@ -34,58 +33,66 @@ Widget buildReceiptThermalDummy(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            // Company Logo with circular radius of 8
+            Center(
+              child: buildDummyLogo(size: 38, radius: 8),
+            ),
+            const SizedBox(height: 8),
+
             // Business Name
             Text(
-              'BUSINESS NAME',
+              DummyTemplateData.companyName.toUpperCase(),
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontFamily: 'Courier',
-                fontSize: 22,
+                fontSize: 20,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 1.2,
                 color: textPrimary,
               ),
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 4),
             Text(
-              '1234 Main Street\nSuite 567\nCity Name, State 54321\n123-456-7890',
+              '${DummyTemplateData.companyAddress}\nPhone: ${DummyTemplateData.companyPhone}\nGSTIN: ${DummyTemplateData.companyGstin}',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontFamily: 'Courier',
-                fontSize: 14,
+                fontSize: 12.5,
                 fontWeight: FontWeight.w600,
                 height: 1.3,
                 color: textSecondary,
               ),
             ),
-            const SizedBox(height: 14),
+            const SizedBox(height: 12),
 
             // Dotted separator
             _buildDottedLine(dividerColor),
-            const SizedBox(height: 12),
+            const SizedBox(height: 10),
 
-            // Item list
-            _buildDummyItemRow('Lorem ipsum', '\$1.25', textPrimary),
-            _buildDummyItemRow('Dolor sit amet', '\$7.99', textPrimary),
-            _buildDummyItemRow('Consectetur', '\$26.70', textPrimary),
-            _buildDummyItemRow('Adipiscing elit', '\$15.49', textPrimary),
-            _buildDummyItemRow('Sed semper', '\$18.79', textPrimary),
-            _buildDummyItemRow('Accumsan ante', '\$42.99', textPrimary),
-            _buildDummyItemRow('Non laoreet', '\$9.99', textPrimary),
-            _buildDummyItemRow('Dui dapibus eu', '\$27.50', textPrimary),
+            // 2 Dummy Product Items
+            _buildDummyItemRow(
+              '1. ${DummyTemplateData.item1.title}',
+              DummyTemplateData.item1.amountRs,
+              textPrimary,
+            ),
+            _buildDummyItemRow(
+              '2. ${DummyTemplateData.item2.title}',
+              DummyTemplateData.item2.amountRs,
+              textPrimary,
+            ),
 
-            const SizedBox(height: 16),
+            const SizedBox(height: 14),
 
             // Subtotals
             _buildDummyItemRow(
               'Sub Total',
-              '\$150.70',
+              DummyTemplateData.subtotalRs,
               textPrimary,
               isMedium: true,
             ),
             _buildDummyItemRow(
-              'Sales Tax',
-              '\$5.29',
+              'Tax (12%)',
+              DummyTemplateData.taxRs,
               textPrimary,
               isMedium: true,
             ),
@@ -102,17 +109,17 @@ Widget buildReceiptThermalDummy(
                   'TOTAL',
                   style: TextStyle(
                     fontFamily: 'Courier',
-                    fontSize: 22,
+                    fontSize: 20,
                     fontWeight: FontWeight.w900,
                     color: textPrimary,
                     letterSpacing: 0.8,
                   ),
                 ),
                 Text(
-                  '\$155.99',
+                  DummyTemplateData.grandTotalRs,
                   style: TextStyle(
                     fontFamily: 'Courier',
-                    fontSize: 22,
+                    fontSize: 20,
                     fontWeight: FontWeight.w900,
                     color: textPrimary,
                   ),
@@ -132,55 +139,100 @@ Widget buildReceiptThermalDummy(
                   'Paid By:',
                   style: TextStyle(
                     fontFamily: 'Courier',
-                    fontSize: 15,
+                    fontSize: 13,
                     fontWeight: FontWeight.w600,
                     color: textSecondary,
                   ),
                 ),
-                Text(
-                  'Credit',
-                  style: TextStyle(
-                    fontFamily: 'Courier',
-                    fontSize: 15,
-                    fontWeight: FontWeight.w700,
-                    color: textPrimary,
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    '${DummyTemplateData.bankName} / UPI',
+                    textAlign: TextAlign.right,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontFamily: 'Courier',
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: textPrimary,
+                    ),
                   ),
                 ),
               ],
             ),
 
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
 
             // Meta details
             Text(
-              '02/08/2022 09:36',
+              'Date: ${DummyTemplateData.issueDate}',
               style: TextStyle(
                 fontFamily: 'Courier',
-                fontSize: 13,
+                fontSize: 12,
                 fontWeight: FontWeight.w600,
                 color: textSecondary,
               ),
             ),
             Text(
-              'Transaction ID: 234-567890',
+              '${documentType.displayName} No: ${DummyTemplateData.getDocNumberPlain(documentType)}',
               style: TextStyle(
                 fontFamily: 'Courier',
-                fontSize: 13,
+                fontSize: 12,
                 fontWeight: FontWeight.w600,
                 color: textSecondary,
               ),
             ),
             Text(
-              'Vendor ID: 987654-321',
+              'Billed To: ${DummyTemplateData.clientName}',
               style: TextStyle(
                 fontFamily: 'Courier',
-                fontSize: 13,
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: textSecondary,
+              ),
+            ),
+            Text(
+              'Shipped To: ${DummyTemplateData.shippingName}',
+              style: TextStyle(
+                fontFamily: 'Courier',
+                fontSize: 12,
                 fontWeight: FontWeight.w600,
                 color: textSecondary,
               ),
             ),
 
-            const SizedBox(height: 22),
+            const SizedBox(height: 14),
+
+            // QR Code Scan to pay
+            Center(
+              child: Column(
+                children: [
+                  Container(
+                    width: 52,
+                    height: 52,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(6),
+                      border: Border.all(color: Colors.grey.shade400, width: 1),
+                    ),
+                    alignment: Alignment.center,
+                    child: const Icon(Icons.qr_code_2, size: 44, color: Colors.black87),
+                  ),
+                  const SizedBox(height: 3),
+                  Text(
+                    'UPI: ${DummyTemplateData.upiId}',
+                    style: TextStyle(
+                      fontFamily: 'Courier',
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                      color: textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 14),
 
             // Footer message
             Text(
@@ -188,7 +240,7 @@ Widget buildReceiptThermalDummy(
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontFamily: 'Courier',
-                fontSize: 15,
+                fontSize: 14,
                 fontWeight: FontWeight.w600,
                 height: 1.35,
                 color: textPrimary,
@@ -228,20 +280,25 @@ Widget _buildDummyItemRow(
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          title,
-          style: TextStyle(
-            fontFamily: 'Courier',
-            fontSize: isMedium ? 15 : 14.5,
-            fontWeight: isMedium ? FontWeight.w700 : FontWeight.w500,
-            color: textColor,
+        Expanded(
+          child: Text(
+            title,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontFamily: 'Courier',
+              fontSize: isMedium ? 14 : 13.5,
+              fontWeight: isMedium ? FontWeight.w700 : FontWeight.w500,
+              color: textColor,
+            ),
           ),
         ),
+        const SizedBox(width: 8),
         Text(
           price,
           style: TextStyle(
             fontFamily: 'Courier',
-            fontSize: isMedium ? 15 : 14.5,
+            fontSize: isMedium ? 14 : 13.5,
             fontWeight: isMedium ? FontWeight.w700 : FontWeight.w500,
             color: textColor,
           ),
@@ -278,11 +335,11 @@ class _ThermalSawtoothClipper extends CustomClipper<Path> {
 
     // Bottom serrated teeth
     final bottomTeeth = (size.width / toothWidth).ceil();
-    final actualBottomWidth = size.width / bottomTeeth;
-    for (int i = bottomTeeth - 1; i >= 0; i--) {
-      final x = i * actualBottomWidth;
-      path.lineTo(x + actualBottomWidth / 2, size.height);
-      path.lineTo(x, size.height - toothHeight);
+    final actualBottomToothWidth = size.width / bottomTeeth;
+    for (int i = bottomTeeth; i > 0; i--) {
+      final x = i * actualBottomToothWidth;
+      path.lineTo(x - actualBottomToothWidth / 2, size.height);
+      path.lineTo(x - actualBottomToothWidth, size.height - toothHeight);
     }
 
     // Left edge

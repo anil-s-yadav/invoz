@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../domain/document_model.dart';
+import 'dummy_template_utils.dart';
 
 Widget buildOrderReceiptDummy(
   DocumentType documentType, [
@@ -10,12 +11,10 @@ Widget buildOrderReceiptDummy(
       context != null && Theme.of(context).brightness == Brightness.dark;
 
   final cardBg = isDark ? AppColors.darkSurface : AppColors.surface;
-  final textPrimary = isDark
-      ? AppColors.darkTextPrimary
-      : const Color(0xFF1E293B);
-  final textSecondary = isDark
-      ? AppColors.darkTextSecondary
-      : const Color(0xFF64748B);
+  final textPrimary =
+      isDark ? AppColors.darkTextPrimary : const Color(0xFF1E293B);
+  final textSecondary =
+      isDark ? AppColors.darkTextSecondary : const Color(0xFF64748B);
   final textMuted = isDark ? AppColors.darkTextMuted : const Color(0xFF94A3B8);
   final borderColor = isDark ? AppColors.darkBorder : const Color(0xFFCBD5E1);
   final linkColor = isDark ? AppColors.primaryDark : AppColors.primary;
@@ -49,35 +48,10 @@ Widget buildOrderReceiptDummy(
               padding: const EdgeInsets.fromLTRB(28, 24, 28, 16),
               child: Column(
                 children: [
-                  // Company Logo Placeholder
+                  // Company Logo: App logo with circular radius of 8
                   Container(
-                    width: 44,
-                    height: 44,
                     margin: const EdgeInsets.only(bottom: 12),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.white,
-                      border: Border.all(
-                        color: borderColor.withValues(alpha: 0.6),
-                        width: 1,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.05),
-                          blurRadius: 6,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: ClipOval(
-                      child: Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: Image.asset(
-                          'assets/icons/applogo.png',
-                          fit: BoxFit.contain,
-                        ),
-                      ),
-                    ),
+                    child: buildDummyLogo(size: 44, radius: 8),
                   ),
                   Text(
                     'Thanks For Your Business!',
@@ -89,11 +63,21 @@ Widget buildOrderReceiptDummy(
                       letterSpacing: -0.3,
                     ),
                   ),
+                  const SizedBox(height: 4),
+                  Text(
+                    DummyTemplateData.companyName,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                      color: textSecondary,
+                    ),
+                  ),
                   const SizedBox(height: 14),
 
                   // Your order section
                   Text(
-                    'Your order',
+                    'Your ${documentType.displayName}',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 16,
@@ -103,7 +87,7 @@ Widget buildOrderReceiptDummy(
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Monday, Dec 28 2026 at 4.13pm',
+                    '${DummyTemplateData.getDocNumberPlain(documentType)} • ${DummyTemplateData.issueDate}',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 11,
@@ -113,22 +97,28 @@ Widget buildOrderReceiptDummy(
                   ),
                   const SizedBox(height: 16),
 
-                  // Items list
-                  _buildItemRow('Something', '20.00', textPrimary),
-                  _buildItemRow('Something else', '10.00', textPrimary),
+                  // 2 Dummy Product Items
                   _buildItemRow(
-                    'Something else that is really good',
-                    '4.00',
+                    '${DummyTemplateData.item1.title} (x${DummyTemplateData.item1.qtyIntString})',
+                    DummyTemplateData.item1.amountRs,
+                    textPrimary,
+                  ),
+                  _buildItemRow(
+                    '${DummyTemplateData.item2.title} (x${DummyTemplateData.item2.qtyIntString})',
+                    DummyTemplateData.item2.amountRs,
                     textPrimary,
                   ),
                   const SizedBox(height: 8),
 
                   // Subtotals
-                  _buildSubtotalRow('Subtotal', '34.00', textSecondary),
-                  _buildSubtotalRow('Tax', '3.00', textSecondary),
                   _buildSubtotalRow(
-                    'Other hidden fee',
-                    '5.00',
+                    'Subtotal',
+                    DummyTemplateData.subtotalRs,
+                    textSecondary,
+                  ),
+                  _buildSubtotalRow(
+                    'Tax (12%)',
+                    DummyTemplateData.taxRs,
                     textSecondary,
                   ),
                   const SizedBox(height: 8),
@@ -156,7 +146,7 @@ Widget buildOrderReceiptDummy(
                           ),
                         ),
                         Text(
-                          '\$42.00',
+                          DummyTemplateData.grandTotalRs,
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w900,
@@ -168,7 +158,7 @@ Widget buildOrderReceiptDummy(
                   ),
                   const SizedBox(height: 20),
 
-                  // Your details section
+                  // Your details section (Billed to & Shipped to)
                   Text(
                     'Your details',
                     textAlign: TextAlign.center,
@@ -180,12 +170,11 @@ Widget buildOrderReceiptDummy(
                   ),
                   const SizedBox(height: 14),
 
-                  // Details rows (Shipping to & Billed to)
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       SizedBox(
-                        width: 110,
+                        width: 100,
                         child: Text(
                           'Shipping to',
                           style: TextStyle(
@@ -197,9 +186,9 @@ Widget buildOrderReceiptDummy(
                       ),
                       Expanded(
                         child: Text(
-                          'Richard Starkey\n22 23rd Street\nSan Francisco\nCA 94107',
+                          '${DummyTemplateData.shippingName}\n${DummyTemplateData.shippingAddress}',
                           style: TextStyle(
-                            fontSize: 11.5,
+                            fontSize: 11,
                             height: 1.35,
                             color: textSecondary,
                           ),
@@ -207,12 +196,12 @@ Widget buildOrderReceiptDummy(
                       ),
                     ],
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 10),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       SizedBox(
-                        width: 110,
+                        width: 100,
                         child: Text(
                           'Billed to',
                           style: TextStyle(
@@ -224,9 +213,9 @@ Widget buildOrderReceiptDummy(
                       ),
                       Expanded(
                         child: Text(
-                          'Visa\nEnding in *1234\nExpiring 08/2026',
+                          '${DummyTemplateData.clientName}\n${DummyTemplateData.clientAddress}\n${DummyTemplateData.clientEmail}',
                           style: TextStyle(
-                            fontSize: 11.5,
+                            fontSize: 11,
                             height: 1.35,
                             color: textSecondary,
                           ),
@@ -234,7 +223,15 @@ Widget buildOrderReceiptDummy(
                       ),
                     ],
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 14),
+
+                  // Payment Details with QR Code
+                  buildDummyPaymentDetails(
+                    type: documentType,
+                    primary: greenBannerBg,
+                    isDark: isDark,
+                  ),
+                  const SizedBox(height: 14),
 
                   // Support help text
                   RichText(
@@ -246,17 +243,14 @@ Widget buildOrderReceiptDummy(
                         height: 1.3,
                       ),
                       children: [
-                        const TextSpan(text: 'Notice something wrong? '),
+                        const TextSpan(text: 'Need help? Contact us at '),
                         TextSpan(
-                          text: 'Contact our support team',
+                          text: DummyTemplateData.companyEmail,
                           style: TextStyle(
                             color: linkColor,
                             decoration: TextDecoration.underline,
                             fontWeight: FontWeight.w600,
                           ),
-                        ),
-                        const TextSpan(
-                          text: " and we'll be happy to help.",
                         ),
                       ],
                     ),
@@ -334,7 +328,7 @@ Widget buildOrderReceiptDummy(
               ),
             ),
 
-            // Bottom footer (WITHOUT "View My Account" button per instruction)
+            // Bottom footer
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 16),
               child: Text(
@@ -354,28 +348,24 @@ Widget buildOrderReceiptDummy(
   );
 }
 
-Widget _buildItemRow(String title, String price, Color color) {
+Widget _buildItemRow(String title, String price, Color textColor) {
   return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 3),
+    padding: const EdgeInsets.symmetric(vertical: 4),
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Expanded(
           child: Text(
             title,
-            style: TextStyle(
-              fontSize: 12.5,
-              fontWeight: FontWeight.w500,
-              color: color,
-            ),
+            style: TextStyle(fontSize: 12, color: textColor),
           ),
         ),
         Text(
           price,
           style: TextStyle(
-            fontSize: 12.5,
+            fontSize: 12,
             fontWeight: FontWeight.w600,
-            color: color,
+            color: textColor,
           ),
         ),
       ],
@@ -383,27 +373,19 @@ Widget _buildItemRow(String title, String price, Color color) {
   );
 }
 
-Widget _buildSubtotalRow(String label, String value, Color color) {
+Widget _buildSubtotalRow(String title, String price, Color textColor) {
   return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 2),
+    padding: const EdgeInsets.symmetric(vertical: 2.5),
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          label,
-          style: TextStyle(
-            fontSize: 11.5,
-            fontWeight: FontWeight.w500,
-            color: color,
-          ),
+          title,
+          style: TextStyle(fontSize: 11, color: textColor),
         ),
         Text(
-          value,
-          style: TextStyle(
-            fontSize: 11.5,
-            fontWeight: FontWeight.w500,
-            color: color,
-          ),
+          price,
+          style: TextStyle(fontSize: 11, color: textColor),
         ),
       ],
     ),

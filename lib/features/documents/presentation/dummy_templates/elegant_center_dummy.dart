@@ -3,8 +3,8 @@ import '../../domain/document_model.dart';
 import 'dummy_template_utils.dart';
 
 Widget buildElegantCenterDummy(DocumentType documentType) {
-  final primary = const Color(0xFF0D47A1);
-  final lightBlue = const Color(0xFFD6E4F0);
+  const primary = Color(0xFF0D47A1);
+  const lightBlue = Color(0xFFD6E4F0);
 
   return Container(
     color: Colors.white,
@@ -12,93 +12,111 @@ Widget buildElegantCenterDummy(DocumentType documentType) {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // Header
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-              width: 36,
-              height: 36,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(color: primary.withAlpha(50), width: 1),
-              ),
-              child: ClipOval(
-                child: Padding(
-                  padding: const EdgeInsets.all(4.0),
-                  child: Image.asset(
-                    'assets/icons/applogo.png',
-                    fit: BoxFit.contain,
-                  ),
+        // Centered Header: App Logo (radius 8) + Company Name
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              buildDummyLogo(size: 38, radius: 8),
+              const SizedBox(width: 14),
+              Text(
+                DummyTemplateData.companyName,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 28,
+                  color: primary,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0.5,
                 ),
               ),
-            ),
-            const SizedBox(width: 16),
-            Text(
-              'Villa Contentezza',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 32,
-                color: primary,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
-        const SizedBox(height: 16),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.location_on, size: 10, color: Colors.grey.shade600),
-            const SizedBox(width: 4),
-            buildDummyText('Via Tammaricella 128', color: Colors.grey.shade600),
-            const SizedBox(width: 16),
-            Icon(Icons.phone, size: 10, color: Colors.grey.shade600),
-            const SizedBox(width: 4),
-            buildDummyText('+1 345-67-890', color: Colors.grey.shade600),
-            const SizedBox(width: 16),
-            Icon(Icons.email, size: 10, color: Colors.grey.shade600),
-            const SizedBox(width: 4),
-            buildDummyText(
-              'info@villacontentezza.com',
-              color: Colors.grey.shade600,
-            ),
-            const SizedBox(width: 16),
-            Icon(Icons.language, size: 10, color: Colors.grey.shade600),
-            const SizedBox(width: 4),
-            buildDummyText('villacontentezza.com', color: Colors.grey.shade600),
-          ],
+        const SizedBox(height: 14),
+        // Centered Contact Information Row
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.location_on, size: 10, color: Colors.grey.shade600),
+              const SizedBox(width: 4),
+              buildDummyText(
+                DummyTemplateData.companyAddress,
+                color: Colors.grey.shade600,
+              ),
+              const SizedBox(width: 14),
+              Icon(Icons.phone, size: 10, color: Colors.grey.shade600),
+              const SizedBox(width: 4),
+              buildDummyText(
+                DummyTemplateData.companyPhone,
+                color: Colors.grey.shade600,
+              ),
+              const SizedBox(width: 14),
+              Icon(Icons.email, size: 10, color: Colors.grey.shade600),
+              const SizedBox(width: 4),
+              buildDummyText(
+                DummyTemplateData.companyEmail,
+                color: Colors.grey.shade600,
+              ),
+              const SizedBox(width: 14),
+              Icon(Icons.language, size: 10, color: Colors.grey.shade600),
+              const SizedBox(width: 4),
+              buildDummyText(
+                DummyTemplateData.companyWebsite,
+                color: Colors.grey.shade600,
+              ),
+            ],
+          ),
         ),
         const SizedBox(height: 12),
         Container(height: 1.5, color: lightBlue),
-        const SizedBox(height: 32),
+        const SizedBox(height: 24),
+
+        // Party Info & Document Title
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                buildDummyText('Paid By', color: primary, bold: true, size: 11),
-                const SizedBox(height: 6),
-                buildDummyText('John Doe', size: 11),
-                const SizedBox(height: 6),
-                buildDummyText('john.doe@example.com', size: 11),
-              ],
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  buildDummyText(
+                    'Billed To / Client',
+                    color: primary,
+                    bold: true,
+                    size: 11,
+                  ),
+                  const SizedBox(height: 4),
+                  buildDummyText(DummyTemplateData.clientName, size: 11, bold: true),
+                  const SizedBox(height: 2),
+                  buildDummyText(DummyTemplateData.clientEmail, size: 10),
+                  buildDummyText(DummyTemplateData.clientAddress, size: 10),
+                ],
+              ),
             ),
-            Text(
-              documentType.displayName.toUpperCase(),
-              style: TextStyle(
-                fontSize: 28,
-                color: primary,
-                fontWeight: FontWeight.w800,
-                letterSpacing: 1.5,
+            const SizedBox(width: 12),
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.topRight,
+              child: Text(
+                documentType.displayName.toUpperCase(),
+                style: const TextStyle(
+                  fontSize: 26,
+                  color: primary,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 1.5,
+                ),
               ),
             ),
           ],
         ),
-        const SizedBox(height: 32),
+        const SizedBox(height: 24),
+
+        // Dates & Document Number
         Row(
           crossAxisAlignment: CrossAxisAlignment.end,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -108,29 +126,44 @@ Widget buildElegantCenterDummy(DocumentType documentType) {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   buildDummyText(
-                    'Booking Details',
+                    '${documentType.displayName} Details',
                     color: primary,
                     bold: true,
                     size: 11,
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      SizedBox(
-                        width: 100,
-                        child: buildDummyText('Check-in', size: 11),
-                      ),
-                      buildDummyText('Apr 25, 2026', size: 11),
-                    ],
                   ),
                   const SizedBox(height: 6),
                   Row(
                     children: [
                       SizedBox(
-                        width: 100,
-                        child: buildDummyText('Check-out', size: 11),
+                        width: 90,
+                        child: buildDummyText('Issue Date:', size: 10.5),
                       ),
-                      buildDummyText('May 2, 2026', size: 11),
+                      buildDummyText(
+                        DummyTemplateData.issueDate,
+                        size: 10.5,
+                        bold: true,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: 90,
+                        child: buildDummyText(
+                          documentType == DocumentType.proforma
+                              ? 'Valid Until:'
+                              : 'Due Date:',
+                          size: 10.5,
+                        ),
+                      ),
+                      buildDummyText(
+                        documentType == DocumentType.proforma
+                            ? DummyTemplateData.validUntil
+                            : DummyTemplateData.dueDate,
+                        size: 10.5,
+                        bold: true,
+                      ),
                     ],
                   ),
                 ],
@@ -142,38 +175,42 @@ Widget buildElegantCenterDummy(DocumentType documentType) {
                 Row(
                   children: [
                     SizedBox(
-                      width: 80,
+                      width: 90,
                       child: buildDummyText(
-                        'Receipt #',
+                        '${documentType.displayName} #',
                         color: primary,
                         bold: true,
                         size: 11,
                       ),
                     ),
-                    buildDummyText('REC-2026-001', size: 11),
+                    buildDummyText(
+                      DummyTemplateData.getDocNumberPlain(documentType),
+                      size: 11,
+                      bold: true,
+                    ),
                   ],
                 ),
-                const SizedBox(height: 6),
+                const SizedBox(height: 4),
                 Row(
                   children: [
                     SizedBox(
-                      width: 80,
-                      child: buildDummyText(
-                        'Receipt Date',
-                        color: primary,
-                        bold: true,
-                        size: 11,
-                      ),
+                      width: 90,
+                      child: buildDummyText('PO Number:', size: 10.5),
                     ),
-                    buildDummyText('Apr 25, 2026', size: 11),
+                    buildDummyText(
+                      DummyTemplateData.poNumber,
+                      size: 10.5,
+                      color: Colors.grey.shade700,
+                    ),
                   ],
                 ),
               ],
             ),
           ],
         ),
-        const SizedBox(height: 24),
-        // Table
+        const SizedBox(height: 20),
+
+        // 2 Products Table
         Container(
           decoration: BoxDecoration(border: Border.all(color: primary)),
           child: Column(
@@ -231,169 +268,188 @@ Widget buildElegantCenterDummy(DocumentType documentType) {
                   ],
                 ),
               ),
+
+              // Product 1
               Padding(
                 padding: const EdgeInsets.symmetric(
-                  vertical: 12,
+                  vertical: 10,
                   horizontal: 12,
                 ),
                 child: Row(
                   children: [
                     Expanded(
                       flex: 1,
-                      child: Align(
-                        alignment: Alignment.centerRight,
-                        child: buildDummyText('7.00', size: 11),
-                      ),
-                    ),
-                    const SizedBox(width: 20),
-                    Expanded(
-                      flex: 3,
                       child: buildDummyText(
-                        'Nights in apartment Lido',
-                        size: 11,
+                        DummyTemplateData.item1.qtyString,
+                        size: 10.5,
+                      ),
+                    ),
+                    Expanded(
+                      flex: 3,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          buildDummyText(
+                            DummyTemplateData.item1.title,
+                            bold: true,
+                            size: 10.5,
+                          ),
+                          buildDummyText(
+                            DummyTemplateData.item1.description,
+                            size: 8.5,
+                            color: Colors.grey.shade600,
+                          ),
+                        ],
                       ),
                     ),
                     Expanded(
                       flex: 2,
                       child: Align(
                         alignment: Alignment.centerRight,
-                        child: buildDummyText('.00', size: 11),
+                        child: buildDummyText(
+                          DummyTemplateData.item1.rateRs,
+                          size: 10.5,
+                        ),
                       ),
                     ),
                     Expanded(
                       flex: 2,
                       child: Align(
                         alignment: Alignment.centerRight,
-                        child: buildDummyText('.00*', size: 11),
+                        child: buildDummyText(
+                          DummyTemplateData.item1.amountRs,
+                          bold: true,
+                          size: 10.5,
+                        ),
                       ),
                     ),
                   ],
                 ),
               ),
+              Container(height: 1, color: lightBlue),
+
+              // Product 2
               Padding(
                 padding: const EdgeInsets.symmetric(
-                  vertical: 12,
+                  vertical: 10,
                   horizontal: 12,
                 ),
                 child: Row(
                   children: [
                     Expanded(
                       flex: 1,
-                      child: Align(
-                        alignment: Alignment.centerRight,
-                        child: buildDummyText('28.00', size: 11),
+                      child: buildDummyText(
+                        DummyTemplateData.item2.qtyString,
+                        size: 10.5,
                       ),
                     ),
-                    const SizedBox(width: 20),
                     Expanded(
                       flex: 3,
-                      child: buildDummyText('Breakfast', size: 11),
-                    ),
-                    Expanded(
-                      flex: 2,
-                      child: Align(
-                        alignment: Alignment.centerRight,
-                        child: buildDummyText('.00', size: 11),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          buildDummyText(
+                            DummyTemplateData.item2.title,
+                            bold: true,
+                            size: 10.5,
+                          ),
+                          buildDummyText(
+                            DummyTemplateData.item2.description,
+                            size: 8.5,
+                            color: Colors.grey.shade600,
+                          ),
+                        ],
                       ),
                     ),
                     Expanded(
                       flex: 2,
                       child: Align(
                         alignment: Alignment.centerRight,
-                        child: buildDummyText('.00*', size: 11),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 12,
-                  horizontal: 12,
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      flex: 1,
-                      child: Align(
-                        alignment: Alignment.centerRight,
-                        child: buildDummyText('1.00', size: 11),
-                      ),
-                    ),
-                    const SizedBox(width: 20),
-                    Expanded(
-                      flex: 3,
-                      child: buildDummyText('Airport pick-up', size: 11),
-                    ),
-                    Expanded(
-                      flex: 2,
-                      child: Align(
-                        alignment: Alignment.centerRight,
-                        child: buildDummyText('.00', size: 11),
+                        child: buildDummyText(
+                          DummyTemplateData.item2.rateRs,
+                          size: 10.5,
+                        ),
                       ),
                     ),
                     Expanded(
                       flex: 2,
                       child: Align(
                         alignment: Alignment.centerRight,
-                        child: buildDummyText('.00*', size: 11),
+                        child: buildDummyText(
+                          DummyTemplateData.item2.amountRs,
+                          bold: true,
+                          size: 10.5,
+                        ),
                       ),
                     ),
                   ],
                 ),
               ),
               Container(height: 1, color: primary),
+
+              // Subtotal
               Padding(
                 padding: const EdgeInsets.symmetric(
-                  vertical: 8,
+                  vertical: 7,
                   horizontal: 12,
                 ),
                 child: Row(
                   children: [
-                    Expanded(flex: 4, child: const SizedBox()),
+                    const Expanded(flex: 4, child: SizedBox()),
                     Expanded(
                       flex: 2,
-                      child: buildDummyText('Subtotal', size: 11),
+                      child: buildDummyText('Subtotal', size: 10.5),
                     ),
                     Expanded(
                       flex: 2,
                       child: Align(
                         alignment: Alignment.centerRight,
-                        child: buildDummyText('.05', size: 11),
+                        child: buildDummyText(
+                          DummyTemplateData.subtotalRs,
+                          size: 10.5,
+                        ),
                       ),
                     ),
                   ],
                 ),
               ),
+              // Tax
               Padding(
                 padding: const EdgeInsets.symmetric(
-                  vertical: 8,
+                  vertical: 7,
                   horizontal: 12,
                 ),
                 child: Row(
                   children: [
-                    Expanded(flex: 4, child: const SizedBox()),
-                    Expanded(flex: 2, child: buildDummyText('Tax', size: 11)),
+                    const Expanded(flex: 4, child: SizedBox()),
+                    Expanded(
+                      flex: 2,
+                      child: buildDummyText('Tax (12%)', size: 10.5),
+                    ),
                     Expanded(
                       flex: 2,
                       child: Align(
                         alignment: Alignment.centerRight,
-                        child: buildDummyText('.95', size: 11),
+                        child: buildDummyText(
+                          DummyTemplateData.taxRs,
+                          size: 10.5,
+                        ),
                       ),
                     ),
                   ],
                 ),
               ),
               Container(height: 1, color: primary),
+              // Total
               Container(
                 color: lightBlue,
                 padding: const EdgeInsets.symmetric(
-                  vertical: 12,
+                  vertical: 10,
                   horizontal: 12,
                 ),
                 child: Row(
                   children: [
-                    Expanded(flex: 4, child: const SizedBox()),
+                    const Expanded(flex: 4, child: SizedBox()),
                     Expanded(
                       flex: 2,
                       child: buildDummyText(
@@ -408,10 +464,10 @@ Widget buildElegantCenterDummy(DocumentType documentType) {
                       child: Align(
                         alignment: Alignment.centerRight,
                         child: buildDummyText(
-                          '.00',
+                          DummyTemplateData.grandTotalRs,
                           color: primary,
                           bold: true,
-                          size: 12,
+                          size: 13,
                         ),
                       ),
                     ),
@@ -421,12 +477,9 @@ Widget buildElegantCenterDummy(DocumentType documentType) {
             ],
           ),
         ),
-        const SizedBox(height: 4),
-        Align(
-          alignment: Alignment.centerRight,
-          child: buildDummyText('*Tax: 7.50%', color: Colors.grey.shade600),
-        ),
         const Spacer(),
+
+        // Bottom Notes, Payment Details & Signature
         Row(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
@@ -437,10 +490,10 @@ Widget buildElegantCenterDummy(DocumentType documentType) {
                   buildDummyText('Notes', color: primary, bold: true, size: 11),
                   const SizedBox(height: 4),
                   buildDummyText(
-                    'Thank you for staying with us. We look forward to your next visit :)',
-                    size: 11,
+                    DummyTemplateData.notes,
+                    size: 9.5,
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 12),
                   buildDummyPaymentDetails(
                     type: documentType,
                     primary: primary,
@@ -448,22 +501,10 @@ Widget buildElegantCenterDummy(DocumentType documentType) {
                 ],
               ),
             ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Image.asset(
-                  'assets/icons/signature.png',
-                  width: 80,
-                  height: 30,
-                ),
-                Container(width: 130, height: 1.5, color: primary),
-                const SizedBox(height: 4),
-                buildDummyText(
-                  'Authorized Signature',
-                  color: primary,
-                  size: 11,
-                ),
-              ],
+            buildDummySignature(
+              lineColor: primary,
+              labelColor: primary,
+              showName: true,
             ),
           ],
         ),

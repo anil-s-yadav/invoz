@@ -3,7 +3,7 @@ import '../../domain/document_model.dart';
 import 'dummy_template_utils.dart';
 
 Widget buildPremiumModernDummy(DocumentType documentType) {
-  final primary = const Color(0xFF2563EB); // Modern Pro Blue
+  const primary = Color(0xFF2563EB); // Modern Pro Blue
   return Container(
     color: Colors.white,
     child: Column(
@@ -33,7 +33,7 @@ Widget buildPremiumModernDummy(DocumentType documentType) {
                     ),
                     const SizedBox(height: 4),
                     buildDummyText(
-                      '# ${documentType.prefix}2026-0001',
+                      DummyTemplateData.getDocNumber(documentType),
                       color: Colors.white,
                       size: 11,
                     ),
@@ -49,7 +49,7 @@ Widget buildPremiumModernDummy(DocumentType documentType) {
                       fit: BoxFit.scaleDown,
                       alignment: Alignment.centerRight,
                       child: buildDummyText(
-                        'Issue Date: 28 Sep 2026',
+                        'Issue Date: ${DummyTemplateData.issueDate}',
                         color: Colors.white70,
                       ),
                     ),
@@ -58,8 +58,8 @@ Widget buildPremiumModernDummy(DocumentType documentType) {
                       alignment: Alignment.centerRight,
                       child: buildDummyText(
                         documentType == DocumentType.proforma
-                            ? 'Valid Until: 13 Oct 2026'
-                            : 'Due Date: 13 Oct 2026',
+                            ? 'Valid Until: ${DummyTemplateData.validUntil}'
+                            : 'Due Date: ${DummyTemplateData.dueDate}',
                         color: Colors.white70,
                       ),
                     ),
@@ -79,7 +79,9 @@ Widget buildPremiumModernDummy(DocumentType documentType) {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // From
                     Expanded(
+                      flex: 4,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -90,23 +92,23 @@ Widget buildPremiumModernDummy(DocumentType documentType) {
                             color: primary,
                           ),
                           const SizedBox(height: 4),
-                          Image.asset(
-                            'assets/icons/applogo.png',
-                            width: 32,
-                            height: 32,
-                          ),
+                          buildDummyLogo(size: 36, radius: 8),
                           const SizedBox(height: 4),
-                          buildDummyText('Tesla Inc.', size: 12, bold: true),
                           buildDummyText(
-                            'teslacom@gmail.com\n9876543210\nRoad no. 397, near weastern railways city, Ghatkopar USA\n- 1087221.',
+                            DummyTemplateData.companyName,
+                            size: 12,
+                            bold: true,
                           ),
+                          buildDummyText(DummyTemplateData.companyFullAddress),
                         ],
                       ),
                     ),
-                    const SizedBox(width: 16),
+                    const SizedBox(width: 12),
+                    // Bill To
                     Expanded(
+                      flex: 3,
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           buildDummyText(
                             'BILL TO:',
@@ -116,27 +118,47 @@ Widget buildPremiumModernDummy(DocumentType documentType) {
                           ),
                           const SizedBox(height: 4),
                           buildDummyText(
-                            'Georgo graph LTD',
+                            DummyTemplateData.clientName,
                             size: 12,
                             bold: true,
                           ),
+                          buildDummyText(DummyTemplateData.clientFullAddress),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    // Ship To
+                    Expanded(
+                      flex: 3,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
                           buildDummyText(
-                            'vajsisi@shjs.com\n9876543210\nHE wants personal loan for your help and more than\n400070',
-                            align: TextAlign.right,
+                            'SHIP TO:',
+                            size: 10,
+                            bold: true,
+                            color: primary,
                           ),
+                          const SizedBox(height: 4),
+                          buildDummyText(
+                            DummyTemplateData.shippingName,
+                            size: 12,
+                            bold: true,
+                          ),
+                          buildDummyText(DummyTemplateData.shippingFullAddress),
                         ],
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 20),
                 // Table Header
                 Container(
                   padding: const EdgeInsets.symmetric(
                     vertical: 6,
                     horizontal: 8,
                   ),
-                  decoration: BoxDecoration(color: primary),
+                  decoration: const BoxDecoration(color: primary),
                   child: Row(
                     children: [
                       Expanded(
@@ -191,41 +213,64 @@ Widget buildPremiumModernDummy(DocumentType documentType) {
                     ],
                   ),
                 ),
-                // Table Row
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 6,
-                    horizontal: 8,
+                // 2 Dummy Product Rows
+                for (final item in DummyTemplateData.items)
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 6,
+                      horizontal: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(color: Colors.grey.shade200),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          flex: 3,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              buildDummyText(item.title, bold: true),
+                              buildDummyText(
+                                item.description,
+                                size: 8.5,
+                                color: Colors.grey.shade500,
+                              ),
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          flex: 1,
+                          child: buildDummyText(item.qtyString),
+                        ),
+                        Expanded(
+                          flex: 2,
+                          child: Align(
+                            alignment: Alignment.centerRight,
+                            child: buildDummyText(item.rateRs),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 1,
+                          child: Align(
+                            alignment: Alignment.centerRight,
+                            child: buildDummyText(item.taxPercentString),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 2,
+                          child: Align(
+                            alignment: Alignment.centerRight,
+                            child: buildDummyText(item.amountRs, bold: true),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  child: Row(
-                    children: [
-                      Expanded(flex: 3, child: buildDummyText('Helmate')),
-                      Expanded(flex: 1, child: buildDummyText('1.0')),
-                      Expanded(
-                        flex: 2,
-                        child: Align(
-                          alignment: Alignment.centerRight,
-                          child: buildDummyText('Rs. 1,000.00'),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 1,
-                        child: Align(
-                          alignment: Alignment.centerRight,
-                          child: buildDummyText('12.0%'),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 2,
-                        child: Align(
-                          alignment: Alignment.centerRight,
-                          child: buildDummyText('Rs. 1,120.00'),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 14),
+                // Summary Box
                 Align(
                   alignment: Alignment.centerRight,
                   child: Container(
@@ -245,7 +290,9 @@ Widget buildPremiumModernDummy(DocumentType documentType) {
                                 alignment: Alignment.centerRight,
                                 child: FittedBox(
                                   fit: BoxFit.scaleDown,
-                                  child: buildDummyText('Rs. 1,000.00'),
+                                  child: buildDummyText(
+                                    DummyTemplateData.subtotalRs,
+                                  ),
                                 ),
                               ),
                             ),
@@ -254,13 +301,15 @@ Widget buildPremiumModernDummy(DocumentType documentType) {
                         const SizedBox(height: 4),
                         Row(
                           children: [
-                            Expanded(child: buildDummyText('Tax')),
+                            Expanded(child: buildDummyText('Tax (12%)')),
                             Expanded(
                               child: Align(
                                 alignment: Alignment.centerRight,
                                 child: FittedBox(
                                   fit: BoxFit.scaleDown,
-                                  child: buildDummyText('Rs. 120.00'),
+                                  child: buildDummyText(
+                                    DummyTemplateData.taxRs,
+                                  ),
                                 ),
                               ),
                             ),
@@ -283,7 +332,7 @@ Widget buildPremiumModernDummy(DocumentType documentType) {
                                 child: FittedBox(
                                   fit: BoxFit.scaleDown,
                                   child: buildDummyText(
-                                    'Rs. 1,120.00',
+                                    DummyTemplateData.grandTotalRs,
                                     bold: true,
                                     size: 14,
                                     color: primary,
@@ -297,16 +346,18 @@ Widget buildPremiumModernDummy(DocumentType documentType) {
                     ),
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 14),
+                // Notes Callout
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: Colors.grey.shade50,
                     border: Border(left: BorderSide(color: primary, width: 3)),
                   ),
-                  child: buildDummyText('Thank you for your business!'),
+                  child: buildDummyText(DummyTemplateData.notes),
                 ),
                 const Spacer(),
+                // Payment Details & Signature
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
@@ -316,25 +367,10 @@ Widget buildPremiumModernDummy(DocumentType documentType) {
                         primary: primary,
                       ),
                     ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Image.asset(
-                          'assets/icons/signature.png',
-                          width: 80,
-                          height: 30,
-                        ),
-                        Container(
-                          width: 100,
-                          height: 1.5,
-                          color: Colors.black87,
-                        ),
-                        const SizedBox(height: 4),
-                        buildDummyText(
-                          'Authorized Signature',
-                          color: Colors.grey.shade600,
-                        ),
-                      ],
+                    buildDummySignature(
+                      lineColor: Colors.black87,
+                      labelColor: Colors.grey.shade600,
+                      showName: true,
                     ),
                   ],
                 ),

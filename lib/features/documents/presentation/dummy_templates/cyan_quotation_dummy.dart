@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../domain/document_model.dart';
+import 'dummy_template_utils.dart';
 
 Widget buildCyanQuotationDummy(
   DocumentType documentType, [
@@ -22,50 +23,30 @@ Widget buildCyanQuotationDummy(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Business Logo + Foobar Labs
+            // Business Logo + Company Name
             Row(
               children: [
-                Container(
-                  width: 38,
-                  height: 38,
-                  decoration: BoxDecoration(
-                    color: cyanPrimary,
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: const Center(
-                    child: Text(
-                      'F',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
+                buildDummyLogo(size: 38, radius: 8),
+                const SizedBox(width: 10),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
-                  children: const [
+                  children: [
                     Text(
-                      'FOOBAR',
-                      style: TextStyle(
+                      DummyTemplateData.companyName.toUpperCase(),
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w900,
                         color: textDark,
                         letterSpacing: 0.8,
-                        height: 1.0,
+                        height: 1.1,
                       ),
                     ),
                     Text(
-                      'LABS',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w900,
-                        color: textDark,
-                        letterSpacing: 0.8,
-                        height: 1.0,
+                      DummyTemplateData.companyEmail,
+                      style: const TextStyle(
+                        fontSize: 9,
+                        color: textMuted,
                       ),
                     ),
                   ],
@@ -73,7 +54,7 @@ Widget buildCyanQuotationDummy(
               ],
             ),
 
-            // "Quotation" Title Right-Aligned
+            // Document Title Right-Aligned
             Text(
               documentType.displayName,
               style: const TextStyle(
@@ -91,57 +72,83 @@ Widget buildCyanQuotationDummy(
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Quotation by
+            // Quotation by (From)
             Expanded(
               flex: 5,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
-                    'Quotation by',
-                    style: TextStyle(
+                    '${documentType.displayName} by',
+                    style: const TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.bold,
                       color: textDark,
                     ),
                   ),
-                  SizedBox(height: 6),
+                  const SizedBox(height: 6),
                   Text(
-                    'Foobar Labs',
-                    style: TextStyle(fontSize: 10.5, color: textDark),
+                    DummyTemplateData.companyName,
+                    style: const TextStyle(
+                      fontSize: 10.5,
+                      fontWeight: FontWeight.w600,
+                      color: textDark,
+                    ),
                   ),
-                  SizedBox(height: 3),
+                  const SizedBox(height: 3),
                   Text(
-                    '56-87, HSR Layout - Bengaluru,\nKarnataka, India - 560055',
-                    style: TextStyle(fontSize: 10, color: textMuted, height: 1.3),
+                    DummyTemplateData.companyAddress,
+                    style: const TextStyle(
+                      fontSize: 10,
+                      color: textMuted,
+                      height: 1.3,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    'GSTIN: ${DummyTemplateData.companyGstin}',
+                    style: const TextStyle(fontSize: 9, color: textMuted),
                   ),
                 ],
               ),
             ),
 
-            // Quotation to
+            // Quotation to (Client)
             Expanded(
               flex: 5,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
-                    'Quotation to',
-                    style: TextStyle(
+                    '${documentType.displayName} to',
+                    style: const TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.bold,
                       color: textDark,
                     ),
                   ),
-                  SizedBox(height: 6),
+                  const SizedBox(height: 6),
                   Text(
-                    'Studio Den',
-                    style: TextStyle(fontSize: 10.5, color: textDark),
+                    DummyTemplateData.clientName,
+                    style: const TextStyle(
+                      fontSize: 10.5,
+                      fontWeight: FontWeight.w600,
+                      color: textDark,
+                    ),
                   ),
-                  SizedBox(height: 3),
+                  const SizedBox(height: 3),
                   Text(
-                    '305, 3rd Floor Orion mall, Bengaluru,\nKarnataka, India - 560055',
-                    style: TextStyle(fontSize: 10, color: textMuted, height: 1.3),
+                    DummyTemplateData.clientAddress,
+                    style: const TextStyle(
+                      fontSize: 10,
+                      color: textMuted,
+                      height: 1.3,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    'GSTIN: ${DummyTemplateData.clientGstin}',
+                    style: const TextStyle(fontSize: 9, color: textMuted),
                   ),
                 ],
               ),
@@ -153,15 +160,34 @@ Widget buildCyanQuotationDummy(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  _buildMetaRow('Invoice No:', '003'),
+                  _buildMetaRow(
+                    '${documentType.displayName} No:',
+                    DummyTemplateData.getDocNumberPlain(documentType),
+                  ),
                   const SizedBox(height: 3),
-                  _buildMetaRow('Invoice Date:', 'FEB 19, 2020'),
+                  _buildMetaRow(
+                    '${documentType.displayName} Date:',
+                    DummyTemplateData.issueDate,
+                  ),
                   const SizedBox(height: 3),
-                  _buildMetaRow('Due Date:', 'FEB 19, 2020'),
-                  const SizedBox(height: 8),
-                  _buildMetaRow('Country of supply:', 'India'),
+                  _buildMetaRow(
+                    documentType == DocumentType.proforma
+                        ? 'Valid Until:'
+                        : 'Due Date:',
+                    documentType == DocumentType.proforma
+                        ? DummyTemplateData.validUntil
+                        : DummyTemplateData.dueDate,
+                  ),
+                  const SizedBox(height: 6),
+                  _buildMetaRow(
+                    'Country of supply:',
+                    DummyTemplateData.countryOfSupply,
+                  ),
                   const SizedBox(height: 3),
-                  _buildMetaRow('Place of supply:', 'Karnataka'),
+                  _buildMetaRow(
+                    'Place of supply:',
+                    DummyTemplateData.placeOfSupply,
+                  ),
                 ],
               ),
             ),
@@ -228,7 +254,7 @@ Widget buildCyanQuotationDummy(
                     SizedBox(
                       width: 55,
                       child: Text(
-                        'Discount',
+                        'Tax',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 9.5,
@@ -241,7 +267,7 @@ Widget buildCyanQuotationDummy(
                     SizedBox(
                       width: 75,
                       child: Text(
-                        'Amount\n(After Discount)',
+                        'Amount',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 8.5,
@@ -254,25 +280,23 @@ Widget buildCyanQuotationDummy(
                 ),
               ),
 
-              // Item Row 1
+              // 2 Dummy Product Rows
               _buildTableRow(
-                title: 'Basic Web Development',
-                qty: '10',
-                rate: '\u20B9 10,000',
-                discount: '5%',
-                amount: '\u20B9 9,500',
+                title: DummyTemplateData.item1.title,
+                description: DummyTemplateData.item1.description,
+                qty: DummyTemplateData.item1.qtyString,
+                rate: DummyTemplateData.item1.rateRs,
+                tax: DummyTemplateData.item1.taxPercentString,
+                amount: DummyTemplateData.item1.amountRs,
                 hasBottomBorder: true,
               ),
-
-              // Item Row 2
               _buildTableRow(
-                title: 'Basic Web Development',
-                description:
-                    'Create and send unlimited professional invoices for free. Use our unique features to collect payments faster.',
-                qty: '10',
-                rate: '\u20B9 10,000',
-                discount: '5%',
-                amount: '\u20B9 9,500',
+                title: DummyTemplateData.item2.title,
+                description: DummyTemplateData.item2.description,
+                qty: DummyTemplateData.item2.qtyString,
+                rate: DummyTemplateData.item2.rateRs,
+                tax: DummyTemplateData.item2.taxPercentString,
+                amount: DummyTemplateData.item2.amountRs,
                 hasBottomBorder: false,
               ),
             ],
@@ -284,13 +308,13 @@ Widget buildCyanQuotationDummy(
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Left: Terms & Conditions + Additional Notes + Attachments
+            // Left: Terms & Conditions + Additional Notes + Payment Details
             Expanded(
               flex: 5,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  Text(
+                children: [
+                  const Text(
                     'Terms and Conditions',
                     style: TextStyle(
                       fontSize: 10,
@@ -298,13 +322,17 @@ Widget buildCyanQuotationDummy(
                       color: textDark,
                     ),
                   ),
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   Text(
-                    '1. Please pay within 15 days from the date of invoice, overdue interest @ 14% will be charged on delayed payments.\n2. Please quote invoice number when remitting funds.',
-                    style: TextStyle(fontSize: 8.5, color: textDark, height: 1.3),
+                    DummyTemplateData.terms,
+                    style: const TextStyle(
+                      fontSize: 8.5,
+                      color: textDark,
+                      height: 1.3,
+                    ),
                   ),
-                  SizedBox(height: 12),
-                  Text(
+                  const SizedBox(height: 10),
+                  const Text(
                     'Additional Notes',
                     style: TextStyle(
                       fontSize: 10,
@@ -312,29 +340,19 @@ Widget buildCyanQuotationDummy(
                       color: textDark,
                     ),
                   ),
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   Text(
-                    'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using \'Content here, content here.',
-                    style: TextStyle(fontSize: 8.5, color: textDark, height: 1.3),
-                  ),
-                  SizedBox(height: 12),
-                  Text(
-                    'Attachments',
-                    style: TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                      color: textDark,
-                    ),
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    '1. finename.png\n2. invoice%402x.png\n3. verified-bank%402x.png',
-                    style: TextStyle(
+                    DummyTemplateData.notes,
+                    style: const TextStyle(
                       fontSize: 8.5,
-                      color: Color(0xFF1E293B),
-                      decoration: TextDecoration.underline,
-                      height: 1.4,
+                      color: textDark,
+                      height: 1.3,
                     ),
+                  ),
+                  const SizedBox(height: 12),
+                  buildDummyPaymentDetails(
+                    type: documentType,
+                    primary: cyanPrimary,
                   ),
                 ],
               ),
@@ -382,7 +400,7 @@ Widget buildCyanQuotationDummy(
                               _VerticalDivider(),
                               Expanded(
                                 child: Text(
-                                  '\u20B920,000',
+                                  DummyTemplateData.subtotalRs,
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     fontSize: 10,
@@ -395,7 +413,7 @@ Widget buildCyanQuotationDummy(
                           ),
                         ),
 
-                        // Discount(5%)
+                        // Tax (12%)
                         Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 10,
@@ -410,7 +428,7 @@ Widget buildCyanQuotationDummy(
                             children: const [
                               Expanded(
                                 child: Text(
-                                  'Discount(5%)',
+                                  'Tax (12%)',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     fontSize: 10,
@@ -422,7 +440,7 @@ Widget buildCyanQuotationDummy(
                               _VerticalDivider(),
                               Expanded(
                                 child: Text(
-                                  '\u20B91,000',
+                                  DummyTemplateData.taxRs,
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     fontSize: 10,
@@ -458,7 +476,7 @@ Widget buildCyanQuotationDummy(
                               _VerticalDivider(color: Colors.white),
                               Expanded(
                                 child: Text(
-                                  '\u20B919,000',
+                                  DummyTemplateData.grandTotalRs,
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     fontSize: 10.5,
@@ -482,41 +500,20 @@ Widget buildCyanQuotationDummy(
                   ),
                   const SizedBox(height: 2),
                   const Text(
-                    'Nineteen Thousand Rupees Only',
+                    DummyTemplateData.totalInWords,
                     style: TextStyle(
-                      fontSize: 9.5,
+                      fontSize: 9,
                       fontWeight: FontWeight.bold,
                       color: textDark,
                     ),
                   ),
-                  const SizedBox(height: 18),
+                  const SizedBox(height: 14),
 
                   // Authorized Signature
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Center(
-                        child: Column(
-                          children: [
-                            Text(
-                              'Sandy',
-                              style: TextStyle(
-                                fontFamily: 'cursive',
-                                fontSize: 26,
-                                fontWeight: FontWeight.bold,
-                                color: const Color(0xFF1E3A8A),
-                                fontStyle: FontStyle.italic,
-                              ),
-                            ),
-                            const SizedBox(height: 2),
-                            const Text(
-                              'Authorized Signature',
-                              style: TextStyle(fontSize: 9, color: textDark),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+                  buildDummySignature(
+                    lineColor: borderColor,
+                    labelColor: textDark,
+                    showName: true,
                   ),
                 ],
               ),
@@ -528,25 +525,25 @@ Widget buildCyanQuotationDummy(
 
         // Bottom Enquiry Box
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
           decoration: BoxDecoration(
             border: Border.all(color: borderColor, width: 1),
           ),
           child: Center(
             child: RichText(
               textAlign: TextAlign.center,
-              text: const TextSpan(
-                style: TextStyle(fontSize: 9.5, color: textDark),
+              text: TextSpan(
+                style: const TextStyle(fontSize: 9.5, color: textDark),
                 children: [
-                  TextSpan(text: 'For any enquiries, email us on '),
+                  const TextSpan(text: 'For any enquiries, email us on '),
                   TextSpan(
-                    text: 'info@foobarlabs.com',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    text: DummyTemplateData.companyEmail,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  TextSpan(text: ' or call us on '),
+                  const TextSpan(text: ' or call us on '),
                   TextSpan(
-                    text: '+91 98765-43210',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    text: DummyTemplateData.companyPhone,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
@@ -586,7 +583,7 @@ Widget _buildTableRow({
   String? description,
   required String qty,
   required String rate,
-  required String discount,
+  required String tax,
   required String amount,
   required bool hasBottomBorder,
 }) {
@@ -653,7 +650,7 @@ Widget _buildTableRow({
         SizedBox(
           width: 55,
           child: Text(
-            discount,
+            tax,
             textAlign: TextAlign.center,
             style: const TextStyle(fontSize: 9.5, color: textDark),
           ),

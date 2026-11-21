@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../domain/document_model.dart';
+import 'dummy_template_utils.dart';
 
 Widget buildWarmQuotationDummy(
   DocumentType documentType, [
@@ -9,7 +10,6 @@ Widget buildWarmQuotationDummy(
   const cream = Color(0xFFFFF4EC);
   const textDark = Color(0xFF1E293B);
   const textMuted = Color(0xFF64748B);
-  const green = Color(0xFF16A34A);
 
   return Container(
     color: Colors.white,
@@ -38,47 +38,27 @@ Widget buildWarmQuotationDummy(
             // Business Logo + Name
             Row(
               children: [
-                Container(
-                  width: 36,
-                  height: 36,
-                  decoration: BoxDecoration(
-                    color: Colors.black,
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: const Center(
-                    child: Text(
-                      'F',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 22,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
+                buildDummyLogo(size: 38, radius: 8),
+                const SizedBox(width: 10),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
-                  children: const [
+                  children: [
                     Text(
-                      'FOOBAR',
-                      style: TextStyle(
+                      DummyTemplateData.companyName.toUpperCase(),
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w900,
                         color: textDark,
                         letterSpacing: 1.0,
-                        height: 1.0,
+                        height: 1.1,
                       ),
                     ),
                     Text(
-                      'LABS',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w900,
-                        color: textDark,
-                        letterSpacing: 1.0,
-                        height: 1.0,
+                      DummyTemplateData.companyEmail,
+                      style: const TextStyle(
+                        fontSize: 9,
+                        color: textMuted,
                       ),
                     ),
                   ],
@@ -98,9 +78,9 @@ Widget buildWarmQuotationDummy(
                       style: const TextStyle(fontSize: 11, color: textMuted),
                     ),
                     const SizedBox(width: 16),
-                    const Text(
-                      '004',
-                      style: TextStyle(
+                    Text(
+                      DummyTemplateData.getDocNumberPlain(documentType),
+                      style: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
                         color: textDark,
@@ -117,9 +97,9 @@ Widget buildWarmQuotationDummy(
                       style: const TextStyle(fontSize: 11, color: textMuted),
                     ),
                     const SizedBox(width: 16),
-                    const Text(
-                      'JUN 19, 2026',
-                      style: TextStyle(
+                    Text(
+                      DummyTemplateData.issueDate,
+                      style: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
                         color: textDark,
@@ -157,18 +137,18 @@ Widget buildWarmQuotationDummy(
                       ),
                     ),
                     const SizedBox(height: 4),
-                    const Text(
-                      'Foobar Labs',
-                      style: TextStyle(
+                    Text(
+                      DummyTemplateData.companyName,
+                      style: const TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.bold,
                         color: textDark,
                       ),
                     ),
                     const SizedBox(height: 2),
-                    const Text(
-                      '56-87, HSR Layout - Bengaluru, Karnataka,\nIndia - 560055',
-                      style: TextStyle(
+                    Text(
+                      DummyTemplateData.companyAddress,
+                      style: const TextStyle(
                         fontSize: 10,
                         color: Color(0xFF334155),
                         height: 1.3,
@@ -176,8 +156,8 @@ Widget buildWarmQuotationDummy(
                     ),
                     const SizedBox(height: 6),
                     Row(
-                      children: const [
-                        Text(
+                      children: [
+                        const Text(
                           'GSTIN  ',
                           style: TextStyle(
                             fontSize: 9.5,
@@ -186,8 +166,8 @@ Widget buildWarmQuotationDummy(
                           ),
                         ),
                         Text(
-                          '29ABCED1234F2Z5',
-                          style: TextStyle(
+                          DummyTemplateData.companyGstin,
+                          style: const TextStyle(
                             fontSize: 9.5,
                             color: Color(0xFF334155),
                           ),
@@ -195,8 +175,8 @@ Widget buildWarmQuotationDummy(
                       ],
                     ),
                     Row(
-                      children: const [
-                        Text(
+                      children: [
+                        const Text(
                           'PAN    ',
                           style: TextStyle(
                             fontSize: 9.5,
@@ -205,8 +185,8 @@ Widget buildWarmQuotationDummy(
                           ),
                         ),
                         Text(
-                          'ABCED1234F',
-                          style: TextStyle(
+                          DummyTemplateData.companyPan,
+                          style: const TextStyle(
                             fontSize: 9.5,
                             color: Color(0xFF334155),
                           ),
@@ -239,18 +219,18 @@ Widget buildWarmQuotationDummy(
                       ),
                     ),
                     const SizedBox(height: 4),
-                    const Text(
-                      'Studio Den',
-                      style: TextStyle(
+                    Text(
+                      DummyTemplateData.clientName,
+                      style: const TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.bold,
                         color: textDark,
                       ),
                     ),
                     const SizedBox(height: 2),
-                    const Text(
-                      '305, 3rd Floor Orion mall, Bengaluru,\nKarnataka, India - 560055',
-                      style: TextStyle(
+                    Text(
+                      DummyTemplateData.clientAddress,
+                      style: const TextStyle(
                         fontSize: 10,
                         color: Color(0xFF334155),
                         height: 1.3,
@@ -258,8 +238,8 @@ Widget buildWarmQuotationDummy(
                     ),
                     const SizedBox(height: 6),
                     Row(
-                      children: const [
-                        Text(
+                      children: [
+                        const Text(
                           'GSTIN  ',
                           style: TextStyle(
                             fontSize: 9.5,
@@ -268,8 +248,8 @@ Widget buildWarmQuotationDummy(
                           ),
                         ),
                         Text(
-                          '29VGCED1234K2Z6',
-                          style: TextStyle(
+                          DummyTemplateData.clientGstin,
+                          style: const TextStyle(
                             fontSize: 9.5,
                             color: Color(0xFF334155),
                           ),
@@ -277,8 +257,8 @@ Widget buildWarmQuotationDummy(
                       ],
                     ),
                     Row(
-                      children: const [
-                        Text(
+                      children: [
+                        const Text(
                           'PAN    ',
                           style: TextStyle(
                             fontSize: 9.5,
@@ -287,8 +267,8 @@ Widget buildWarmQuotationDummy(
                           ),
                         ),
                         Text(
-                          'VGCED1234K',
-                          style: TextStyle(
+                          DummyTemplateData.clientPan,
+                          style: const TextStyle(
                             fontSize: 9.5,
                             color: Color(0xFF334155),
                           ),
@@ -310,14 +290,14 @@ Widget buildWarmQuotationDummy(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(
-                children: const [
-                  Text(
+                children: [
+                  const Text(
                     'Place of Supply    ',
                     style: TextStyle(fontSize: 10.5, color: textMuted),
                   ),
                   Text(
-                    'Karnataka',
-                    style: TextStyle(
+                    DummyTemplateData.placeOfSupply,
+                    style: const TextStyle(
                       fontSize: 10.5,
                       fontWeight: FontWeight.bold,
                       color: textDark,
@@ -326,14 +306,14 @@ Widget buildWarmQuotationDummy(
                 ],
               ),
               Row(
-                children: const [
-                  Text(
+                children: [
+                  const Text(
                     'Country of Supply    ',
                     style: TextStyle(fontSize: 10.5, color: textMuted),
                   ),
                   Text(
-                    'India',
-                    style: TextStyle(
+                    DummyTemplateData.countryOfSupply,
+                    style: const TextStyle(
                       fontSize: 10.5,
                       fontWeight: FontWeight.bold,
                       color: textDark,
@@ -409,36 +389,20 @@ Widget buildWarmQuotationDummy(
           ),
         ),
 
-        // Alternating Table Rows
+        // 2 Alternating Table Rows
         _buildTableRow(
-          '1. Basic Web Development',
-          '1',
-          'Rs. 10,000',
-          'Rs. 10,000.00',
+          '1. ${DummyTemplateData.item1.title}',
+          DummyTemplateData.item1.qtyString,
+          DummyTemplateData.item1.rateRs,
+          DummyTemplateData.item1.amountRs,
           Colors.white,
           textDark,
         ),
         _buildTableRow(
-          '2. Logo Design',
-          '1',
-          'Rs. 1,000',
-          'Rs. 1,000.00',
-          cream,
-          textDark,
-        ),
-        _buildTableRow(
-          '3. Web Design',
-          '1',
-          'Rs. 50,000',
-          'Rs. 50,000.00',
-          Colors.white,
-          textDark,
-        ),
-        _buildTableRow(
-          '4. Full Stack Web development',
-          '1',
-          'Rs. 40,000',
-          'Rs. 40,000.00',
+          '2. ${DummyTemplateData.item2.title}',
+          DummyTemplateData.item2.qtyString,
+          DummyTemplateData.item2.rateRs,
+          DummyTemplateData.item2.amountRs,
           cream,
           textDark,
         ),
@@ -463,15 +427,15 @@ Widget buildWarmQuotationDummy(
                     ),
                   ),
                   const SizedBox(height: 4),
-                  const Text(
-                    '1. Please pay within 15 days from the date of invoice, overdue interest @ 14% will be charged on delayed payments.\n2. Please quote invoice number when remitting funds.',
-                    style: TextStyle(
+                  Text(
+                    DummyTemplateData.terms,
+                    style: const TextStyle(
                       fontSize: 9.5,
                       color: Color(0xFF475569),
                       height: 1.35,
                     ),
                   ),
-                  const SizedBox(height: 14),
+                  const SizedBox(height: 12),
                   const Text(
                     'Additional Notes',
                     style: TextStyle(
@@ -481,31 +445,18 @@ Widget buildWarmQuotationDummy(
                     ),
                   ),
                   const SizedBox(height: 4),
-                  const Text(
-                    'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using \'Content here, content here.',
-                    style: TextStyle(
+                  Text(
+                    DummyTemplateData.notes,
+                    style: const TextStyle(
                       fontSize: 9.5,
                       color: Color(0xFF475569),
                       height: 1.35,
                     ),
                   ),
-                  const SizedBox(height: 16),
-                  RichText(
-                    text: const TextSpan(
-                      style: TextStyle(fontSize: 10, color: textDark),
-                      children: [
-                        TextSpan(text: 'For any enquiries, email us on '),
-                        TextSpan(
-                          text: 'info@foobarlabs.com',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        TextSpan(text: ' or\ncall us on '),
-                        TextSpan(
-                          text: '+91 98765-43210',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
+                  const SizedBox(height: 12),
+                  buildDummyPaymentDetails(
+                    type: documentType,
+                    primary: orange,
                   ),
                 ],
               ),
@@ -521,8 +472,8 @@ Widget buildWarmQuotationDummy(
                   // Sub Total
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
-                      Text(
+                    children: [
+                      const Text(
                         'Sub Total',
                         style: TextStyle(
                           fontSize: 12,
@@ -531,8 +482,8 @@ Widget buildWarmQuotationDummy(
                         ),
                       ),
                       Text(
-                        'Rs. 101,000',
-                        style: TextStyle(
+                        DummyTemplateData.subtotalRs,
+                        style: const TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
                           color: textDark,
@@ -542,24 +493,24 @@ Widget buildWarmQuotationDummy(
                   ),
                   const SizedBox(height: 6),
 
-                  // Discount
+                  // Tax (12%)
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
-                      Text(
-                        'Discount(5%)',
+                    children: [
+                      const Text(
+                        'Tax (12%)',
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
-                          color: green,
+                          color: orange,
                         ),
                       ),
                       Text(
-                        '- Rs. 5,050',
-                        style: TextStyle(
+                        DummyTemplateData.taxRs,
+                        style: const TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
-                          color: green,
+                          color: orange,
                         ),
                       ),
                     ],
@@ -570,8 +521,8 @@ Widget buildWarmQuotationDummy(
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.end,
-                    children: const [
-                      Text(
+                    children: [
+                      const Text(
                         'Total',
                         style: TextStyle(
                           fontSize: 15,
@@ -580,8 +531,8 @@ Widget buildWarmQuotationDummy(
                         ),
                       ),
                       Text(
-                        'Rs. 95,950',
-                        style: TextStyle(
+                        DummyTemplateData.grandTotalRs,
+                        style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w900,
                           color: textDark,
@@ -597,10 +548,10 @@ Widget buildWarmQuotationDummy(
                     style: TextStyle(fontSize: 8.5, color: textMuted),
                   ),
                   const SizedBox(height: 2),
-                  const Text(
-                    'Ninety Thousand Nine Hundred Fifty Rupees Only',
-                    style: TextStyle(
-                      fontSize: 10,
+                  Text(
+                    DummyTemplateData.totalInWordsInr,
+                    style: const TextStyle(
+                      fontSize: 9.5,
                       fontWeight: FontWeight.w600,
                       color: textDark,
                     ),
@@ -608,28 +559,48 @@ Widget buildWarmQuotationDummy(
                   const SizedBox(height: 8),
                   Container(height: 0.8, color: const Color(0xFFE2E8F0)),
 
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 16),
 
                   // Authorized Signature
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Image.asset(
-                        'assets/icons/signature.png',
-                        height: 36,
-                        fit: BoxFit.contain,
-                      ),
-                      const SizedBox(height: 2),
-                      const Text(
-                        'Authorized Signature',
-                        style: TextStyle(fontSize: 9, color: textMuted),
-                      ),
-                    ],
+                  buildDummySignature(
+                    lineColor: const Color(0xFFCBD5E1),
+                    labelColor: textMuted,
+                    showName: true,
                   ),
                 ],
               ),
             ),
           ],
+        ),
+
+        const Spacer(),
+
+        // Bottom enquiry banner
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+          decoration: BoxDecoration(
+            color: cream,
+            borderRadius: BorderRadius.circular(6),
+          ),
+          child: Center(
+            child: RichText(
+              text: TextSpan(
+                style: const TextStyle(fontSize: 9.5, color: textDark),
+                children: [
+                  const TextSpan(text: 'For any enquiries, email us on '),
+                  TextSpan(
+                    text: DummyTemplateData.companyEmail,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  const TextSpan(text: ' or call us on '),
+                  TextSpan(
+                    text: DummyTemplateData.companyPhone,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
       ],
     ),
