@@ -328,7 +328,48 @@ Widget buildWarmQuotationDummy(
             ],
           ),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 10),
+
+        // Quotation Intro Message (Top of Table)
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                DummyTemplateData.quotationIntroTitle,
+                style: const TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                  color: textDark,
+                ),
+              ),
+              const SizedBox(height: 2),
+              const Text(
+                DummyTemplateData.quotationIntroBody,
+                style: TextStyle(
+                  fontSize: 9,
+                  color: textDark,
+                  height: 1.25,
+                ),
+              ),
+              const SizedBox(height: 2),
+              const Text(
+                DummyTemplateData.quotationIntroClosing,
+                style: TextStyle(fontSize: 9, color: textDark),
+              ),
+              Text(
+                DummyTemplateData.quotationIntroSender,
+                style: const TextStyle(
+                  fontSize: 9.5,
+                  fontWeight: FontWeight.bold,
+                  color: textDark,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 10),
 
         // Table Header
         Container(
@@ -412,62 +453,40 @@ Widget buildWarmQuotationDummy(
         ),
         const SizedBox(height: 18),
 
-        // Bottom section: Terms & Notes on Left, Totals & Signature on Right
+        // Middle section: Terms on Left, Totals on Right
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Left Column
+            // Left Column: Quotation Closing & Terms
             Expanded(
               flex: 5,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Terms and Conditions',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                      color: orange,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
+                children: const [
                   Text(
-                    DummyTemplateData.terms,
-                    style: const TextStyle(
+                    DummyTemplateData.quotationClosingMessage,
+                    style: TextStyle(
                       fontSize: 9.5,
-                      color: Color(0xFF475569),
+                      color: textDark,
                       height: 1.35,
                     ),
                   ),
-                  const SizedBox(height: 12),
-                  const Text(
-                    'Additional Notes',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                      color: orange,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: 10),
                   Text(
-                    DummyTemplateData.notes,
-                    style: const TextStyle(
+                    DummyTemplateData.quotationTerms,
+                    style: TextStyle(
                       fontSize: 9.5,
-                      color: Color(0xFF475569),
+                      fontWeight: FontWeight.bold,
+                      color: textDark,
                       height: 1.35,
                     ),
-                  ),
-                  const SizedBox(height: 12),
-                  buildDummyPaymentDetails(
-                    type: documentType,
-                    primary: orange,
                   ),
                 ],
               ),
             ),
             const SizedBox(width: 24),
 
-            // Right Column: Summary & Signature
+            // Right Column: Summary
             Expanded(
               flex: 4,
               child: Column(
@@ -562,15 +581,6 @@ Widget buildWarmQuotationDummy(
                   ),
                   const SizedBox(height: 8),
                   Container(height: 0.8, color: const Color(0xFFE2E8F0)),
-
-                  const SizedBox(height: 16),
-
-                  // Authorized Signature
-                  buildDummySignature(
-                    lineColor: const Color(0xFFCBD5E1),
-                    labelColor: textMuted,
-                    showName: true,
-                  ),
                 ],
               ),
             ),
@@ -578,6 +588,31 @@ Widget buildWarmQuotationDummy(
         ),
 
         const Spacer(),
+
+        // Bottom Row: Payment Details on Left, Signature on Right
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Expanded(
+              flex: 5,
+              child: buildDummyPaymentDetails(
+                type: documentType,
+                primary: orange,
+              ),
+            ),
+            const SizedBox(width: 24),
+            Expanded(
+              flex: 4,
+              child: buildDummySignature(
+                lineColor: const Color(0xFFCBD5E1),
+                labelColor: textMuted,
+                showName: true,
+              ),
+            ),
+          ],
+        ),
+
+        const SizedBox(height: 14),
 
         // Bottom enquiry banner
         Container(

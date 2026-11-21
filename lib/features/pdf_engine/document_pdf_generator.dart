@@ -570,7 +570,47 @@ class DocumentPdfGenerator {
           ),
         ],
       ),
-      pw.SizedBox(height: 16),
+      pw.SizedBox(height: 10),
+
+      // Quotation Intro Message (Top of Table)
+      pw.Column(
+        crossAxisAlignment: pw.CrossAxisAlignment.start,
+        children: [
+          pw.Text(
+            'Dear ${cName.isNotEmpty ? cName : "Valued Client"},',
+            style: pw.TextStyle(
+              fontSize: 9.5,
+              fontWeight: pw.FontWeight.bold,
+              color: textDark,
+            ),
+          ),
+          pw.SizedBox(height: 2),
+          pw.Text(
+            'Please find below a cost-breakdown for the quotation. Please consider this, and do not hesitate to contact us with any questions.',
+            style: const pw.TextStyle(
+              fontSize: 8.5,
+              color: textDark,
+              lineSpacing: 1.25,
+            ),
+          ),
+          pw.SizedBox(height: 2),
+          pw.Text(
+            'Many thanks,',
+            style: const pw.TextStyle(fontSize: 8.5, color: textDark),
+          ),
+          pw.Text(
+            profile.businessName.isNotEmpty
+                ? profile.businessName
+                : 'Acme Innovations',
+            style: pw.TextStyle(
+              fontSize: 9,
+              fontWeight: pw.FontWeight.bold,
+              color: textDark,
+            ),
+          ),
+        ],
+      ),
+      pw.SizedBox(height: 10),
 
       // Items Table with Borders
       pw.Container(
@@ -805,67 +845,30 @@ class DocumentPdfGenerator {
       pw.Row(
         crossAxisAlignment: pw.CrossAxisAlignment.start,
         children: [
-          // Left Notes/Terms
+          // Left: Quotation Closing & Terms
           pw.Expanded(
             flex: 5,
             child: pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
                 pw.Text(
-                  'Terms and Conditions',
-                  style: pw.TextStyle(
-                    fontSize: 9.5,
-                    fontWeight: pw.FontWeight.bold,
+                  'Many thanks for your custom! We look forward to doing business with you.',
+                  style: const pw.TextStyle(
+                    fontSize: 8.5,
                     color: textDark,
+                    lineSpacing: 1.25,
                   ),
                 ),
-                pw.SizedBox(height: 3),
+                pw.SizedBox(height: 8),
                 pw.Text(
                   doc.terms?.isNotEmpty == true
-                      ? doc.terms!
-                      : profile.defaultTerms,
+                      ? 'Quotation terms: ${doc.terms!}'
+                      : 'Quotation terms: Valid up to 15 days from issue date.',
                   style: pw.TextStyle(
-                    fontSize: 8,
-                    color: textDark,
-                    lineSpacing: 1.25,
-                  ),
-                ),
-                pw.SizedBox(height: 10),
-                pw.Text(
-                  'Additional Notes',
-                  style: pw.TextStyle(
-                    fontSize: 9.5,
+                    fontSize: 8.5,
                     fontWeight: pw.FontWeight.bold,
                     color: textDark,
-                  ),
-                ),
-                pw.SizedBox(height: 3),
-                pw.Text(
-                  doc.notes?.isNotEmpty == true
-                      ? doc.notes!
-                      : profile.defaultNotes,
-                  style: pw.TextStyle(
-                    fontSize: 8,
-                    color: textDark,
                     lineSpacing: 1.25,
-                  ),
-                ),
-                pw.SizedBox(height: 10),
-                pw.Text(
-                  'Attachments',
-                  style: pw.TextStyle(
-                    fontSize: 9.5,
-                    fontWeight: pw.FontWeight.bold,
-                    color: textDark,
-                  ),
-                ),
-                pw.SizedBox(height: 3),
-                pw.Text(
-                  '1. spec_sheet.pdf\n2. quote_details.pdf',
-                  style: pw.TextStyle(
-                    fontSize: 8,
-                    color: textDark,
-                    lineSpacing: 1.3,
                   ),
                 ),
               ],
@@ -1018,9 +1021,35 @@ class DocumentPdfGenerator {
                     ],
                   ),
                 ),
-                pw.SizedBox(height: 6),
+              ],
+            ),
+          ),
+        ],
+      ),
 
-                // Invoice Total In Words
+      pw.Spacer(),
+
+      // Bottom Row: Payment Details (Left) + Total In Words & Signature (Right)
+      pw.Row(
+        crossAxisAlignment: pw.CrossAxisAlignment.end,
+        children: [
+          pw.Expanded(
+            flex: 5,
+            child: doc.includePaymentDetails
+                ? _buildPaymentDetails(
+                    doc,
+                    payments,
+                    profile,
+                    primaryColor: cyanPrimary,
+                  )
+                : pw.SizedBox(),
+          ),
+          pw.SizedBox(width: 18),
+          pw.Expanded(
+            flex: 4,
+            child: pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.stretch,
+              children: [
                 pw.Text(
                   'Invoice Total In Words:',
                   style: pw.TextStyle(fontSize: 8, color: textMuted),
@@ -1035,8 +1064,6 @@ class DocumentPdfGenerator {
                   ),
                 ),
                 pw.SizedBox(height: 14),
-
-                // Signature
                 pw.Center(
                   child: pw.Column(
                     children: [
@@ -1071,7 +1098,7 @@ class DocumentPdfGenerator {
         ],
       ),
 
-      pw.Spacer(),
+      pw.SizedBox(height: 14),
 
       // Full Width Enquiry Box
       pw.Container(
@@ -1492,7 +1519,50 @@ class DocumentPdfGenerator {
           ],
         ),
       ),
-      pw.SizedBox(height: 12),
+      pw.SizedBox(height: 10),
+
+      // Quotation Intro Message (Top of Table)
+      pw.Padding(
+        padding: const pw.EdgeInsets.symmetric(horizontal: 4),
+        child: pw.Column(
+          crossAxisAlignment: pw.CrossAxisAlignment.start,
+          children: [
+            pw.Text(
+              'Dear ${cName.isNotEmpty ? cName : "Valued Client"},',
+              style: pw.TextStyle(
+                fontSize: 9.5,
+                fontWeight: pw.FontWeight.bold,
+                color: textDark,
+              ),
+            ),
+            pw.SizedBox(height: 2),
+            pw.Text(
+              'Please find below a cost-breakdown for the quotation. Please consider this, and do not hesitate to contact us with any questions.',
+              style: const pw.TextStyle(
+                fontSize: 8.5,
+                color: textDark,
+                lineSpacing: 1.25,
+              ),
+            ),
+            pw.SizedBox(height: 2),
+            pw.Text(
+              'Many thanks,',
+              style: const pw.TextStyle(fontSize: 8.5, color: textDark),
+            ),
+            pw.Text(
+              profile.businessName.isNotEmpty
+                  ? profile.businessName
+                  : 'Acme Innovations',
+              style: pw.TextStyle(
+                fontSize: 9,
+                fontWeight: pw.FontWeight.bold,
+                color: textDark,
+              ),
+            ),
+          ],
+        ),
+      ),
+      pw.SizedBox(height: 10),
 
       // Table Header
       pw.Container(
@@ -1604,66 +1674,42 @@ class DocumentPdfGenerator {
       }),
       pw.SizedBox(height: 18),
 
-      // Bottom Area
+      // Middle section: Quotation Terms on Left, Summary on Right
       pw.Row(
         crossAxisAlignment: pw.CrossAxisAlignment.start,
         children: [
-          // Left: Terms & Notes
+          // Left: Quotation Closing & Terms
           pw.Expanded(
             flex: 5,
             child: pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
                 pw.Text(
-                  'Terms and Conditions',
-                  style: pw.TextStyle(
-                    fontSize: 11,
-                    fontWeight: pw.FontWeight.bold,
-                    color: primaryOrange,
-                  ),
-                ),
-                pw.SizedBox(height: 4),
-                pw.Text(
-                  '1. Please pay within 15 days from the date of quotation/invoice.\n2. Please quote reference number when remitting funds.',
-                  style: pw.TextStyle(
+                  'Many thanks for your custom! We look forward to doing business with you.',
+                  style: const pw.TextStyle(
                     fontSize: 9,
-                    color: PdfColor.fromHex('#475569'),
+                    color: textDark,
                     lineSpacing: 1.3,
                   ),
                 ),
-                pw.SizedBox(height: 12),
-                if (doc.notes?.isNotEmpty == true) ...[
-                  pw.Text(
-                    'Additional Notes',
-                    style: pw.TextStyle(
-                      fontSize: 11,
-                      fontWeight: pw.FontWeight.bold,
-                      color: primaryOrange,
-                    ),
+                pw.SizedBox(height: 8),
+                pw.Text(
+                  doc.terms?.isNotEmpty == true
+                      ? 'Quotation terms: ${doc.terms!}'
+                      : 'Quotation terms: Valid up to 15 days from issue date.',
+                  style: pw.TextStyle(
+                    fontSize: 9,
+                    fontWeight: pw.FontWeight.bold,
+                    color: textDark,
+                    lineSpacing: 1.3,
                   ),
-                  pw.SizedBox(height: 4),
-                  pw.Text(
-                    doc.notes!,
-                    style: pw.TextStyle(
-                      fontSize: 9,
-                      color: PdfColor.fromHex('#475569'),
-                      lineSpacing: 1.3,
-                    ),
-                  ),
-                  pw.SizedBox(height: 14),
-                ],
-                if (profile.email?.isNotEmpty == true ||
-                    profile.phone?.isNotEmpty == true)
-                  pw.Text(
-                    'For any enquiries, email us on ${profile.email ?? ""} or call us on ${profile.phone ?? ""}',
-                    style: pw.TextStyle(fontSize: 9, color: textDark),
-                  ),
+                ),
               ],
             ),
           ),
           pw.SizedBox(width: 20),
 
-          // Right: Summary & Signature
+          // Right: Summary
           pw.Expanded(
             flex: 4,
             child: pw.Column(
@@ -1772,60 +1818,113 @@ class DocumentPdfGenerator {
                 ),
                 pw.SizedBox(height: 6),
                 pw.Container(height: 0.8, color: PdfColor.fromHex('#E2E8F0')),
-                pw.SizedBox(height: 16),
-
-                // Signature & Stamp
-                pw.Row(
-                  mainAxisAlignment: pw.MainAxisAlignment.end,
-                  crossAxisAlignment: pw.CrossAxisAlignment.end,
-                  children: [
-                    if (stampBytes != null && doc.showStamp)
-                      pw.Padding(
-                        padding: const pw.EdgeInsets.only(right: 14),
-                        child: pw.Column(
-                          children: [
-                            pw.Container(
-                              height: 38,
-                              child: pw.Image(
-                                pw.MemoryImage(stampBytes),
-                                fit: pw.BoxFit.contain,
-                              ),
-                            ),
-                            pw.SizedBox(height: 2),
-                            pw.Text(
-                              'Company Stamp',
-                              style: pw.TextStyle(
-                                fontSize: 8,
-                                color: textMuted,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    if (signatureBytes != null && doc.showSignature)
-                      pw.Column(
-                        children: [
-                          pw.Container(
-                            height: 38,
-                            child: pw.Image(
-                              pw.MemoryImage(signatureBytes),
-                              fit: pw.BoxFit.contain,
-                            ),
-                          ),
-                          pw.SizedBox(height: 2),
-                          pw.Text(
-                            'Authorized Signature',
-                            style: pw.TextStyle(fontSize: 8, color: textMuted),
-                          ),
-                        ],
-                      ),
-                  ],
-                ),
               ],
             ),
           ),
         ],
       ),
+
+      pw.Spacer(),
+
+      // Bottom Row: Payment Details on Left, Signature on Right
+      pw.Row(
+        crossAxisAlignment: pw.CrossAxisAlignment.end,
+        children: [
+          pw.Expanded(
+            flex: 5,
+            child: doc.includePaymentDetails
+                ? _buildPaymentDetails(
+                    doc,
+                    payments,
+                    profile,
+                    primaryColor: primaryOrange,
+                  )
+                : pw.SizedBox(),
+          ),
+          pw.SizedBox(width: 20),
+          pw.Expanded(
+            flex: 4,
+            child: pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.end,
+              crossAxisAlignment: pw.CrossAxisAlignment.end,
+              children: [
+                if (stampBytes != null && doc.showStamp)
+                  pw.Padding(
+                    padding: const pw.EdgeInsets.only(right: 14),
+                    child: pw.Column(
+                      children: [
+                        pw.Container(
+                          height: 38,
+                          child: pw.Image(
+                            pw.MemoryImage(stampBytes),
+                            fit: pw.BoxFit.contain,
+                          ),
+                        ),
+                        pw.SizedBox(height: 2),
+                        pw.Text(
+                          'Company Stamp',
+                          style: pw.TextStyle(
+                            fontSize: 8,
+                            color: textMuted,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                if (signatureBytes != null && doc.showSignature)
+                  pw.Column(
+                    children: [
+                      pw.Container(
+                        height: 38,
+                        child: pw.Image(
+                          pw.MemoryImage(signatureBytes),
+                          fit: pw.BoxFit.contain,
+                        ),
+                      ),
+                      pw.SizedBox(height: 2),
+                      pw.Text(
+                        'Authorized Signature',
+                        style: pw.TextStyle(fontSize: 8, color: textMuted),
+                      ),
+                    ],
+                  ),
+              ],
+            ),
+          ),
+        ],
+      ),
+
+      pw.SizedBox(height: 14),
+
+      // Bottom Enquiry Banner
+      if (profile.email?.isNotEmpty == true ||
+          profile.phone?.isNotEmpty == true)
+        pw.Container(
+          padding: const pw.EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+          decoration: pw.BoxDecoration(
+            color: PdfColor.fromHex('#FFF7ED'),
+            borderRadius: const pw.BorderRadius.all(pw.Radius.circular(6)),
+          ),
+          child: pw.Center(
+            child: pw.RichText(
+              text: pw.TextSpan(
+                style: pw.TextStyle(fontSize: 9, color: textDark),
+                children: [
+                  const pw.TextSpan(text: 'For any enquiries, email us on '),
+                  pw.TextSpan(
+                    text: profile.email ?? '',
+                    style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                  ),
+                  const pw.TextSpan(text: ' or call us on '),
+                  pw.TextSpan(
+                    text: profile.phone ?? '',
+                    style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
     ];
   }
 

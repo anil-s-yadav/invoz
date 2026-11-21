@@ -156,6 +156,18 @@ class DummyTemplateData {
   static const String terms =
       '1. Payment is due within 15 days of invoice date.\n2. Overdue interest @ 1.5% monthly will be charged on delayed payments.';
 
+  // Quotation Specific Texts (Top and Bottom of Table)
+  static String get quotationIntroTitle => 'Dear $clientName,';
+  static const String quotationIntroBody =
+      'Please find below a cost-breakdown for the quotation. Please consider this, and do not hesitate to contact us with any questions.';
+  static const String quotationIntroClosing = 'Many thanks,';
+  static String get quotationIntroSender => companyName;
+
+  static const String quotationClosingMessage =
+      'Many thanks for your custom! We look forward to doing business with you.';
+  static const String quotationTerms =
+      'Quotation terms: Valid up to 15 days from issue date.';
+
   // Signatory & Signature
   static const String signatureAsset = 'assets/icons/signature.png';
   static const String signatoryName = 'Alex Morgan';
