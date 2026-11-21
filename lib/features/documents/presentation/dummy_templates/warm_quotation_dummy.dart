@@ -93,12 +93,16 @@ Widget buildWarmQuotationDummy(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      '${documentType.displayName} Date',
+                      documentType == DocumentType.receipt
+                          ? 'Payment Date'
+                          : '${documentType.displayName} Date',
                       style: const TextStyle(fontSize: 11, color: textMuted),
                     ),
                     const SizedBox(width: 16),
                     Text(
-                      DummyTemplateData.issueDate,
+                      documentType == DocumentType.receipt
+                          ? DummyTemplateData.paymentDate
+                          : DummyTemplateData.issueDate,
                       style: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,

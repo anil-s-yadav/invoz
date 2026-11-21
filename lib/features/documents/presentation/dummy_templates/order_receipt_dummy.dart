@@ -87,7 +87,7 @@ Widget buildOrderReceiptDummy(
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    '${DummyTemplateData.getDocNumberPlain(documentType)} • ${DummyTemplateData.issueDate}',
+                    '${DummyTemplateData.getDocNumberPlain(documentType)} • Payment Date: ${DummyTemplateData.paymentDate}',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 11,

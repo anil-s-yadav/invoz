@@ -165,19 +165,26 @@ Widget buildCyanQuotationDummy(
                     DummyTemplateData.getDocNumberPlain(documentType),
                   ),
                   const SizedBox(height: 3),
-                  _buildMetaRow(
-                    '${documentType.displayName} Date:',
-                    DummyTemplateData.issueDate,
-                  ),
-                  const SizedBox(height: 3),
-                  _buildMetaRow(
-                    documentType == DocumentType.proforma
-                        ? 'Valid Until:'
-                        : 'Due Date:',
-                    documentType == DocumentType.proforma
-                        ? DummyTemplateData.validUntil
-                        : DummyTemplateData.dueDate,
-                  ),
+                  if (documentType == DocumentType.receipt)
+                    _buildMetaRow(
+                      'Payment Date:',
+                      DummyTemplateData.paymentDate,
+                    )
+                  else ...[
+                    _buildMetaRow(
+                      '${documentType.displayName} Date:',
+                      DummyTemplateData.issueDate,
+                    ),
+                    const SizedBox(height: 3),
+                    _buildMetaRow(
+                      documentType == DocumentType.proforma
+                          ? 'Valid Until:'
+                          : 'Due Date:',
+                      documentType == DocumentType.proforma
+                          ? DummyTemplateData.validUntil
+                          : DummyTemplateData.dueDate,
+                    ),
+                  ],
                   const SizedBox(height: 6),
                   _buildMetaRow(
                     'Country of supply:',

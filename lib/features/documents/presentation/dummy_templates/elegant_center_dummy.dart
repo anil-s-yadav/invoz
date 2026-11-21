@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import '../../domain/document_model.dart';
 import 'dummy_template_utils.dart';
 
-Widget buildElegantCenterDummy(DocumentType documentType) {
+Widget buildElegantCenterDummy([
+  DocumentType documentType = DocumentType.receipt,
+]) {
   const primary = Color(0xFF0D47A1);
   const lightBlue = Color(0xFFD6E4F0);
 
@@ -85,13 +87,17 @@ Widget buildElegantCenterDummy(DocumentType documentType) {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   buildDummyText(
-                    'Billed To / Client',
+                    'Paid By',
                     color: primary,
                     bold: true,
                     size: 11,
                   ),
                   const SizedBox(height: 4),
-                  buildDummyText(DummyTemplateData.clientName, size: 11, bold: true),
+                  buildDummyText(
+                    DummyTemplateData.clientName,
+                    size: 11,
+                    bold: true,
+                  ),
                   const SizedBox(height: 2),
                   buildDummyText(DummyTemplateData.clientEmail, size: 10),
                   buildDummyText(DummyTemplateData.clientAddress, size: 10),
@@ -102,9 +108,9 @@ Widget buildElegantCenterDummy(DocumentType documentType) {
             FittedBox(
               fit: BoxFit.scaleDown,
               alignment: Alignment.topRight,
-              child: Text(
-                documentType.displayName.toUpperCase(),
-                style: const TextStyle(
+              child: const Text(
+                'RECEIPT',
+                style: TextStyle(
                   fontSize: 26,
                   color: primary,
                   fontWeight: FontWeight.w800,
@@ -126,7 +132,7 @@ Widget buildElegantCenterDummy(DocumentType documentType) {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   buildDummyText(
-                    '${documentType.displayName} Details',
+                    'Receipt Details',
                     color: primary,
                     bold: true,
                     size: 11,
@@ -136,31 +142,10 @@ Widget buildElegantCenterDummy(DocumentType documentType) {
                     children: [
                       SizedBox(
                         width: 90,
-                        child: buildDummyText('Issue Date:', size: 10.5),
+                        child: buildDummyText('Payment Date:', size: 10.5),
                       ),
                       buildDummyText(
-                        DummyTemplateData.issueDate,
-                        size: 10.5,
-                        bold: true,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      SizedBox(
-                        width: 90,
-                        child: buildDummyText(
-                          documentType == DocumentType.proforma
-                              ? 'Valid Until:'
-                              : 'Due Date:',
-                          size: 10.5,
-                        ),
-                      ),
-                      buildDummyText(
-                        documentType == DocumentType.proforma
-                            ? DummyTemplateData.validUntil
-                            : DummyTemplateData.dueDate,
+                        DummyTemplateData.paymentDate,
                         size: 10.5,
                         bold: true,
                       ),
@@ -177,14 +162,14 @@ Widget buildElegantCenterDummy(DocumentType documentType) {
                     SizedBox(
                       width: 90,
                       child: buildDummyText(
-                        '${documentType.displayName} #',
+                        'Receipt #',
                         color: primary,
                         bold: true,
                         size: 11,
                       ),
                     ),
                     buildDummyText(
-                      DummyTemplateData.getDocNumberPlain(documentType),
+                      DummyTemplateData.getDocNumberPlain(DocumentType.receipt),
                       size: 11,
                       bold: true,
                     ),
@@ -489,10 +474,7 @@ Widget buildElegantCenterDummy(DocumentType documentType) {
                 children: [
                   buildDummyText('Notes', color: primary, bold: true, size: 11),
                   const SizedBox(height: 4),
-                  buildDummyText(
-                    DummyTemplateData.notes,
-                    size: 9.5,
-                  ),
+                  buildDummyText(DummyTemplateData.notes, size: 9.5),
                   const SizedBox(height: 12),
                   buildDummyPaymentDetails(
                     type: documentType,

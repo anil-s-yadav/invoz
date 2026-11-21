@@ -299,7 +299,7 @@ class _DocumentEditorScreenState extends State<DocumentEditorScreen> {
       customerId: _selectedCustomer?.id,
       customerSnapshot: _selectedCustomer,
       issueDate: _issueDate,
-      dueDate: _dueDate,
+      dueDate: _docType == DocumentType.receipt ? _issueDate : _dueDate,
       status: status,
       items: _items,
       payments: widget.initialDocument?.payments ?? const [],
@@ -642,27 +642,38 @@ class _DocumentEditorScreenState extends State<DocumentEditorScreen> {
           ),
           const SizedBox(height: 12),
           // Dates row
-          Row(
-            children: [
-              Expanded(
-                child: _buildDateChip(
-                  label: '${_docType.displayName} Date',
-                  dateStr: DateFormatter.format(_issueDate),
-                  onTap: _selectIssueDate,
+          if (_docType == DocumentType.receipt)
+            _buildDateChip(
+              label: 'Payment Date',
+              dateStr: DateFormatter.format(_issueDate),
+              onTap: _selectIssueDate,
+            )
+          else
+            Row(
+              children: [
+                Expanded(
+                  child: _buildDateChip(
+                    label: _docType == DocumentType.quotation ||
+                            _docType == DocumentType.proforma
+                        ? 'Issue Date'
+                        : '${_docType.displayName} Date',
+                    dateStr: DateFormatter.format(_issueDate),
+                    onTap: _selectIssueDate,
+                  ),
                 ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _buildDateChip(
-                  label: _docType == DocumentType.quotation
-                      ? 'Valid Until'
-                      : 'Due Date',
-                  dateStr: DateFormatter.format(_dueDate),
-                  onTap: _selectDueDate,
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _buildDateChip(
+                    label: _docType == DocumentType.quotation ||
+                            _docType == DocumentType.proforma
+                        ? 'Valid Until'
+                        : 'Due Date',
+                    dateStr: DateFormatter.format(_dueDate),
+                    onTap: _selectDueDate,
+                  ),
                 ),
-              ),
-            ],
-          ),
+              ],
+            ),
           const SizedBox(height: 12),
           _buildTemplateChip(),
         ],

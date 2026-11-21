@@ -55,7 +55,7 @@ class DummyTemplateWidget extends StatelessWidget {
         return SizedBox(
           width: 595,
           height: 842,
-          child: buildElegantCenterDummy(documentType),
+          child: buildElegantCenterDummy(DocumentType.receipt),
         );
       case TemplateRegistry.orderReceipt:
         return SizedBox(

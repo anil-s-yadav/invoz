@@ -87,6 +87,7 @@ class DummyTemplateData {
 
   // Dates & Metadata
   static const String issueDate = '28 Sep 2026';
+  static const String paymentDate = '28 Sep 2026';
   static const String dueDate = '13 Oct 2026';
   static const String validUntil = '13 Oct 2026';
   static const String poNumber = 'PO-98234';

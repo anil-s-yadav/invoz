@@ -45,24 +45,35 @@ Widget buildPremiumModernDummy(DocumentType documentType) {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    FittedBox(
-                      fit: BoxFit.scaleDown,
-                      alignment: Alignment.centerRight,
-                      child: buildDummyText(
-                        'Issue Date: ${DummyTemplateData.issueDate}',
-                        color: Colors.white70,
+                    if (documentType == DocumentType.receipt)
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.centerRight,
+                        child: buildDummyText(
+                          'Payment Date: ${DummyTemplateData.paymentDate}',
+                          color: Colors.white70,
+                        ),
+                      )
+                    else ...[
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.centerRight,
+                        child: buildDummyText(
+                          'Issue Date: ${DummyTemplateData.issueDate}',
+                          color: Colors.white70,
+                        ),
                       ),
-                    ),
-                    FittedBox(
-                      fit: BoxFit.scaleDown,
-                      alignment: Alignment.centerRight,
-                      child: buildDummyText(
-                        documentType == DocumentType.proforma
-                            ? 'Valid Until: ${DummyTemplateData.validUntil}'
-                            : 'Due Date: ${DummyTemplateData.dueDate}',
-                        color: Colors.white70,
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.centerRight,
+                        child: buildDummyText(
+                          documentType == DocumentType.proforma
+                              ? 'Valid Until: ${DummyTemplateData.validUntil}'
+                              : 'Due Date: ${DummyTemplateData.dueDate}',
+                          color: Colors.white70,
+                        ),
                       ),
-                    ),
+                    ],
                   ],
                 ),
               ),

@@ -81,51 +81,74 @@ Widget buildClassicFreeDummy(DocumentType documentType) {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  FittedBox(
-                    fit: BoxFit.scaleDown,
-                    alignment: Alignment.centerRight,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        buildDummyText(
-                          'Issue Date: ',
-                          size: 10,
-                          color: mutedSlate,
-                        ),
-                        buildDummyText(
-                          DummyTemplateData.issueDate,
-                          size: 10,
-                          bold: true,
-                          color: primarySlate,
-                        ),
-                      ],
+                  if (documentType == DocumentType.receipt)
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerRight,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          buildDummyText(
+                            'Payment Date: ',
+                            size: 10,
+                            color: mutedSlate,
+                          ),
+                          buildDummyText(
+                            DummyTemplateData.paymentDate,
+                            size: 10,
+                            bold: true,
+                            color: primarySlate,
+                          ),
+                        ],
+                      ),
+                    )
+                  else ...[
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerRight,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          buildDummyText(
+                            'Issue Date: ',
+                            size: 10,
+                            color: mutedSlate,
+                          ),
+                          buildDummyText(
+                            DummyTemplateData.issueDate,
+                            size: 10,
+                            bold: true,
+                            color: primarySlate,
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 3),
-                  FittedBox(
-                    fit: BoxFit.scaleDown,
-                    alignment: Alignment.centerRight,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        buildDummyText(
-                          documentType == DocumentType.proforma
-                              ? 'Valid Until: '
-                              : 'Due Date: ',
-                          size: 10,
-                          color: mutedSlate,
-                        ),
-                        buildDummyText(
-                          documentType == DocumentType.proforma
-                              ? DummyTemplateData.validUntil
-                              : DummyTemplateData.dueDate,
-                          size: 10,
-                          bold: true,
-                          color: primarySlate,
-                        ),
-                      ],
+                    const SizedBox(height: 3),
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerRight,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          buildDummyText(
+                            documentType == DocumentType.proforma
+                                ? 'Valid Until: '
+                                : 'Due Date: ',
+                            size: 10,
+                            color: mutedSlate,
+                          ),
+                          buildDummyText(
+                            documentType == DocumentType.proforma
+                                ? DummyTemplateData.validUntil
+                                : DummyTemplateData.dueDate,
+                            size: 10,
+                            bold: true,
+                            color: primarySlate,
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
+                  ],
                 ],
               ),
             ),

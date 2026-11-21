@@ -115,13 +115,20 @@ Widget buildReceiptThermalDummy(
                     letterSpacing: 0.8,
                   ),
                 ),
-                Text(
-                  DummyTemplateData.grandTotalRs,
-                  style: TextStyle(
-                    fontFamily: 'Courier',
-                    fontSize: 20,
-                    fontWeight: FontWeight.w900,
-                    color: textPrimary,
+                const SizedBox(width: 8),
+                Expanded(
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      DummyTemplateData.grandTotalRs,
+                      style: TextStyle(
+                        fontFamily: 'Courier',
+                        fontSize: 20,
+                        fontWeight: FontWeight.w900,
+                        color: textPrimary,
+                      ),
+                    ),
                   ),
                 ),
               ],
@@ -165,7 +172,7 @@ Widget buildReceiptThermalDummy(
 
             // Meta details
             Text(
-              'Date: ${DummyTemplateData.issueDate}',
+              'Payment Date: ${DummyTemplateData.paymentDate}',
               style: TextStyle(
                 fontFamily: 'Courier',
                 fontSize: 12,

@@ -481,7 +481,7 @@ class DocumentPdfGenerator {
                 pw.Row(
                   mainAxisSize: pw.MainAxisSize.min,
                   children: [
-                    pw.Text('Invoice No:  ',
+                    pw.Text('${doc.docType.displayName} No:  ',
                         style: pw.TextStyle(
                             fontSize: 9,
                             fontWeight: pw.FontWeight.bold,
@@ -491,31 +491,54 @@ class DocumentPdfGenerator {
                   ],
                 ),
                 pw.SizedBox(height: 2),
-                pw.Row(
-                  mainAxisSize: pw.MainAxisSize.min,
-                  children: [
-                    pw.Text('Invoice Date:  ',
-                        style: pw.TextStyle(
-                            fontSize: 9,
-                            fontWeight: pw.FontWeight.bold,
-                            color: textDark)),
-                    pw.Text(DateFormatter.format(doc.issueDate),
-                        style: pw.TextStyle(fontSize: 9, color: textDark)),
-                  ],
-                ),
-                pw.SizedBox(height: 2),
-                pw.Row(
-                  mainAxisSize: pw.MainAxisSize.min,
-                  children: [
-                    pw.Text('Due Date:  ',
-                        style: pw.TextStyle(
-                            fontSize: 9,
-                            fontWeight: pw.FontWeight.bold,
-                            color: textDark)),
-                    pw.Text(DateFormatter.format(doc.dueDate),
-                        style: pw.TextStyle(fontSize: 9, color: textDark)),
-                  ],
-                ),
+                if (doc.docType == DocumentType.receipt)
+                  pw.Row(
+                    mainAxisSize: pw.MainAxisSize.min,
+                    children: [
+                      pw.Text('Payment Date:  ',
+                          style: pw.TextStyle(
+                              fontSize: 9,
+                              fontWeight: pw.FontWeight.bold,
+                              color: textDark)),
+                      pw.Text(DateFormatter.format(doc.issueDate),
+                          style: pw.TextStyle(fontSize: 9, color: textDark)),
+                    ],
+                  )
+                else ...[
+                  pw.Row(
+                    mainAxisSize: pw.MainAxisSize.min,
+                    children: [
+                      pw.Text(
+                          doc.docType == DocumentType.quotation ||
+                                  doc.docType == DocumentType.proforma
+                              ? 'Issue Date:  '
+                              : '${doc.docType.displayName} Date:  ',
+                          style: pw.TextStyle(
+                              fontSize: 9,
+                              fontWeight: pw.FontWeight.bold,
+                              color: textDark)),
+                      pw.Text(DateFormatter.format(doc.issueDate),
+                          style: pw.TextStyle(fontSize: 9, color: textDark)),
+                    ],
+                  ),
+                  pw.SizedBox(height: 2),
+                  pw.Row(
+                    mainAxisSize: pw.MainAxisSize.min,
+                    children: [
+                      pw.Text(
+                          doc.docType == DocumentType.quotation ||
+                                  doc.docType == DocumentType.proforma
+                              ? 'Valid Until:  '
+                              : 'Due Date:  ',
+                          style: pw.TextStyle(
+                              fontSize: 9,
+                              fontWeight: pw.FontWeight.bold,
+                              color: textDark)),
+                      pw.Text(DateFormatter.format(doc.dueDate),
+                          style: pw.TextStyle(fontSize: 9, color: textDark)),
+                    ],
+                  ),
+                ],
                 pw.SizedBox(height: 6),
                 pw.Row(
                   mainAxisSize: pw.MainAxisSize.min,
@@ -1236,7 +1259,9 @@ class DocumentPdfGenerator {
                 mainAxisSize: pw.MainAxisSize.min,
                 children: [
                   pw.Text(
-                    '${doc.docType.displayName} Date',
+                    doc.docType == DocumentType.receipt
+                        ? 'Payment Date'
+                        : '${doc.docType.displayName} Date',
                     style: pw.TextStyle(fontSize: 10, color: textMuted),
                   ),
                   pw.SizedBox(width: 14),
@@ -2054,7 +2079,7 @@ class DocumentPdfGenerator {
             pw.SizedBox(height: 12),
 
             pw.Text(
-              DateFormatter.format(doc.issueDate),
+              'Payment Date: ${DateFormatter.format(doc.issueDate)}',
               style: pw.TextStyle(font: courier, fontSize: 9),
             ),
             pw.Text(
@@ -2218,41 +2243,63 @@ class DocumentPdfGenerator {
                   ),
                 ),
                 pw.SizedBox(height: 8),
-                pw.Row(
-                  mainAxisSize: pw.MainAxisSize.min,
-                  children: [
-                    pw.Text(
-                      'Issue Date: ',
-                      style: pw.TextStyle(fontSize: 10, color: mutedColor),
-                    ),
-                    pw.Text(
-                      DateFormatter.format(doc.issueDate),
-                      style: pw.TextStyle(
-                        fontSize: 10,
-                        fontWeight: pw.FontWeight.bold,
-                        color: primaryColor,
+                if (doc.docType == DocumentType.receipt)
+                  pw.Row(
+                    mainAxisSize: pw.MainAxisSize.min,
+                    children: [
+                      pw.Text(
+                        'Payment Date: ',
+                        style: pw.TextStyle(fontSize: 10, color: mutedColor),
                       ),
-                    ),
-                  ],
-                ),
-                pw.SizedBox(height: 3),
-                pw.Row(
-                  mainAxisSize: pw.MainAxisSize.min,
-                  children: [
-                    pw.Text(
-                      'Due Date: ',
-                      style: pw.TextStyle(fontSize: 10, color: mutedColor),
-                    ),
-                    pw.Text(
-                      DateFormatter.format(doc.dueDate),
-                      style: pw.TextStyle(
-                        fontSize: 10,
-                        fontWeight: pw.FontWeight.bold,
-                        color: primaryColor,
+                      pw.Text(
+                        DateFormatter.format(doc.issueDate),
+                        style: pw.TextStyle(
+                          fontSize: 10,
+                          fontWeight: pw.FontWeight.bold,
+                          color: primaryColor,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
+                    ],
+                  )
+                else ...[
+                  pw.Row(
+                    mainAxisSize: pw.MainAxisSize.min,
+                    children: [
+                      pw.Text(
+                        'Issue Date: ',
+                        style: pw.TextStyle(fontSize: 10, color: mutedColor),
+                      ),
+                      pw.Text(
+                        DateFormatter.format(doc.issueDate),
+                        style: pw.TextStyle(
+                          fontSize: 10,
+                          fontWeight: pw.FontWeight.bold,
+                          color: primaryColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                  pw.SizedBox(height: 3),
+                  pw.Row(
+                    mainAxisSize: pw.MainAxisSize.min,
+                    children: [
+                      pw.Text(
+                        doc.docType == DocumentType.proforma
+                            ? 'Valid Until: '
+                            : 'Due Date: ',
+                        style: pw.TextStyle(fontSize: 10, color: mutedColor),
+                      ),
+                      pw.Text(
+                        DateFormatter.format(doc.dueDate),
+                        style: pw.TextStyle(
+                          fontSize: 10,
+                          fontWeight: pw.FontWeight.bold,
+                          color: primaryColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ],
             ),
           ),
@@ -2732,20 +2779,32 @@ class DocumentPdfGenerator {
             pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.end,
               children: [
-                pw.Text(
-                  'Issue Date: ${DateFormatter.format(doc.issueDate)}',
-                  style: const pw.TextStyle(
-                    fontSize: 10,
-                    color: PdfColors.white,
+                if (doc.docType == DocumentType.receipt)
+                  pw.Text(
+                    'Payment Date: ${DateFormatter.format(doc.issueDate)}',
+                    style: const pw.TextStyle(
+                      fontSize: 10,
+                      color: PdfColors.white,
+                    ),
+                  )
+                else ...[
+                  pw.Text(
+                    'Issue Date: ${DateFormatter.format(doc.issueDate)}',
+                    style: const pw.TextStyle(
+                      fontSize: 10,
+                      color: PdfColors.white,
+                    ),
                   ),
-                ),
-                pw.Text(
-                  'Due Date: ${DateFormatter.format(doc.dueDate)}',
-                  style: const pw.TextStyle(
-                    fontSize: 10,
-                    color: PdfColors.white,
+                  pw.Text(
+                    doc.docType == DocumentType.proforma
+                        ? 'Valid Until: ${DateFormatter.format(doc.dueDate)}'
+                        : 'Due Date: ${DateFormatter.format(doc.dueDate)}',
+                    style: const pw.TextStyle(
+                      fontSize: 10,
+                      color: PdfColors.white,
+                    ),
                   ),
-                ),
+                ],
               ],
             ),
           ],
@@ -3259,27 +3318,24 @@ class DocumentPdfGenerator {
           ),
         ],
       ),
-      pw.SizedBox(height: 16),
+      pw.SizedBox(height: 12),
+      if (profile.address != null && profile.address!.isNotEmpty) ...[
+        pw.Center(
+          child: pw.Text(
+            profile.address!,
+            textAlign: pw.TextAlign.center,
+            style: const pw.TextStyle(fontSize: 9.5, color: PdfColors.grey600),
+          ),
+        ),
+        pw.SizedBox(height: 4),
+      ],
       pw.Row(
         mainAxisAlignment: pw.MainAxisAlignment.center,
         children: [
-          if (profile.address != null && profile.address!.isNotEmpty)
-            pw.Text(
-              profile.address!,
-              style: const pw.TextStyle(fontSize: 10, color: PdfColors.grey600),
-            ),
-          if (profile.address != null &&
-              profile.phone != null &&
-              profile.address!.isNotEmpty &&
-              profile.phone!.isNotEmpty)
-            pw.Text(
-              '   |   ',
-              style: const pw.TextStyle(fontSize: 10, color: PdfColors.grey600),
-            ),
           if (profile.phone != null && profile.phone!.isNotEmpty)
             pw.Text(
               profile.phone!,
-              style: const pw.TextStyle(fontSize: 10, color: PdfColors.grey600),
+              style: const pw.TextStyle(fontSize: 9.5, color: PdfColors.grey600),
             ),
           if (profile.phone != null &&
               profile.email != null &&
@@ -3287,12 +3343,12 @@ class DocumentPdfGenerator {
               profile.email!.isNotEmpty)
             pw.Text(
               '   |   ',
-              style: const pw.TextStyle(fontSize: 10, color: PdfColors.grey600),
+              style: const pw.TextStyle(fontSize: 9.5, color: PdfColors.grey600),
             ),
           if (profile.email != null && profile.email!.isNotEmpty)
             pw.Text(
               profile.email!,
-              style: const pw.TextStyle(fontSize: 10, color: PdfColors.grey600),
+              style: const pw.TextStyle(fontSize: 9.5, color: PdfColors.grey600),
             ),
         ],
       ),
@@ -3341,7 +3397,7 @@ class DocumentPdfGenerator {
               crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
                 pw.Text(
-                  'Booking Details',
+                  'Receipt Details',
                   style: pw.TextStyle(
                     color: primaryColor,
                     fontWeight: pw.FontWeight.bold,
@@ -3354,28 +3410,12 @@ class DocumentPdfGenerator {
                     pw.SizedBox(
                       width: 100,
                       child: pw.Text(
-                        'Issue Date',
+                        'Payment Date',
                         style: const pw.TextStyle(fontSize: 11),
                       ),
                     ),
                     pw.Text(
                       DateFormatter.format(doc.issueDate),
-                      style: const pw.TextStyle(fontSize: 11),
-                    ),
-                  ],
-                ),
-                pw.SizedBox(height: 6),
-                pw.Row(
-                  children: [
-                    pw.SizedBox(
-                      width: 100,
-                      child: pw.Text(
-                        'Due Date',
-                        style: const pw.TextStyle(fontSize: 11),
-                      ),
-                    ),
-                    pw.Text(
-                      DateFormatter.format(doc.dueDate),
                       style: const pw.TextStyle(fontSize: 11),
                     ),
                   ],
@@ -3391,7 +3431,7 @@ class DocumentPdfGenerator {
                   pw.SizedBox(
                     width: 80,
                     child: pw.Text(
-                      'Receipt #',
+                      '${doc.docType.displayName} #',
                       style: pw.TextStyle(
                         color: primaryColor,
                         fontWeight: pw.FontWeight.bold,
@@ -3405,26 +3445,28 @@ class DocumentPdfGenerator {
                   ),
                 ],
               ),
-              pw.SizedBox(height: 6),
-              pw.Row(
-                children: [
-                  pw.SizedBox(
-                    width: 80,
-                    child: pw.Text(
-                      'Receipt Date',
-                      style: pw.TextStyle(
-                        color: primaryColor,
-                        fontWeight: pw.FontWeight.bold,
-                        fontSize: 11,
+              if (doc.poNumber != null && doc.poNumber!.isNotEmpty) ...[
+                pw.SizedBox(height: 6),
+                pw.Row(
+                  children: [
+                    pw.SizedBox(
+                      width: 80,
+                      child: pw.Text(
+                        'PO #',
+                        style: pw.TextStyle(
+                          color: primaryColor,
+                          fontWeight: pw.FontWeight.bold,
+                          fontSize: 11,
+                        ),
                       ),
                     ),
-                  ),
-                  pw.Text(
-                    DateFormatter.format(doc.issueDate),
-                    style: const pw.TextStyle(fontSize: 11),
-                  ),
-                ],
-              ),
+                    pw.Text(
+                      doc.poNumber!,
+                      style: const pw.TextStyle(fontSize: 11),
+                    ),
+                  ],
+                ),
+              ],
             ],
           ),
         ],
@@ -3882,7 +3924,7 @@ class DocumentPdfGenerator {
                   ),
                   pw.SizedBox(height: 4),
                   pw.Text(
-                    DateFormatter.format(doc.issueDate),
+                    '${doc.docNumber}  •  Payment Date: ${DateFormatter.format(doc.issueDate)}',
                     textAlign: pw.TextAlign.center,
                     style: pw.TextStyle(
                       fontSize: 10,
