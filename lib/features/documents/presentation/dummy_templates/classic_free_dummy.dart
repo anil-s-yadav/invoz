@@ -159,13 +159,12 @@ Widget buildClassicFreeDummy(DocumentType documentType) {
         Container(height: 1, color: borderColor),
         const SizedBox(height: 16),
 
-        // Bill To, Ship To & Summary Card Row
+        // Bill To & Summary Card Row
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Billed To
             Expanded(
-              flex: 5,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -196,36 +195,7 @@ Widget buildClassicFreeDummy(DocumentType documentType) {
                 ],
               ),
             ),
-            const SizedBox(width: 8),
-            // Shipped To
-            Expanded(
-              flex: 5,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  buildDummyText(
-                    'SHIPPED TO',
-                    size: 9,
-                    bold: true,
-                    color: mutedSlate,
-                  ),
-                  const SizedBox(height: 4),
-                  buildDummyText(
-                    DummyTemplateData.shippingName,
-                    size: 12,
-                    bold: true,
-                    color: primarySlate,
-                  ),
-                  const SizedBox(height: 2),
-                  buildDummyText(
-                    DummyTemplateData.shippingAddress,
-                    size: 9,
-                    color: secondarySlate,
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 8),
+            const SizedBox(width: 16),
             // Total Due Badge
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),

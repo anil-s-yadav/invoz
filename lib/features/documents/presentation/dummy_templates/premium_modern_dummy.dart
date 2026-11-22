@@ -92,7 +92,7 @@ Widget buildPremiumModernDummy(DocumentType documentType) {
                   children: [
                     // From
                     Expanded(
-                      flex: 4,
+                      flex: 5,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -114,10 +114,10 @@ Widget buildPremiumModernDummy(DocumentType documentType) {
                         ],
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: 16),
                     // Bill To
                     Expanded(
-                      flex: 3,
+                      flex: 5,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -134,29 +134,6 @@ Widget buildPremiumModernDummy(DocumentType documentType) {
                             bold: true,
                           ),
                           buildDummyText(DummyTemplateData.clientFullAddress),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    // Ship To
-                    Expanded(
-                      flex: 3,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          buildDummyText(
-                            'SHIP TO:',
-                            size: 10,
-                            bold: true,
-                            color: primary,
-                          ),
-                          const SizedBox(height: 4),
-                          buildDummyText(
-                            DummyTemplateData.shippingName,
-                            size: 12,
-                            bold: true,
-                          ),
-                          buildDummyText(DummyTemplateData.shippingFullAddress),
                         ],
                       ),
                     ),

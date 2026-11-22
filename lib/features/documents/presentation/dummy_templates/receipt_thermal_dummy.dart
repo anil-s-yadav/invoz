@@ -198,15 +198,6 @@ Widget buildReceiptThermalDummy(
                 color: textSecondary,
               ),
             ),
-            Text(
-              'Shipped To: ${DummyTemplateData.shippingName}',
-              style: TextStyle(
-                fontFamily: 'Courier',
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: textSecondary,
-              ),
-            ),
 
             const SizedBox(height: 14),
 

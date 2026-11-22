@@ -56,10 +56,7 @@ Widget buildWarmQuotationDummy(
                     ),
                     Text(
                       DummyTemplateData.companyEmail,
-                      style: const TextStyle(
-                        fontSize: 9,
-                        color: textMuted,
-                      ),
+                      style: const TextStyle(fontSize: 9, color: textMuted),
                     ),
                   ],
                 ),
@@ -287,47 +284,6 @@ Widget buildWarmQuotationDummy(
         ),
         const SizedBox(height: 10),
 
-        // Supply details row
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 4),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  const Text(
-                    'Place of Supply    ',
-                    style: TextStyle(fontSize: 10.5, color: textMuted),
-                  ),
-                  Text(
-                    DummyTemplateData.placeOfSupply,
-                    style: const TextStyle(
-                      fontSize: 10.5,
-                      fontWeight: FontWeight.bold,
-                      color: textDark,
-                    ),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  const Text(
-                    'Country of Supply    ',
-                    style: TextStyle(fontSize: 10.5, color: textMuted),
-                  ),
-                  Text(
-                    DummyTemplateData.countryOfSupply,
-                    style: const TextStyle(
-                      fontSize: 10.5,
-                      fontWeight: FontWeight.bold,
-                      color: textDark,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
         const SizedBox(height: 10),
 
         // Quotation Intro Message (Top of Table)
@@ -347,11 +303,7 @@ Widget buildWarmQuotationDummy(
               const SizedBox(height: 2),
               const Text(
                 DummyTemplateData.quotationIntroBody,
-                style: TextStyle(
-                  fontSize: 9,
-                  color: textDark,
-                  height: 1.25,
-                ),
+                style: TextStyle(fontSize: 9, color: textDark, height: 1.25),
               ),
               const SizedBox(height: 2),
               const Text(
@@ -460,28 +412,9 @@ Widget buildWarmQuotationDummy(
             // Left Column: Quotation Closing & Terms
             Expanded(
               flex: 5,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  Text(
-                    DummyTemplateData.quotationClosingMessage,
-                    style: TextStyle(
-                      fontSize: 9.5,
-                      color: textDark,
-                      height: 1.35,
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                  Text(
-                    DummyTemplateData.quotationTerms,
-                    style: TextStyle(
-                      fontSize: 9.5,
-                      fontWeight: FontWeight.bold,
-                      color: textDark,
-                      height: 1.35,
-                    ),
-                  ),
-                ],
+              child: Text(
+                "",
+                style: TextStyle(fontSize: 9.5, color: textDark, height: 1.35),
               ),
             ),
             const SizedBox(width: 24),
@@ -622,21 +555,13 @@ Widget buildWarmQuotationDummy(
             borderRadius: BorderRadius.circular(6),
           ),
           child: Center(
-            child: RichText(
-              text: TextSpan(
-                style: const TextStyle(fontSize: 9.5, color: textDark),
-                children: [
-                  const TextSpan(text: 'For any enquiries, email us on '),
-                  TextSpan(
-                    text: DummyTemplateData.companyEmail,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  const TextSpan(text: ' or call us on '),
-                  TextSpan(
-                    text: DummyTemplateData.companyPhone,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ],
+            child: Text(
+              DummyTemplateData.quotationTerms,
+              style: TextStyle(
+                fontSize: 9.5,
+                fontWeight: FontWeight.bold,
+                color: textDark,
+                height: 1.35,
               ),
             ),
           ),

@@ -137,10 +137,7 @@ class DocumentPdfGenerator {
           440.0 +
           (logoBytes != null ? 40.0 : 0.0) +
           (signatureBytes != null ? 70.0 : 0.0) +
-          (document.items.length * 28.0) +
-          (document.customerSnapshot?.shippingAddress?.isNotEmpty == true
-              ? 30.0
-              : 0.0);
+          (document.items.length * 28.0);
       final double finalOrderHeight = calcOrderHeight < 600
           ? 600
           : calcOrderHeight;
@@ -5143,34 +5140,7 @@ class DocumentPdfGenerator {
                   ),
                   pw.SizedBox(height: 12),
 
-                  // Details rows
-                  pw.Row(
-                    crossAxisAlignment: pw.CrossAxisAlignment.start,
-                    children: [
-                      pw.SizedBox(
-                        width: 100,
-                        child: pw.Text(
-                          'Shipping to',
-                          style: pw.TextStyle(
-                            fontSize: 11,
-                            fontWeight: pw.FontWeight.bold,
-                            color: PdfColor.fromHex('#1E293B'),
-                          ),
-                        ),
-                      ),
-                      pw.Expanded(
-                        child: pw.Text(
-                          '$cName${cAddress.isNotEmpty ? '\n$cAddress' : ''}',
-                          style: pw.TextStyle(
-                            fontSize: 10.5,
-                            lineSpacing: 1.3,
-                            color: PdfColor.fromHex('#64748B'),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  pw.SizedBox(height: 10),
+                  // Details row
                   pw.Row(
                     crossAxisAlignment: pw.CrossAxisAlignment.start,
                     children: [
@@ -5187,7 +5157,7 @@ class DocumentPdfGenerator {
                       ),
                       pw.Expanded(
                         child: pw.Text(
-                          '$paidBy\nReceipt #${doc.docNumber}',
+                          '$cName${cAddress.isNotEmpty ? '\n$cAddress' : ''}\nPaid via $paidBy  •  Receipt #${doc.docNumber}',
                           style: pw.TextStyle(
                             fontSize: 10.5,
                             lineSpacing: 1.3,

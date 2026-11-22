@@ -158,7 +158,7 @@ Widget buildOrderReceiptDummy(
                   ),
                   const SizedBox(height: 20),
 
-                  // Your details section (Billed to & Shipped to)
+                  // Your details section (Billed to)
                   Text(
                     'Your details',
                     textAlign: TextAlign.center,
@@ -170,33 +170,6 @@ Widget buildOrderReceiptDummy(
                   ),
                   const SizedBox(height: 14),
 
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        width: 100,
-                        child: Text(
-                          'Shipping to',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: textPrimary,
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: Text(
-                          '${DummyTemplateData.shippingName}\n${DummyTemplateData.shippingAddress}',
-                          style: TextStyle(
-                            fontSize: 11,
-                            height: 1.35,
-                            color: textSecondary,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
