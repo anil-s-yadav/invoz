@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
@@ -6,6 +5,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/services/analytics_service.dart';
 import '../../business_profile/bloc/business_profile_bloc.dart';
 import '../../business_profile/bloc/business_profile_state.dart';
+import '../data/payment_config.dart';
 import '../data/subscription_repository.dart';
 import '../domain/subscription_plan_model.dart';
 import '../../subscriptions/bloc/subscription_bloc.dart';
@@ -207,9 +207,7 @@ class _PremiumOfferScreenState extends State<PremiumOfferScreen> {
     }
 
     final options = {
-      'key': kDebugMode
-          ? 'rzp_test_ThkLyPi706leO9'
-          : 'rzp_live_YOUR_PRODUCTION_KEY_HERE',
+      'key': PaymentConfig.razorpayKey,
       'amount': 59400, // ₹594 in paise (50% off ₹1,188)
       'name': 'Invoz App',
       'description': 'Professional 1-Year Plan (50% Welcome Offer)',

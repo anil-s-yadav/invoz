@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/widgets/responsive_max_width.dart';
@@ -10,6 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../business_profile/bloc/business_profile_bloc.dart';
 import '../../business_profile/bloc/business_profile_state.dart';
+import '../data/payment_config.dart';
 import '../data/subscription_repository.dart';
 import '../domain/subscription_plan_model.dart';
 import '../../subscriptions/bloc/subscription_bloc.dart';
@@ -377,9 +377,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     }
     log(prefillContact);
     final options = {
-      'key': kDebugMode
-          ? 'rzp_test_ThkLyPi706leO9'
-          : 'rzp_live_YOUR_PRODUCTION_KEY_HERE',
+      'key': PaymentConfig.razorpayKey,
       'amount': (totalPayable * 100).toInt(),
       'name': 'Invoz App',
       'description': '${widget.planName} - $_selectedDuration Months Plan',
