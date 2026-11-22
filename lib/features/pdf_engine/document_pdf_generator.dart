@@ -898,7 +898,9 @@ class DocumentPdfGenerator {
               crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
                 pw.Text(
-                  'Many thanks for your custom! We look forward to doing business with you.',
+                  doc.notes?.isNotEmpty == true
+                      ? doc.notes!
+                      : 'Many thanks for your custom! We look forward to doing business with you.',
                   style: pw.TextStyle(
                     fontSize: 8.5,
                     color: textDark,
@@ -908,7 +910,10 @@ class DocumentPdfGenerator {
                 pw.SizedBox(height: 8),
                 pw.Text(
                   doc.terms?.isNotEmpty == true
-                      ? 'Quotation terms: ${doc.terms!}'
+                      ? (doc.terms!.toLowerCase().startsWith('quotation terms') ||
+                              doc.terms!.toLowerCase().startsWith('terms')
+                          ? doc.terms!
+                          : 'Quotation terms: ${doc.terms!}')
                       : 'Quotation terms: Valid up to 15 days from issue date.',
                   style: pw.TextStyle(
                     fontSize: 8.5,
@@ -1743,7 +1748,9 @@ class DocumentPdfGenerator {
               crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
                 pw.Text(
-                  'Many thanks for your custom! We look forward to doing business with you.',
+                  doc.notes?.isNotEmpty == true
+                      ? doc.notes!
+                      : 'Many thanks for your custom! We look forward to doing business with you.',
                   style: pw.TextStyle(
                     fontSize: 9,
                     color: textDark,
@@ -1753,7 +1760,10 @@ class DocumentPdfGenerator {
                 pw.SizedBox(height: 8),
                 pw.Text(
                   doc.terms?.isNotEmpty == true
-                      ? 'Quotation terms: ${doc.terms!}'
+                      ? (doc.terms!.toLowerCase().startsWith('quotation terms') ||
+                              doc.terms!.toLowerCase().startsWith('terms')
+                          ? doc.terms!
+                          : 'Quotation terms: ${doc.terms!}')
                       : 'Quotation terms: Valid up to 15 days from issue date.',
                   style: pw.TextStyle(
                     fontSize: 9,
@@ -2714,13 +2724,18 @@ class DocumentPdfGenerator {
         crossAxisAlignment: pw.CrossAxisAlignment.start,
         children: [
           pw.Text(
-            'Many thanks for your custom! I look forward to doing business with you.',
+            doc.notes?.isNotEmpty == true
+                ? doc.notes!
+                : 'Many thanks for your custom! I look forward to doing business with you.',
             style: pw.TextStyle(fontSize: 8.5, color: textDark),
           ),
           pw.SizedBox(height: 4),
           pw.Text(
             doc.terms?.isNotEmpty == true
-                ? 'Quotation terms: ${doc.terms!}'
+                ? (doc.terms!.toLowerCase().startsWith('quotation terms') ||
+                        doc.terms!.toLowerCase().startsWith('terms')
+                    ? doc.terms!
+                    : 'Quotation terms: ${doc.terms!}')
                 : 'Quotation terms: Valid up to 15 days.',
             style: pw.TextStyle(
               fontSize: 8.5,
@@ -3590,6 +3605,21 @@ class DocumentPdfGenerator {
                   size: 10,
                   color: secondaryColor,
                 ),
+              if (doc.shippingCharges > 0)
+                _buildSummaryRow(
+                  'Shipping',
+                  CurrencyFormatter.format(doc.shippingCharges, symbol: 'Rs.'),
+                  size: 10,
+                  color: secondaryColor,
+                ),
+              if (doc.roundOff != 0)
+                _buildSummaryRow(
+                  'Round Off',
+                  (doc.roundOff > 0 ? '+ ' : '') +
+                      CurrencyFormatter.format(doc.roundOff, symbol: 'Rs.'),
+                  size: 10,
+                  color: secondaryColor,
+                ),
               pw.SizedBox(height: 6),
               pw.Container(height: 1, color: borderColor),
               pw.SizedBox(height: 6),
@@ -3624,18 +3654,24 @@ class DocumentPdfGenerator {
       pw.SizedBox(height: 16),
 
       // Notes & Terms Callout
-      if (doc.notes != null && doc.notes!.isNotEmpty)
+      if ((doc.notes != null && doc.notes!.isNotEmpty) ||
+          (doc.terms != null && doc.terms!.isNotEmpty))
         pw.Container(
-          padding: const pw.EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          padding: const pw.EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: pw.BoxDecoration(
             color: bgLight,
+            borderRadius: const pw.BorderRadius.all(pw.Radius.circular(6)),
             border: pw.Border(left: pw.BorderSide(color: mutedColor, width: 3)),
           ),
           child: pw.Column(
             crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
               pw.Text(
-                'Notes & Terms:',
+                (doc.notes?.isNotEmpty == true && doc.terms?.isNotEmpty == true)
+                    ? 'Notes & Terms'
+                    : (doc.terms?.isNotEmpty == true
+                        ? 'Terms & Conditions'
+                        : 'Notes'),
                 style: pw.TextStyle(
                   fontSize: 9.5,
                   fontWeight: pw.FontWeight.bold,
@@ -3643,10 +3679,18 @@ class DocumentPdfGenerator {
                 ),
               ),
               pw.SizedBox(height: 2),
-              pw.Text(
-                doc.notes!,
-                style: pw.TextStyle(fontSize: 9.5, color: secondaryColor),
-              ),
+              if (doc.notes != null && doc.notes!.isNotEmpty)
+                pw.Text(
+                  doc.notes!,
+                  style: pw.TextStyle(fontSize: 9.5, color: secondaryColor),
+                ),
+              if (doc.notes?.isNotEmpty == true && doc.terms?.isNotEmpty == true)
+                pw.SizedBox(height: 4),
+              if (doc.terms != null && doc.terms!.isNotEmpty)
+                pw.Text(
+                  doc.terms!,
+                  style: pw.TextStyle(fontSize: 9.5, color: secondaryColor),
+                ),
             ],
           ),
         ),
@@ -3923,6 +3967,17 @@ class DocumentPdfGenerator {
                     'Discount',
                     '-${CurrencyFormatter.format(doc.overallDiscountAmount + doc.itemDiscountsTotal, symbol: 'Rs.')}',
                   ),
+                if (doc.shippingCharges > 0)
+                  _buildSummaryRow(
+                    'Shipping',
+                    CurrencyFormatter.format(doc.shippingCharges, symbol: 'Rs.'),
+                  ),
+                if (doc.roundOff != 0)
+                  _buildSummaryRow(
+                    'Round Off',
+                    (doc.roundOff > 0 ? '+ ' : '') +
+                        CurrencyFormatter.format(doc.roundOff, symbol: 'Rs.'),
+                  ),
                 pw.Divider(color: PdfColors.grey400),
                 _buildSummaryRow(
                   'Total',
@@ -3949,19 +4004,50 @@ class DocumentPdfGenerator {
           ),
         ],
       ),
-      pw.SizedBox(height: 40),
-      if (doc.notes != null && doc.notes!.isNotEmpty)
+      if ((doc.notes != null && doc.notes!.isNotEmpty) ||
+          (doc.terms != null && doc.terms!.isNotEmpty)) ...[
+        pw.SizedBox(height: 14),
         pw.Container(
-          padding: const pw.EdgeInsets.all(12),
+          padding: const pw.EdgeInsets.all(10),
           decoration: pw.BoxDecoration(
             border: pw.Border(
               left: pw.BorderSide(color: primaryColor, width: 3),
             ),
             color: PdfColors.grey50,
           ),
-          child: pw.Text(doc.notes!, style: const pw.TextStyle(fontSize: 10)),
+          child: pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              if (doc.notes != null && doc.notes!.isNotEmpty)
+                pw.Text(
+                  doc.notes!,
+                  style: const pw.TextStyle(fontSize: 9.5),
+                ),
+              if (doc.notes?.isNotEmpty == true && doc.terms?.isNotEmpty == true)
+                pw.SizedBox(height: 6),
+              if (doc.terms != null && doc.terms!.isNotEmpty) ...[
+                pw.Text(
+                  'Terms & Conditions:',
+                  style: pw.TextStyle(
+                    fontSize: 9,
+                    fontWeight: pw.FontWeight.bold,
+                    color: primaryColor,
+                  ),
+                ),
+                pw.SizedBox(height: 2),
+                pw.Text(
+                  doc.terms!,
+                  style: const pw.TextStyle(
+                    fontSize: 9,
+                    color: PdfColors.grey800,
+                  ),
+                ),
+              ],
+            ],
+          ),
         ),
-      pw.SizedBox(height: 40),
+      ],
+      pw.Spacer(),
       pw.Row(
         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
         crossAxisAlignment: pw.CrossAxisAlignment.end,
@@ -4302,17 +4388,19 @@ class DocumentPdfGenerator {
         crossAxisAlignment: pw.CrossAxisAlignment.center,
         children: [
           if (logoBytes != null) ...[
-            pw.ClipOval(
+            pw.ClipRRect(
+              horizontalRadius: 8,
+              verticalRadius: 8,
               child: pw.Container(
-                width: 32,
-                height: 32,
+                width: 38,
+                height: 38,
                 child: pw.Image(
                   pw.MemoryImage(logoBytes),
-                  fit: pw.BoxFit.cover,
+                  fit: pw.BoxFit.contain,
                 ),
               ),
             ),
-            pw.SizedBox(width: 16),
+            pw.SizedBox(width: 14),
           ],
           pw.Text(
             profile.businessName,
@@ -4699,6 +4787,39 @@ class DocumentPdfGenerator {
                   ],
                 ),
               ),
+            if (doc.roundOff != 0)
+              pw.Padding(
+                padding: const pw.EdgeInsets.symmetric(
+                  vertical: 8,
+                  horizontal: 12,
+                ),
+                child: pw.Row(
+                  children: [
+                    pw.Expanded(flex: 4, child: pw.SizedBox()),
+                    pw.Expanded(
+                      flex: 2,
+                      child: pw.Text(
+                        'Round Off',
+                        style: const pw.TextStyle(fontSize: 11),
+                      ),
+                    ),
+                    pw.Expanded(
+                      flex: 2,
+                      child: pw.Align(
+                        alignment: pw.Alignment.centerRight,
+                        child: pw.Text(
+                          (doc.roundOff > 0 ? '+ ' : '') +
+                              CurrencyFormatter.format(
+                                doc.roundOff,
+                                symbol: currency,
+                              ),
+                          style: const pw.TextStyle(fontSize: 11),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             pw.Container(height: 1, color: primaryColor),
             pw.Container(
               color: lightBlue,
@@ -4877,7 +4998,9 @@ class DocumentPdfGenerator {
                       width: 44,
                       height: 44,
                       margin: const pw.EdgeInsets.only(bottom: 12),
-                      child: pw.ClipOval(
+                      child: pw.ClipRRect(
+                        horizontalRadius: 8,
+                        verticalRadius: 8,
                         child: pw.Image(
                           pw.MemoryImage(logoBytes),
                           fit: pw.BoxFit.contain,
@@ -4891,7 +5014,9 @@ class DocumentPdfGenerator {
                       margin: const pw.EdgeInsets.only(bottom: 12),
                       decoration: pw.BoxDecoration(
                         color: PdfColor.fromHex('#F1F5F9'),
-                        shape: pw.BoxShape.circle,
+                        borderRadius: const pw.BorderRadius.all(
+                          pw.Radius.circular(8),
+                        ),
                         border: pw.Border.all(
                           color: PdfColor.fromHex('#CBD5E1'),
                           width: 1,
@@ -5267,7 +5392,9 @@ class DocumentPdfGenerator {
             pw.Padding(
               padding: const pw.EdgeInsets.symmetric(vertical: 14),
               child: pw.Text(
-                'Thanks for being a great customer.',
+                doc.notes?.isNotEmpty == true
+                    ? doc.notes!
+                    : 'Thanks for being a great customer.',
                 textAlign: pw.TextAlign.center,
                 style: pw.TextStyle(
                   fontSize: 10.5,

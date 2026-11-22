@@ -25,6 +25,7 @@ import '../bloc/document_event.dart';
 import '../data/document_repository.dart';
 import '../domain/document_item_model.dart';
 import '../domain/document_model.dart';
+import '../domain/payment_record_model.dart';
 import '../../settings/data/payment_detail_repository.dart';
 import '../../settings/domain/payment_detail_model.dart';
 import '../../settings/presentation/payment_details_list_screen.dart';
@@ -34,7 +35,6 @@ import '../../customers/presentation/customer_editor_sheet.dart';
 import 'widgets/item_entry_sheet.dart';
 import 'widgets/product_select_sheet.dart';
 import '../../pdf_engine/template_registry.dart';
-import 'widgets/template_thumbnail_card.dart';
 
 class DocumentEditorScreen extends StatefulWidget {
   final DocumentModel? initialDocument;
@@ -74,6 +74,7 @@ class _DocumentEditorScreenState extends State<DocumentEditorScreen> {
 
   String? _selectedBankDetailId;
   String? _selectedUpiDetailId;
+  late String _receiptPaymentMethod;
 
   @override
   void initState() {
@@ -83,6 +84,9 @@ class _DocumentEditorScreenState extends State<DocumentEditorScreen> {
     final doc = widget.initialDocument;
     _documentId = doc?.id ?? const Uuid().v4();
     _docType = doc?.docType ?? widget.initialType;
+    _receiptPaymentMethod = (doc?.payments.isNotEmpty == true)
+        ? doc!.payments.first.paymentMethod
+        : 'Cash';
     _docNumberController = TextEditingController(text: doc?.docNumber ?? '');
     _poNumberController = TextEditingController(text: doc?.poNumber ?? '');
     _subjectController = TextEditingController(text: doc?.subject ?? '');
@@ -153,10 +157,14 @@ class _DocumentEditorScreenState extends State<DocumentEditorScreen> {
         if (profileState is BusinessProfileLoaded) {
           final profile = profileState.profile;
           if (_termsController.text.isEmpty) {
-            _termsController.text = profile.defaultTerms;
+            _termsController.text = _docType == DocumentType.quotation
+                ? 'Valid up to 15 days from issue date.'
+                : (_docType == DocumentType.receipt ? '' : profile.defaultTerms);
           }
           if (_notesController.text.isEmpty) {
-            _notesController.text = profile.defaultNotes;
+            _notesController.text = _docType == DocumentType.quotation
+                ? 'Many thanks for your custom! We look forward to doing business with you.'
+                : profile.defaultNotes;
           }
         }
       }
@@ -171,6 +179,18 @@ class _DocumentEditorScreenState extends State<DocumentEditorScreen> {
       if (mounted) {
         setState(() {
           _payments = payments;
+          if (_selectedBankDetailId == null || _selectedBankDetailId == 'none') {
+            final banks = payments.where((p) => p.type == 'Bank').toList();
+            if (banks.isNotEmpty) {
+              _selectedBankDetailId = banks.first.id;
+            }
+          }
+          if (_selectedUpiDetailId == null || _selectedUpiDetailId == 'none') {
+            final upis = payments.where((p) => p.type == 'UPI').toList();
+            if (upis.isNotEmpty) {
+              _selectedUpiDetailId = upis.first.id;
+            }
+          }
         });
       }
     } catch (_) {}
@@ -201,7 +221,12 @@ class _DocumentEditorScreenState extends State<DocumentEditorScreen> {
     }
   }
 
-  double get _rawTotal => (_subtotal - _overallDiscountAmount) + _taxTotal;
+  double get _shippingChargeAmount =>
+      (_docType == DocumentType.invoice || _docType == DocumentType.proforma)
+          ? (double.tryParse(_shippingController.text) ?? 0.0)
+          : 0.0;
+  double get _rawTotal =>
+      (_subtotal - _overallDiscountAmount) + _taxTotal + _shippingChargeAmount;
   double get _calculatedRoundOff => (_rawTotal.roundToDouble() - _rawTotal);
   double get _roundOff => _enableRoundOff ? _calculatedRoundOff : 0.0;
   double get _finalTotal => _rawTotal + _roundOff;
@@ -289,8 +314,11 @@ class _DocumentEditorScreenState extends State<DocumentEditorScreen> {
     setState(() => _isSaving = true);
 
     final now = DateTime.now();
-    final status =
-        forcedStatus ?? widget.initialDocument?.status ?? DocumentStatus.sent;
+    final status = forcedStatus ??
+        widget.initialDocument?.status ??
+        (_docType == DocumentType.receipt
+            ? DocumentStatus.paid
+            : DocumentStatus.sent);
 
     final document = DocumentModel(
       id: _documentId,
@@ -302,7 +330,21 @@ class _DocumentEditorScreenState extends State<DocumentEditorScreen> {
       dueDate: _docType == DocumentType.receipt ? _issueDate : _dueDate,
       status: status,
       items: _items,
-      payments: widget.initialDocument?.payments ?? const [],
+      payments: _docType == DocumentType.receipt
+          ? [
+              PaymentRecord(
+                id: widget.initialDocument?.payments.isNotEmpty == true
+                    ? widget.initialDocument!.payments.first.id
+                    : const Uuid().v4(),
+                documentId: _documentId,
+                amount: _finalTotal,
+                paymentDate: _issueDate,
+                paymentMethod: _receiptPaymentMethod,
+                notes: 'Paid via $_receiptPaymentMethod',
+                createdAt: now,
+              ),
+            ]
+          : (widget.initialDocument?.payments ?? const []),
       overallDiscountValue: _overallDiscountValue,
       overallDiscountType: _overallDiscountType,
       templateId: _templateId,
@@ -313,19 +355,23 @@ class _DocumentEditorScreenState extends State<DocumentEditorScreen> {
           _includePaymentDetails,
       selectedBankDetailId: _selectedBankDetailId,
       selectedUpiDetailId: _selectedUpiDetailId,
-      poNumber: _poNumberController.text.trim().isNotEmpty
+      poNumber: (_docType == DocumentType.invoice ||
+                  _docType == DocumentType.proforma) &&
+              _poNumberController.text.trim().isNotEmpty
           ? _poNumberController.text.trim()
           : null,
       subject: _subjectController.text.trim().isNotEmpty
           ? _subjectController.text.trim()
           : null,
-      shippingCharges: double.tryParse(_shippingController.text) ?? 0.0,
+      shippingCharges: _shippingChargeAmount,
       notes: _notesController.text.trim().isNotEmpty
           ? _notesController.text.trim()
           : null,
-      terms: _termsController.text.trim().isNotEmpty
-          ? _termsController.text.trim()
-          : null,
+      terms: _docType == DocumentType.receipt
+          ? null
+          : (_termsController.text.trim().isNotEmpty
+              ? _termsController.text.trim()
+              : null),
       relatedDocId: widget.initialDocument?.relatedDocId,
       createdAt: widget.initialDocument?.createdAt ?? now,
       updatedAt: now,
@@ -401,9 +447,12 @@ class _DocumentEditorScreenState extends State<DocumentEditorScreen> {
                 _buildItemsSection(),
                 const SizedBox(height: 24),
 
-                // _buildSectionTitle('DETAILS (OPTIONAL)'),
-                _buildOptionalFields(),
-                const SizedBox(height: 24),
+                // Optional PO & Shipping (Invoice & Proforma only)
+                if (_docType == DocumentType.invoice ||
+                    _docType == DocumentType.proforma) ...[
+                  _buildOptionalFields(),
+                  const SizedBox(height: 24),
+                ],
 
                 // 5. Totals & Tax Summary Card
                 if (_items.isNotEmpty) ...[
@@ -412,8 +461,10 @@ class _DocumentEditorScreenState extends State<DocumentEditorScreen> {
                   const SizedBox(height: 24),
                 ],
 
-                // 6. Notes & Terms Accordion
-                _buildSectionTitle('SHOW PAYMENTS INFO'),
+                // 6. Notes & Terms Section
+                _buildSectionTitle(_docType == DocumentType.receipt
+                    ? 'PAYMENT & NOTES'
+                    : 'PAYMENT DETAILS & TERMS'),
                 _buildNotesTermsSection(),
               ],
             ),
@@ -674,194 +725,8 @@ class _DocumentEditorScreenState extends State<DocumentEditorScreen> {
                 ),
               ],
             ),
-          const SizedBox(height: 12),
-          _buildTemplateChip(),
         ],
       ),
-    );
-  }
-
-  Widget _buildTemplateChip() {
-    final available = TemplateRegistry.getTemplatesFor(_docType);
-    final currentTemplate = available.any((t) => t.id == _templateId)
-        ? TemplateRegistry.getById(_templateId)
-        : (available.isNotEmpty
-            ? available.first
-            : TemplateRegistry.allTemplates.first);
-    return InkWell(
-      onTap: _showTemplateSelector,
-      borderRadius: BorderRadius.circular(8),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-        decoration: BoxDecoration(
-          color: _isDark ? AppColors.darkSurfaceVariant : AppColors.canvas,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: _isDark ? AppColors.darkBorder : AppColors.border,
-            width: 0.8,
-          ),
-        ),
-        child: Row(
-          children: [
-            Icon(
-              currentTemplate.icon,
-              size: 20,
-              color: AppColors.primary,
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Template Style',
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: AppColors.textMuted,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    currentTemplate.name,
-                    style: TextStyle(
-                      fontSize: 13.5,
-                      fontWeight: FontWeight.w700,
-                      color: _textPrimary,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(6),
-              ),
-              child: const Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'Change',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.primary,
-                    ),
-                  ),
-                  SizedBox(width: 2),
-                  Icon(
-                    Icons.arrow_forward_ios,
-                    size: 11,
-                    color: AppColors.primary,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _showTemplateSelector() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      useSafeArea: true,
-      backgroundColor: isDark ? AppColors.darkSurface : Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (bottomSheetContext) {
-        final screenHeight = MediaQuery.of(bottomSheetContext).size.height;
-        final templates = TemplateRegistry.getTemplatesFor(_docType);
-
-        return Container(
-          height: screenHeight * 0.85,
-          padding: const EdgeInsets.only(top: 14),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Select ${_docType.displayName} Template',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                        color: isDark
-                            ? AppColors.darkTextPrimary
-                            : AppColors.textPrimary,
-                      ),
-                    ),
-                    IconButton(
-                      icon: Icon(
-                        Icons.close,
-                        color: isDark
-                            ? AppColors.darkTextPrimary
-                            : AppColors.textPrimary,
-                      ),
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(),
-                      onPressed: () => Navigator.pop(bottomSheetContext),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 12),
-              Expanded(
-                child: GridView.builder(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 16,
-                    mainAxisSpacing: 16,
-                    childAspectRatio: 0.65,
-                  ),
-                  itemCount: templates.length,
-                  itemBuilder: (context, index) {
-                    final t = templates[index];
-                    final isSelected = t.id == _templateId;
-                    return TemplateThumbnailCard(
-                      template: t,
-                      isSelected: isSelected,
-                      documentType: _docType,
-                      onTap: () {
-                        if (t.isPremium) {
-                          final subState =
-                              context.read<SubscriptionBloc>().state;
-                          if (!subState.effectivePlan.hasPremiumTemplates) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                  'Premium template. Please upgrade your plan.',
-                                ),
-                                backgroundColor: Colors.orange,
-                              ),
-                            );
-                            return;
-                          }
-                        }
-                        setState(() => _templateId = t.id);
-                        Navigator.pop(bottomSheetContext);
-                      },
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
-        );
-      },
     );
   }
 
@@ -918,6 +783,9 @@ class _DocumentEditorScreenState extends State<DocumentEditorScreen> {
   }
 
   Widget _buildOptionalFields() {
+    if (_docType != DocumentType.invoice && _docType != DocumentType.proforma) {
+      return const SizedBox.shrink();
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -1029,15 +897,6 @@ class _DocumentEditorScreenState extends State<DocumentEditorScreen> {
                   Icons.location_on_outlined,
                   'Billing Address',
                   customer.billingAddress!,
-                ),
-                const SizedBox(height: 16),
-              ],
-              if (customer.shippingAddress != null &&
-                  customer.shippingAddress!.isNotEmpty) ...[
-                _buildInfoRow(
-                  Icons.local_shipping_outlined,
-                  'Shipping Address',
-                  customer.shippingAddress!,
                 ),
                 const SizedBox(height: 16),
               ],
@@ -1475,6 +1334,15 @@ class _DocumentEditorScreenState extends State<DocumentEditorScreen> {
             ),
           ],
 
+          if (_shippingChargeAmount > 0) ...[
+            const SizedBox(height: 12),
+            _buildSummaryRow(
+              'Shipping',
+              '+ ${CurrencyFormatter.format(_shippingChargeAmount)}',
+              valueColor: AppColors.textSecondary,
+            ),
+          ],
+
           if (_calculatedRoundOff != 0) ...[
             const SizedBox(height: 12),
             Row(
@@ -1688,6 +1556,141 @@ class _DocumentEditorScreenState extends State<DocumentEditorScreen> {
   }
 
   Widget _buildNotesTermsSection() {
+    if (_docType == DocumentType.receipt) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // 1. Receipt Payment Method Selector Card
+          AppCard(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.payment_rounded,
+                      size: 20,
+                      color: AppColors.primary,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Payment Method',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: _textPrimary,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                InputDecorator(
+                  decoration: const InputDecoration(
+                    labelText: 'Received Via',
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 4,
+                    ),
+                  ),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      isExpanded: true,
+                      value: _receiptPaymentMethod,
+                      items: const [
+                        DropdownMenuItem(value: 'Cash', child: Text('Cash')),
+                        DropdownMenuItem(value: 'UPI', child: Text('UPI / QR')),
+                        DropdownMenuItem(
+                          value: 'Card',
+                          child: Text('Credit / Debit Card'),
+                        ),
+                        DropdownMenuItem(
+                          value: 'Net Banking',
+                          child: Text('Net Banking / NEFT'),
+                        ),
+                        DropdownMenuItem(value: 'Cheque', child: Text('Cheque')),
+                      ],
+                      onChanged: (val) {
+                        if (val != null) {
+                          setState(() => _receiptPaymentMethod = val);
+                        }
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 14),
+
+          // 2. Receipt Note / Return Policy Card
+          AppCard(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.sticky_note_2_outlined,
+                      size: 18,
+                      color: AppColors.primary,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Receipt Note / Store Policy',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: _textPrimary,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: _notesController,
+                  maxLines: 2,
+                  minLines: 1,
+                  style: TextStyle(fontSize: 14, color: _textPrimary),
+                  decoration: InputDecoration(
+                    hintText:
+                        'e.g. Thank you for your business! Goods once sold cannot be returned without receipt.',
+                    hintStyle: const TextStyle(
+                      fontSize: 13,
+                      color: AppColors.textMuted,
+                    ),
+                    isDense: true,
+                    filled: true,
+                    fillColor: _surfaceVariant.withValues(alpha: 0.35),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 10,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(color: _border),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(color: _border),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: const BorderSide(
+                        color: AppColors.primary,
+                        width: 1.5,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      );
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -1706,21 +1709,66 @@ class _DocumentEditorScreenState extends State<DocumentEditorScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Icon(
-                        Icons.qr_code_2_rounded,
-                        size: 22,
-                        color: AppColors.primary,
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.qr_code_2_rounded,
+                            size: 22,
+                            color: AppColors.primary,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Select Payment Profile & QR',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                              color: _textPrimary,
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Select Payment Profile & QR',
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                          color: _textPrimary,
+                      if (hasAny)
+                        InkWell(
+                          onTap: () async {
+                            await Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) =>
+                                    const PaymentDetailsListScreen(),
+                              ),
+                            );
+                            if (mounted) {
+                              await _loadPayments();
+                            }
+                          },
+                          borderRadius: BorderRadius.circular(6),
+                          child: const Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 4,
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.settings_outlined,
+                                  size: 14,
+                                  color: AppColors.primary,
+                                ),
+                                SizedBox(width: 4),
+                                Text(
+                                  'Manage',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.primary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
-                      ),
                     ],
                   ),
                   const SizedBox(height: 12),
@@ -1731,12 +1779,15 @@ class _DocumentEditorScreenState extends State<DocumentEditorScreen> {
                     ),
                     const SizedBox(height: 8),
                     TextButton.icon(
-                      onPressed: () {
-                        Navigator.of(context).push(
+                      onPressed: () async {
+                        await Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (_) => const PaymentDetailsListScreen(),
                           ),
                         );
+                        if (mounted) {
+                          await _loadPayments();
+                        }
                       },
                       icon: const Icon(Icons.add_circle_outline, size: 18),
                       label: const Text('Create New Payment Profile'),
@@ -1863,8 +1914,9 @@ class _DocumentEditorScreenState extends State<DocumentEditorScreen> {
                 minLines: 1,
                 style: TextStyle(fontSize: 14, color: _textPrimary),
                 decoration: InputDecoration(
-                  hintText:
-                      'e.g. Thank you for your business! Please feel free to reach out with any questions.',
+                  hintText: _docType == DocumentType.quotation
+                      ? 'e.g. Thank you for your inquiry! Please review the quotation below.'
+                      : 'e.g. Thank you for your business! Please feel free to reach out with any questions.',
                   hintStyle: const TextStyle(
                     fontSize: 13,
                     color: AppColors.textMuted,
@@ -1894,10 +1946,6 @@ class _DocumentEditorScreenState extends State<DocumentEditorScreen> {
                 ),
               ),
 
-              // const Padding(
-              //   padding: EdgeInsets.symmetric(vertical: 14),
-              //   child: Divider(height: 1, color: AppColors.border),
-              // ),
               const SizedBox(height: 10),
               // Terms & Conditions Header & Field
               Row(
@@ -1925,8 +1973,9 @@ class _DocumentEditorScreenState extends State<DocumentEditorScreen> {
                 minLines: 1,
                 style: TextStyle(fontSize: 14, color: _textPrimary),
                 decoration: InputDecoration(
-                  hintText:
-                      'e.g. Payment is due within 15 days of invoice date. Late payments incur a 1.5% monthly fee.',
+                  hintText: _docType == DocumentType.quotation
+                      ? 'e.g. Validity of this quotation is 30 days. 50% advance upon order confirmation.'
+                      : 'e.g. Payment is due within 15 days of invoice date. Late payments incur a 1.5% monthly fee.',
                   hintStyle: const TextStyle(
                     fontSize: 13,
                     color: AppColors.textMuted,
