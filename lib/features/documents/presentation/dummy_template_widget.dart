@@ -14,6 +14,10 @@ class DummyTemplateWidget extends StatelessWidget {
   final String templateId;
   final DocumentType documentType;
 
+  static const double a4Width = 595.0;
+  static const double a4Height = 842.0;
+  static const double receiptWidth = 440.0;
+
   const DummyTemplateWidget({
     super.key,
     required this.templateId,
@@ -36,49 +40,49 @@ class DummyTemplateWidget extends StatelessWidget {
     switch (effectiveId) {
       case TemplateRegistry.cyanQuotation:
         return SizedBox(
-          width: 595,
-          height: 842,
+          width: a4Width,
+          height: a4Height,
           child: buildCyanQuotationDummy(documentType, context),
         );
       case TemplateRegistry.warmQuotation:
         return SizedBox(
-          width: 595,
-          height: 842,
+          width: a4Width,
+          height: a4Height,
           child: buildWarmQuotationDummy(documentType, context),
         );
       case TemplateRegistry.formalQuotation:
         return SizedBox(
-          width: 595,
-          height: 842,
+          width: a4Width,
+          height: a4Height,
           child: buildFormalQuotationDummy(documentType, context),
         );
       case TemplateRegistry.premiumModern:
         return SizedBox(
-          width: 595,
-          height: 842,
+          width: a4Width,
+          height: a4Height,
           child: buildPremiumModernDummy(documentType),
         );
       case TemplateRegistry.elegantCenter:
         return SizedBox(
-          width: 595,
-          height: 842,
+          width: a4Width,
+          height: a4Height,
           child: buildElegantCenterDummy(DocumentType.receipt),
         );
       case TemplateRegistry.orderReceipt:
         return SizedBox(
-          width: 440,
+          width: receiptWidth,
           child: buildOrderReceiptDummy(documentType, context),
         );
       case TemplateRegistry.thermalReceipt:
         return SizedBox(
-          width: 440,
+          width: receiptWidth,
           child: buildReceiptThermalDummy(documentType, context),
         );
       case TemplateRegistry.freeClassic:
       default:
         return SizedBox(
-          width: 595,
-          height: 842,
+          width: a4Width,
+          height: a4Height,
           child: buildClassicFreeDummy(documentType),
         );
     }

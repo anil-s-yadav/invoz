@@ -2,15 +2,21 @@ import 'package:flutter/material.dart';
 import '../../domain/document_model.dart';
 import 'dummy_template_utils.dart';
 
+const _borderColor = Color(0xFF64748B);
+const _textDark = Color(0xFF0F172A);
+const _textMuted = Color(0xFF475569);
+const _tableHeaderBg = Color(0xFFF1F5F9);
+const _cyanPrimary = Color(0xFF00A3E0);
+
 Widget buildFormalQuotationDummy(
   DocumentType documentType, [
   BuildContext? context,
 ]) {
-  const borderColor = Color(0xFF64748B);
-  const textDark = Color(0xFF0F172A);
-  const textMuted = Color(0xFF475569);
-  const tableHeaderBg = Color(0xFFF1F5F9);
-  const cyanPrimary = Color(0xFF00A3E0);
+  const borderColor = _borderColor;
+  const textDark = _textDark;
+  const textMuted = _textMuted;
+  const tableHeaderBg = _tableHeaderBg;
+  const cyanPrimary = _cyanPrimary;
 
   return Container(
     color: Colors.white,
@@ -345,26 +351,17 @@ Widget buildFormalQuotationDummy(
               ),
 
               // 2 Dummy Product Rows
-              _buildProductRow(
-                sNo: '1.',
-                itemCode: DummyTemplateData.item1.itemCode,
-                title: DummyTemplateData.item1.title,
-                description: DummyTemplateData.item1.description,
-                qty: '${DummyTemplateData.item1.qtyString} Units',
-                price: DummyTemplateData.item1.rateInr,
-                total: DummyTemplateData.item1.amountInr,
-                hasBottomBorder: true,
-              ),
-              _buildProductRow(
-                sNo: '2.',
-                itemCode: DummyTemplateData.item2.itemCode,
-                title: DummyTemplateData.item2.title,
-                description: DummyTemplateData.item2.description,
-                qty: '${DummyTemplateData.item2.qtyString} Units',
-                price: DummyTemplateData.item2.rateInr,
-                total: DummyTemplateData.item2.amountInr,
-                hasBottomBorder: true,
-              ),
+              for (int i = 0; i < DummyTemplateData.items.length; i++)
+                _buildProductRow(
+                  sNo: '${i + 1}.',
+                  itemCode: DummyTemplateData.items[i].itemCode,
+                  title: DummyTemplateData.items[i].title,
+                  description: DummyTemplateData.items[i].description,
+                  qty: '${DummyTemplateData.items[i].qtyString} Units',
+                  price: DummyTemplateData.items[i].rateInr,
+                  total: DummyTemplateData.items[i].amountInr,
+                  hasBottomBorder: true,
+                ),
 
               // Summary: Subtotal
               _buildSummaryRow(
@@ -461,15 +458,11 @@ Widget _buildProductRow({
   required String total,
   required bool hasBottomBorder,
 }) {
-  const borderColor = Color(0xFF64748B);
-  const textDark = Color(0xFF0F172A);
-  const textMuted = Color(0xFF475569);
-
   return Container(
     padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
     decoration: BoxDecoration(
       border: hasBottomBorder
-          ? const Border(bottom: BorderSide(color: borderColor, width: 0.8))
+          ? const Border(bottom: BorderSide(color: _borderColor, width: 0.8))
           : null,
     ),
     child: Row(
@@ -480,7 +473,7 @@ Widget _buildProductRow({
           child: Text(
             sNo,
             textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 8.5, color: textDark),
+            style: const TextStyle(fontSize: 8.5, color: _textDark),
           ),
         ),
         const _TableBorderDivider(),
@@ -489,7 +482,7 @@ Widget _buildProductRow({
           child: Text(
             itemCode,
             textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 8.5, color: textDark),
+            style: const TextStyle(fontSize: 8.5, color: _textDark),
           ),
         ),
         const _TableBorderDivider(),
@@ -503,7 +496,7 @@ Widget _buildProductRow({
                 style: const TextStyle(
                   fontSize: 8.5,
                   fontWeight: FontWeight.bold,
-                  color: textDark,
+                  color: _textDark,
                 ),
               ),
               if (description.isNotEmpty) ...[
@@ -512,7 +505,7 @@ Widget _buildProductRow({
                   description,
                   style: const TextStyle(
                     fontSize: 7.5,
-                    color: textMuted,
+                    color: _textMuted,
                     height: 1.2,
                   ),
                 ),
@@ -526,7 +519,7 @@ Widget _buildProductRow({
           child: Text(
             qty,
             textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 8.5, color: textDark),
+            style: const TextStyle(fontSize: 8.5, color: _textDark),
           ),
         ),
         const _TableBorderDivider(),
@@ -535,7 +528,7 @@ Widget _buildProductRow({
           child: Text(
             price,
             textAlign: TextAlign.right,
-            style: const TextStyle(fontSize: 8.5, color: textDark),
+            style: const TextStyle(fontSize: 8.5, color: _textDark),
           ),
         ),
         const _TableBorderDivider(),
@@ -547,7 +540,7 @@ Widget _buildProductRow({
             style: const TextStyle(
               fontSize: 8.5,
               fontWeight: FontWeight.bold,
-              color: textDark,
+              color: _textDark,
             ),
           ),
         ),
@@ -562,14 +555,11 @@ Widget _buildSummaryRow({
   bool isBold = false,
   required bool hasBottomBorder,
 }) {
-  const borderColor = Color(0xFF64748B);
-  const textDark = Color(0xFF0F172A);
-
   return Container(
     padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 5),
     decoration: BoxDecoration(
       border: hasBottomBorder
-          ? const Border(bottom: BorderSide(color: borderColor, width: 0.8))
+          ? const Border(bottom: BorderSide(color: _borderColor, width: 0.8))
           : null,
     ),
     child: Row(
@@ -583,7 +573,7 @@ Widget _buildSummaryRow({
             style: TextStyle(
               fontSize: isBold ? 9.5 : 8.5,
               fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
-              color: textDark,
+              color: _textDark,
             ),
           ),
         ),
@@ -596,7 +586,7 @@ Widget _buildSummaryRow({
             style: TextStyle(
               fontSize: isBold ? 9.5 : 8.5,
               fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
-              color: textDark,
+              color: _textDark,
             ),
           ),
         ),

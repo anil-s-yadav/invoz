@@ -79,14 +79,6 @@ class DummyTemplateData {
   static const String clientFullAddress =
       'accounts@example.com  •  +1 555-0144\n742 Evergreen Street, North District, Cityville - 110025\nGSTIN: 29BBBBB0000B1Z5';
 
-  // Shipping / Shipped To Information (Fictional shipping location)
-  static const String shippingName = 'Global Horizon Trading Co. (Warehouse)';
-  static const String shippingAddress =
-      'Plot 88, Logistics Terminal, Sector 4, Cityville - 110045';
-  static const String shippingPhone = '+1 555-0144';
-  static const String shippingFullAddress =
-      'Plot 88, Logistics Terminal, Sector 4, Cityville - 110045\nPhone: +1 555-0144';
-
   // Dates & Metadata
   static const String issueDate = '28 Sep 2026';
   static const String paymentDate = '28 Sep 2026';
@@ -257,21 +249,6 @@ Widget buildDummySignature({
     ],
   );
 }
-
-// /// Standalone dummy QR code box
-// Widget buildDummyQrCode({double size = 58, double iconSize = 46}) {
-//   return Container(
-//     width: size,
-//     height: size,
-//     decoration: BoxDecoration(
-//       color: Colors.white,
-//       borderRadius: BorderRadius.circular(4),
-//       border: Border.all(color: Colors.grey.shade400, width: 0.8),
-//     ),
-//     alignment: Alignment.center,
-//     child: Icon(Icons.qr_code_2, size: iconSize, color: Colors.black87),
-//   );
-// }
 
 /// Reusable Payment Details with QR Code
 Widget buildDummyPaymentDetails({

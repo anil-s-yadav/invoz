@@ -70,16 +70,12 @@ Widget buildReceiptThermalDummy(
             const SizedBox(height: 10),
 
             // 2 Dummy Product Items
-            _buildDummyItemRow(
-              '1. ${DummyTemplateData.item1.title}',
-              DummyTemplateData.item1.amountRs,
-              textPrimary,
-            ),
-            _buildDummyItemRow(
-              '2. ${DummyTemplateData.item2.title}',
-              DummyTemplateData.item2.amountRs,
-              textPrimary,
-            ),
+            for (int i = 0; i < DummyTemplateData.items.length; i++)
+              _buildDummyItemRow(
+                '${i + 1}. ${DummyTemplateData.items[i].title}',
+                DummyTemplateData.items[i].amountRs,
+                textPrimary,
+              ),
 
             const SizedBox(height: 14),
 

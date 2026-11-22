@@ -150,6 +150,31 @@ class TemplateRegistry {
     ),
   ];
 
+  static final Map<String, TemplateInfo> _templateMap = {
+    for (final t in allTemplates) t.id: t,
+  };
+
+  static const Map<String, String> _aliases = {
+    'modern_crimson': premiumModern,
+    'bold': premiumModern,
+    'compact': thermalReceipt,
+    'elegant': elegantCenter,
+    'order': orderReceipt,
+    'quotation': warmQuotation,
+    'warm_quotation': warmQuotation,
+    'formal': formalQuotation,
+    'letterhead': formalQuotation,
+    'cyan_quotation': cyanQuotation,
+    'cyan': cyanQuotation,
+  };
+
+  static final Map<DocumentType, List<TemplateInfo>> _typeTemplatesMap = {
+    for (final type in DocumentType.values)
+      type: allTemplates
+          .where((t) => t.supportedTypes.contains(type))
+          .toList(growable: false),
+  };
+
   static String resolveTemplateId(String? id, DocumentType type) {
     final available = getTemplatesFor(type);
     if (available.isEmpty) return freeClassic;
@@ -159,61 +184,33 @@ class TemplateRegistry {
     if (available.any((t) => t.id == id)) return id;
 
     // Aliases / Legacy mappings
+    final aliasTarget = _aliases[id];
+    if (aliasTarget != null && available.any((t) => t.id == aliasTarget)) {
+      return aliasTarget;
+    }
+
     if (type == DocumentType.quotation) {
-      if (id == warmQuotation) {
-        return warmQuotation;
-      }
-      if (id == formalQuotation || id == 'formal' || id == 'letterhead') {
-        return formalQuotation;
-      }
+      if (id == warmQuotation) return warmQuotation;
       return cyanQuotation;
     } else if (type == DocumentType.receipt) {
-      if (id == thermalReceipt || id == 'compact') {
-        return thermalReceipt;
-      }
-      if (id == orderReceipt || id == 'order') {
-        return orderReceipt;
-      }
       return elegantCenter;
     } else {
-      // Invoice & Proforma
-      if (id == premiumModern || id == 'modern_crimson' || id == 'bold') {
-        return premiumModern;
-      }
       return freeClassic;
     }
   }
 
   static TemplateInfo getById(String id) {
-    for (final t in allTemplates) {
-      if (t.id == id) return t;
-    }
-    // Check aliases
-    if (id == 'modern_crimson' || id == 'bold') {
-      return allTemplates.firstWhere((t) => t.id == premiumModern);
-    }
-    if (id == 'compact') {
-      return allTemplates.firstWhere((t) => t.id == thermalReceipt);
-    }
-    if (id == 'elegant') {
-      return allTemplates.firstWhere((t) => t.id == elegantCenter);
-    }
-    if (id == 'order') {
-      return allTemplates.firstWhere((t) => t.id == orderReceipt);
-    }
-    if (id == 'quotation' || id == 'warm_quotation') {
-      return allTemplates.firstWhere((t) => t.id == warmQuotation);
-    }
-    if (id == formalQuotation || id == 'formal' || id == 'letterhead') {
-      return allTemplates.firstWhere((t) => t.id == formalQuotation);
-    }
-    if (id == 'cyan_quotation' || id == 'cyan') {
-      return allTemplates.firstWhere((t) => t.id == cyanQuotation);
+    final direct = _templateMap[id];
+    if (direct != null) return direct;
+    final aliasTarget = _aliases[id];
+    if (aliasTarget != null) {
+      final aliasTemplate = _templateMap[aliasTarget];
+      if (aliasTemplate != null) return aliasTemplate;
     }
     return allTemplates.first;
   }
 
   static List<TemplateInfo> getTemplatesFor(DocumentType type) {
-    return allTemplates.where((t) => t.supportedTypes.contains(type)).toList();
+    return _typeTemplatesMap[type] ?? const [];
   }
 }

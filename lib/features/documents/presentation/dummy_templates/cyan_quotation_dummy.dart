@@ -319,24 +319,16 @@ Widget buildCyanQuotationDummy(
               ),
 
               // 2 Dummy Product Rows
-              _buildTableRow(
-                title: DummyTemplateData.item1.title,
-                description: DummyTemplateData.item1.description,
-                qty: DummyTemplateData.item1.qtyString,
-                rate: DummyTemplateData.item1.rateRs,
-                tax: DummyTemplateData.item1.taxPercentString,
-                amount: DummyTemplateData.item1.amountRs,
-                hasBottomBorder: true,
-              ),
-              _buildTableRow(
-                title: DummyTemplateData.item2.title,
-                description: DummyTemplateData.item2.description,
-                qty: DummyTemplateData.item2.qtyString,
-                rate: DummyTemplateData.item2.rateRs,
-                tax: DummyTemplateData.item2.taxPercentString,
-                amount: DummyTemplateData.item2.amountRs,
-                hasBottomBorder: false,
-              ),
+              for (int i = 0; i < DummyTemplateData.items.length; i++)
+                _buildTableRow(
+                  title: DummyTemplateData.items[i].title,
+                  description: DummyTemplateData.items[i].description,
+                  qty: DummyTemplateData.items[i].qtyString,
+                  rate: DummyTemplateData.items[i].rateRs,
+                  tax: DummyTemplateData.items[i].taxPercentString,
+                  amount: DummyTemplateData.items[i].amountRs,
+                  hasBottomBorder: i < DummyTemplateData.items.length - 1,
+                ),
             ],
           ),
         ),

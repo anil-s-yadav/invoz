@@ -98,16 +98,12 @@ Widget buildOrderReceiptDummy(
                   const SizedBox(height: 16),
 
                   // 2 Dummy Product Items
-                  _buildItemRow(
-                    '${DummyTemplateData.item1.title} (x${DummyTemplateData.item1.qtyIntString})',
-                    DummyTemplateData.item1.amountRs,
-                    textPrimary,
-                  ),
-                  _buildItemRow(
-                    '${DummyTemplateData.item2.title} (x${DummyTemplateData.item2.qtyIntString})',
-                    DummyTemplateData.item2.amountRs,
-                    textPrimary,
-                  ),
+                  for (final item in DummyTemplateData.items)
+                    _buildItemRow(
+                      '${item.title} (x${item.qtyIntString})',
+                      item.amountRs,
+                      textPrimary,
+                    ),
                   const SizedBox(height: 8),
 
                   // Subtotals

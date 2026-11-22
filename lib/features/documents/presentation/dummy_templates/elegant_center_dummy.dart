@@ -255,122 +255,66 @@ Widget buildElegantCenterDummy([
                 ),
               ),
 
-              // Product 1
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 10,
-                  horizontal: 12,
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      flex: 1,
-                      child: buildDummyText(
-                        DummyTemplateData.item1.qtyString,
-                        size: 10.5,
+              // 2 Dummy Products
+              for (int i = 0; i < DummyTemplateData.items.length; i++) ...[
+                if (i > 0) Container(height: 1, color: lightBlue),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 10,
+                    horizontal: 12,
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        flex: 1,
+                        child: buildDummyText(
+                          DummyTemplateData.items[i].qtyString,
+                          size: 10.5,
+                        ),
                       ),
-                    ),
-                    Expanded(
-                      flex: 3,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          buildDummyText(
-                            DummyTemplateData.item1.title,
+                      Expanded(
+                        flex: 3,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            buildDummyText(
+                              DummyTemplateData.items[i].title,
+                              bold: true,
+                              size: 10.5,
+                            ),
+                            buildDummyText(
+                              DummyTemplateData.items[i].description,
+                              size: 8.5,
+                              color: Colors.grey.shade600,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        flex: 2,
+                        child: Align(
+                          alignment: Alignment.centerRight,
+                          child: buildDummyText(
+                            DummyTemplateData.items[i].rateRs,
+                            size: 10.5,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 2,
+                        child: Align(
+                          alignment: Alignment.centerRight,
+                          child: buildDummyText(
+                            DummyTemplateData.items[i].amountRs,
                             bold: true,
                             size: 10.5,
                           ),
-                          buildDummyText(
-                            DummyTemplateData.item1.description,
-                            size: 8.5,
-                            color: Colors.grey.shade600,
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      flex: 2,
-                      child: Align(
-                        alignment: Alignment.centerRight,
-                        child: buildDummyText(
-                          DummyTemplateData.item1.rateRs,
-                          size: 10.5,
                         ),
                       ),
-                    ),
-                    Expanded(
-                      flex: 2,
-                      child: Align(
-                        alignment: Alignment.centerRight,
-                        child: buildDummyText(
-                          DummyTemplateData.item1.amountRs,
-                          bold: true,
-                          size: 10.5,
-                        ),
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              Container(height: 1, color: lightBlue),
-
-              // Product 2
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 10,
-                  horizontal: 12,
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      flex: 1,
-                      child: buildDummyText(
-                        DummyTemplateData.item2.qtyString,
-                        size: 10.5,
-                      ),
-                    ),
-                    Expanded(
-                      flex: 3,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          buildDummyText(
-                            DummyTemplateData.item2.title,
-                            bold: true,
-                            size: 10.5,
-                          ),
-                          buildDummyText(
-                            DummyTemplateData.item2.description,
-                            size: 8.5,
-                            color: Colors.grey.shade600,
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      flex: 2,
-                      child: Align(
-                        alignment: Alignment.centerRight,
-                        child: buildDummyText(
-                          DummyTemplateData.item2.rateRs,
-                          size: 10.5,
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      flex: 2,
-                      child: Align(
-                        alignment: Alignment.centerRight,
-                        child: buildDummyText(
-                          DummyTemplateData.item2.amountRs,
-                          bold: true,
-                          size: 10.5,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              ],
               Container(height: 1, color: primary),
 
               // Subtotal
