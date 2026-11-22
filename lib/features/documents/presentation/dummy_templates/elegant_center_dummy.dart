@@ -137,7 +137,7 @@ Widget buildElegantCenterDummy([
                     bold: true,
                     size: 11,
                   ),
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 2),
                   Row(
                     children: [
                       SizedBox(
@@ -155,7 +155,7 @@ Widget buildElegantCenterDummy([
               ),
             ),
             Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
@@ -175,8 +175,9 @@ Widget buildElegantCenterDummy([
                     ),
                   ],
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 2),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     SizedBox(
                       width: 90,

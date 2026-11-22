@@ -130,7 +130,7 @@ Widget buildWarmQuotationDummy(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '${documentType.displayName} by',
+                      'by',
                       style: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
@@ -175,25 +175,6 @@ Widget buildWarmQuotationDummy(
                         ),
                       ],
                     ),
-                    Row(
-                      children: [
-                        const Text(
-                          'PAN    ',
-                          style: TextStyle(
-                            fontSize: 9.5,
-                            fontWeight: FontWeight.bold,
-                            color: textDark,
-                          ),
-                        ),
-                        Text(
-                          DummyTemplateData.companyPan,
-                          style: const TextStyle(
-                            fontSize: 9.5,
-                            color: Color(0xFF334155),
-                          ),
-                        ),
-                      ],
-                    ),
                   ],
                 ),
               ),
@@ -212,7 +193,7 @@ Widget buildWarmQuotationDummy(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '${documentType.displayName} to',
+                      'to',
                       style: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
@@ -250,25 +231,6 @@ Widget buildWarmQuotationDummy(
                         ),
                         Text(
                           DummyTemplateData.clientGstin,
-                          style: const TextStyle(
-                            fontSize: 9.5,
-                            color: Color(0xFF334155),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        const Text(
-                          'PAN    ',
-                          style: TextStyle(
-                            fontSize: 9.5,
-                            fontWeight: FontWeight.bold,
-                            color: textDark,
-                          ),
-                        ),
-                        Text(
-                          DummyTemplateData.clientPan,
                           style: const TextStyle(
                             fontSize: 9.5,
                             color: Color(0xFF334155),
@@ -496,14 +458,14 @@ Widget buildWarmQuotationDummy(
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 12),
 
                   // Total in words
-                  const Text(
-                    'Invoice Total (in words)',
-                    style: TextStyle(fontSize: 8.5, color: textMuted),
-                  ),
-                  const SizedBox(height: 2),
+                  // const Text(
+                  //   'Invoice Total (in words)',
+                  //   style: TextStyle(fontSize: 8.5, color: textMuted),
+                  // ),
+                  // const SizedBox(height: 2),
                   Text(
                     DummyTemplateData.totalInWordsInr,
                     style: const TextStyle(
@@ -512,7 +474,7 @@ Widget buildWarmQuotationDummy(
                       color: textDark,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  // const SizedBox(height: 8),
                   Container(height: 0.8, color: const Color(0xFFE2E8F0)),
                 ],
               ),

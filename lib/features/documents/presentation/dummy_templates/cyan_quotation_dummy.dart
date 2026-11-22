@@ -76,7 +76,7 @@ Widget buildCyanQuotationDummy(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '${documentType.displayName} by',
+                    'by',
                     style: const TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.bold,
@@ -117,7 +117,7 @@ Widget buildCyanQuotationDummy(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '${documentType.displayName} to',
+                    'to',
                     style: const TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.bold,
@@ -197,7 +197,7 @@ Widget buildCyanQuotationDummy(
             ),
           ],
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 24),
 
         // Quotation Intro Message (Top of Table)
         Column(
@@ -231,7 +231,7 @@ Widget buildCyanQuotationDummy(
             ),
           ],
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 20),
 
         // Bordered Items Table
         Container(
@@ -343,165 +343,157 @@ Widget buildCyanQuotationDummy(
         const SizedBox(height: 18),
 
         // Middle Section: Left Notes/Terms + Right Summary Box
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            // Left: Quotation Closing & Terms
-            Expanded(
-              flex: 5,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  Text(
-                    DummyTemplateData.quotationClosingMessage,
-                    style: TextStyle(
-                      fontSize: 9,
-                      color: textDark,
-                      height: 1.35,
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Left: Quotation Closing & Terms
+                Text(
+                  DummyTemplateData.quotationClosingMessage,
+                  style: TextStyle(fontSize: 9, color: textDark, height: 1.35),
+                ),
+
+                const SizedBox(width: 20),
+
+                // Right: Totals Box with Borders
+                Expanded(
+                  flex: 4,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: borderColor, width: 1),
+                    ),
+                    child: Column(
+                      children: [
+                        // Sub Total
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 5,
+                          ),
+                          decoration: const BoxDecoration(
+                            border: Border(
+                              bottom: BorderSide(color: borderColor, width: 1),
+                            ),
+                          ),
+                          child: Row(
+                            children: const [
+                              Expanded(
+                                child: Text(
+                                  'Sub Total',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                    color: textDark,
+                                  ),
+                                ),
+                              ),
+                              _VerticalDivider(),
+                              Expanded(
+                                child: Text(
+                                  DummyTemplateData.subtotalRs,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                    color: textDark,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        // Tax (12%)
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 5,
+                          ),
+                          decoration: const BoxDecoration(
+                            border: Border(
+                              bottom: BorderSide(color: borderColor, width: 1),
+                            ),
+                          ),
+                          child: Row(
+                            children: const [
+                              Expanded(
+                                child: Text(
+                                  'Tax (12%)',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                    color: textDark,
+                                  ),
+                                ),
+                              ),
+                              _VerticalDivider(),
+                              Expanded(
+                                child: Text(
+                                  DummyTemplateData.taxRs,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                    color: textDark,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        // Total Amount Row (Cyan Background, White Text)
+                        Container(
+                          color: cyanPrimary,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 6,
+                          ),
+                          child: Row(
+                            children: const [
+                              Expanded(
+                                child: Text(
+                                  'Total Amount',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 10.5,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                              _VerticalDivider(color: Colors.white),
+                              Expanded(
+                                child: Text(
+                                  DummyTemplateData.grandTotalRs,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 10.5,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  SizedBox(height: 10),
-                  Text(
-                    DummyTemplateData.quotationTerms,
-                    style: TextStyle(
-                      fontSize: 9,
-                      fontWeight: FontWeight.bold,
-                      color: textDark,
-                      height: 1.35,
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-
-            const SizedBox(width: 20),
-
-            // Right: Totals Box with Borders
-            Expanded(
-              flex: 4,
-              child: Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: borderColor, width: 1),
-                ),
-                child: Column(
-                  children: [
-                    // Sub Total
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 5,
-                      ),
-                      decoration: const BoxDecoration(
-                        border: Border(
-                          bottom: BorderSide(color: borderColor, width: 1),
-                        ),
-                      ),
-                      child: Row(
-                        children: const [
-                          Expanded(
-                            child: Text(
-                              'Sub Total',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold,
-                                color: textDark,
-                              ),
-                            ),
-                          ),
-                          _VerticalDivider(),
-                          Expanded(
-                            child: Text(
-                              DummyTemplateData.subtotalRs,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold,
-                                color: textDark,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    // Tax (12%)
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 5,
-                      ),
-                      decoration: const BoxDecoration(
-                        border: Border(
-                          bottom: BorderSide(color: borderColor, width: 1),
-                        ),
-                      ),
-                      child: Row(
-                        children: const [
-                          Expanded(
-                            child: Text(
-                              'Tax (12%)',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold,
-                                color: textDark,
-                              ),
-                            ),
-                          ),
-                          _VerticalDivider(),
-                          Expanded(
-                            child: Text(
-                              DummyTemplateData.taxRs,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold,
-                                color: textDark,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    // Total Amount Row (Cyan Background, White Text)
-                    Container(
-                      color: cyanPrimary,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 6,
-                      ),
-                      child: Row(
-                        children: const [
-                          Expanded(
-                            child: Text(
-                              'Total Amount',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 10.5,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                          _VerticalDivider(color: Colors.white),
-                          Expanded(
-                            child: Text(
-                              DummyTemplateData.grandTotalRs,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 10.5,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+            const SizedBox(height: 5),
+            const Text(
+              DummyTemplateData.totalInWords,
+              style: TextStyle(
+                fontSize: 9,
+                fontWeight: FontWeight.bold,
+                color: textDark,
               ),
             ),
           ],
@@ -520,34 +512,12 @@ Widget buildCyanQuotationDummy(
                 primary: cyanPrimary,
               ),
             ),
-            const SizedBox(width: 20),
-            Expanded(
-              flex: 4,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const Text(
-                    'Invoice Total In Words:',
-                    style: TextStyle(fontSize: 8.5, color: textMuted),
-                  ),
-                  const SizedBox(height: 2),
-                  const Text(
-                    DummyTemplateData.totalInWords,
-                    style: TextStyle(
-                      fontSize: 9,
-                      fontWeight: FontWeight.bold,
-                      color: textDark,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  buildDummySignature(
-                    lineColor: borderColor,
-                    labelColor: textDark,
-                    showName: true,
-                  ),
-                ],
-              ),
+            buildDummySignature(
+              lineColor: borderColor,
+              labelColor: textDark,
+              showName: true,
             ),
+            const SizedBox(width: 20),
           ],
         ),
 
@@ -555,27 +525,18 @@ Widget buildCyanQuotationDummy(
 
         // Bottom Enquiry Box
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
           decoration: BoxDecoration(
             border: Border.all(color: borderColor, width: 1),
           ),
           child: Center(
-            child: RichText(
-              textAlign: TextAlign.center,
-              text: TextSpan(
-                style: const TextStyle(fontSize: 9.5, color: textDark),
-                children: [
-                  const TextSpan(text: 'For any enquiries, email us on '),
-                  TextSpan(
-                    text: DummyTemplateData.companyEmail,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  const TextSpan(text: ' or call us on '),
-                  TextSpan(
-                    text: DummyTemplateData.companyPhone,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ],
+            child: Text(
+              DummyTemplateData.quotationTerms,
+              style: TextStyle(
+                fontSize: 9,
+                fontWeight: FontWeight.bold,
+                color: textDark,
+                height: 1.35,
               ),
             ),
           ),

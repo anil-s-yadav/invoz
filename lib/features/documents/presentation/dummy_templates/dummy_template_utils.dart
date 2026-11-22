@@ -247,11 +247,7 @@ Widget buildDummySignature({
         height: height,
         fit: BoxFit.contain,
       ),
-      Container(
-        width: width + 30,
-        height: 1.5,
-        color: lineColor,
-      ),
+      Container(width: width + 30, height: 1.5, color: lineColor),
       const SizedBox(height: 4),
       if (showName && name != null) ...[
         buildDummyText(name, size: 9.5, bold: true, color: labelColor),
@@ -262,20 +258,20 @@ Widget buildDummySignature({
   );
 }
 
-/// Standalone dummy QR code box
-Widget buildDummyQrCode({double size = 58, double iconSize = 46}) {
-  return Container(
-    width: size,
-    height: size,
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(4),
-      border: Border.all(color: Colors.grey.shade400, width: 0.8),
-    ),
-    alignment: Alignment.center,
-    child: Icon(Icons.qr_code_2, size: iconSize, color: Colors.black87),
-  );
-}
+// /// Standalone dummy QR code box
+// Widget buildDummyQrCode({double size = 58, double iconSize = 46}) {
+//   return Container(
+//     width: size,
+//     height: size,
+//     decoration: BoxDecoration(
+//       color: Colors.white,
+//       borderRadius: BorderRadius.circular(4),
+//       border: Border.all(color: Colors.grey.shade400, width: 0.8),
+//     ),
+//     alignment: Alignment.center,
+//     child: Icon(Icons.qr_code_2, size: iconSize, color: Colors.black87),
+//   );
+// }
 
 /// Reusable Payment Details with QR Code
 Widget buildDummyPaymentDetails({
@@ -332,7 +328,10 @@ Widget buildDummyPaymentDetails({
               bold: true,
               size: 9.5,
             ),
-            buildDummyText('A/C: ${DummyTemplateData.accountNumber}', size: 9.5),
+            buildDummyText(
+              'A/C: ${DummyTemplateData.accountNumber}',
+              size: 9.5,
+            ),
             buildDummyText(
               'IFSC: ${DummyTemplateData.ifscCode}',
               size: 8.5,
