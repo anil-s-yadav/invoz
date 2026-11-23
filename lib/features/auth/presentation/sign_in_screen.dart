@@ -97,104 +97,84 @@ class SignInScreen extends StatelessWidget {
               );
             }
 
-            return Stack(
-              children: [
-                // Background decorations
-                Positioned(
-                  top: -100,
-                  left: -100,
-                  child: Container(
-                    width: 300,
-                    height: 300,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: isDark
-                          ? Colors.blue.shade900.withValues(alpha: 0.15)
-                          : Colors.blue.shade50.withValues(alpha: 0.5),
+            return SizedBox.expand(
+              child: Stack(
+                children: [
+                  // Background decorations
+                  Positioned(
+                    top: -100,
+                    left: -100,
+                    child: Container(
+                      width: 300,
+                      height: 300,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: isDark
+                            ? Colors.blue.shade900.withValues(alpha: 0.15)
+                            : Colors.blue.shade50.withValues(alpha: 0.5),
+                      ),
                     ),
                   ),
-                ),
 
-                SafeArea(
-                  child: ResponsiveMaxWidth(
-                    child: SingleChildScrollView(
+                  SafeArea(
+                    child: ResponsiveMaxWidth(
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          const SizedBox(height: 20),
+                          const SizedBox(height: 12),
                           // Logo and Title
-                          Center(
-                            child: Column(
-                              children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(22),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: const Color(
-                                          0xFF003DFF,
-                                        ).withValues(alpha: 0.15),
-                                        blurRadius: 20,
-                                        offset: const Offset(0, 10),
-                                      ),
-                                    ],
-                                  ),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(22),
-                                    child: Image.asset(
-                                      'assets/icons/applogo.png',
-                                      width: 92,
-                                      height: 92,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 24),
-                                Text(
-                                  'Create professional invoices,\nquotations and receipts — effortlessly.',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                    color: isDark
-                                        ? AppColors.darkTextSecondary
-                                        : const Color(0xFF6B7280),
-                                    height: 1.4,
-                                    fontWeight: FontWeight.w500,
-                                  ),
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(18),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: const Color(
+                                    0xFF003DFF,
+                                  ).withValues(alpha: 0.15),
+                                  blurRadius: 20,
+                                  offset: const Offset(0, 10),
                                 ),
                               ],
                             ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(18),
+                              child: Image.asset(
+                                'assets/icons/applogo.png',
+                                width: 72,
+                                height: 72,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            'Create professional invoices,\nquotations and receipts — effortlessly.',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: isDark
+                                  ? AppColors.darkTextSecondary
+                                  : const Color(0xFF6B7280),
+                              height: 1.4,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
 
-                          const SizedBox(height: 24),
-
-                          // Center Illustration
-                          Builder(
-                            builder: (context) {
-                              final screenHeight = MediaQuery.of(
-                                context,
-                              ).size.height;
-                              double illHeight = 320;
-                              double scale = 1.0;
-                              if (screenHeight < 750) {
-                                illHeight = 220;
-                                scale = 0.7;
-                              }
-                              return _CenterIllustration(
-                                height: illHeight,
-                                scale: scale,
-                              );
-                            },
+                          // Center Illustration - fills remaining space
+                          const Expanded(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(vertical: 8),
+                              child: _CenterIllustration(),
+                            ),
                           ),
-
-                          const SizedBox(height: 60),
 
                           // Buttons
                           if (isLoading)
-                            const Center(
-                              child: CircularProgressIndicator(
-                                color: AppColors.primary,
+                            const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 12),
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                  color: AppColors.primary,
+                                ),
                               ),
                             )
                           else
@@ -203,6 +183,7 @@ class SignInScreen extends StatelessWidget {
                                 horizontal: 24,
                               ),
                               child: Column(
+                                mainAxisSize: MainAxisSize.min,
                                 children: [
                                   _SocialSignInButton(
                                     icon: Image.asset(
@@ -224,7 +205,7 @@ class SignInScreen extends StatelessWidget {
                                       );
                                     },
                                   ),
-                                  const SizedBox(height: 16),
+                                  const SizedBox(height: 12),
                                   _SocialSignInButton(
                                     icon: const Icon(
                                       Icons.apple,
@@ -247,7 +228,7 @@ class SignInScreen extends StatelessWidget {
                               ),
                             ),
 
-                          const SizedBox(height: 24),
+                          const SizedBox(height: 14),
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 32),
                             child: Wrap(
@@ -276,13 +257,13 @@ class SignInScreen extends StatelessWidget {
                               ],
                             ),
                           ),
-                          const SizedBox(height: 40),
+                          const SizedBox(height: 16),
                         ],
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             );
           },
         ),
@@ -292,17 +273,15 @@ class SignInScreen extends StatelessWidget {
 }
 
 class _CenterIllustration extends StatelessWidget {
-  final double height;
-  final double scale;
-  const _CenterIllustration({this.height = 320, this.scale = 1.0});
+  const _CenterIllustration();
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: height,
-      width: double.infinity,
-      child: Transform.scale(
-        scale: scale,
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      child: SizedBox(
+        width: 340,
+        height: 320,
         child: Stack(
           alignment: Alignment.center,
           children: [
@@ -718,7 +697,7 @@ class _SocialSignInButton extends StatelessWidget {
         backgroundColor: backgroundColor,
         foregroundColor: textColor,
         elevation: 0, // removed shadow for cleaner look matching the design
-        padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 20),
+        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(100),
           side: hasBorder
