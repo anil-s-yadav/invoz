@@ -1,3 +1,10 @@
+# Attributes
+-keepattributes *Annotation*
+-keepattributes Signature
+-keepattributes InnerClasses
+-keepattributes EnclosingMethod
+-keepattributes JavascriptInterface
+
 # Flutter Wrapper
 -keep class io.flutter.app.** { *; }
 -keep class io.flutter.plugin.**  { *; }
@@ -5,6 +12,26 @@
 -keep class io.flutter.view.**  { *; }
 -keep class io.flutter.**  { *; }
 -keep class io.flutter.plugins.**  { *; }
+
+# WorkManager & Room Database (Used by Google Mobile Ads)
+-keep class androidx.work.** { *; }
+-keep class androidx.work.impl.** { *; }
+-keep class * extends androidx.work.ListenableWorker { *; }
+-keep class * extends androidx.room.RoomDatabase { *; }
+-keepclassmembers class * extends androidx.room.RoomDatabase {
+    <init>();
+    *;
+}
+-keep class androidx.room.** { *; }
+-keep class androidx.sqlite.db.** { *; }
+-keep interface androidx.sqlite.db.** { *; }
+-dontwarn androidx.work.**
+-dontwarn androidx.room.**
+-dontwarn androidx.sqlite.db.**
+
+# AndroidX Startup
+-keep class androidx.startup.** { *; }
+-dontwarn androidx.startup.**
 
 # Google Sign In / Identity / Credential Manager
 -keep class androidx.credentials.** { *; }
@@ -22,14 +49,13 @@
 -keepclassmembers class * {
     @android.webkit.JavascriptInterface <methods>;
 }
--keepattributes JavascriptInterface
--keepattributes *Annotation*
 -dontwarn com.razorpay.**
 -keep class com.razorpay.** {*;}
 
 # AdMob
 -keep class com.google.android.gms.ads.** { *; }
 -dontwarn com.google.android.gms.ads.**
+-keep class com.google.ads.mediation.** { *; }
 
 # Firebase
 -keep class com.google.firebase.** { *; }
