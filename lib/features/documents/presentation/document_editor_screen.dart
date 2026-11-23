@@ -105,10 +105,7 @@ class _DocumentEditorScreenState extends State<DocumentEditorScreen> {
     _items = doc?.items != null ? List.from(doc!.items) : [];
     _overallDiscountValue = doc?.overallDiscountValue ?? 0.0;
     _overallDiscountType = doc?.overallDiscountType ?? DiscountType.percentage;
-    _templateId = TemplateRegistry.resolveTemplateId(
-      doc?.templateId,
-      _docType,
-    );
+    _templateId = TemplateRegistry.resolveTemplateId(doc?.templateId, _docType);
     _notesController = TextEditingController(text: doc?.notes ?? '');
     _termsController = TextEditingController(text: doc?.terms ?? '');
 
@@ -159,7 +156,9 @@ class _DocumentEditorScreenState extends State<DocumentEditorScreen> {
           if (_termsController.text.isEmpty) {
             _termsController.text = _docType == DocumentType.quotation
                 ? 'Valid up to 15 days from issue date.'
-                : (_docType == DocumentType.receipt ? '' : profile.defaultTerms);
+                : (_docType == DocumentType.receipt
+                      ? ''
+                      : profile.defaultTerms);
           }
           if (_notesController.text.isEmpty) {
             _notesController.text = _docType == DocumentType.quotation
@@ -179,7 +178,8 @@ class _DocumentEditorScreenState extends State<DocumentEditorScreen> {
       if (mounted) {
         setState(() {
           _payments = payments;
-          if (_selectedBankDetailId == null || _selectedBankDetailId == 'none') {
+          if (_selectedBankDetailId == null ||
+              _selectedBankDetailId == 'none') {
             final banks = payments.where((p) => p.type == 'Bank').toList();
             if (banks.isNotEmpty) {
               _selectedBankDetailId = banks.first.id;
@@ -223,8 +223,8 @@ class _DocumentEditorScreenState extends State<DocumentEditorScreen> {
 
   double get _shippingChargeAmount =>
       (_docType == DocumentType.invoice || _docType == DocumentType.proforma)
-          ? (double.tryParse(_shippingController.text) ?? 0.0)
-          : 0.0;
+      ? (double.tryParse(_shippingController.text) ?? 0.0)
+      : 0.0;
   double get _rawTotal =>
       (_subtotal - _overallDiscountAmount) + _taxTotal + _shippingChargeAmount;
   double get _calculatedRoundOff => (_rawTotal.roundToDouble() - _rawTotal);
@@ -314,7 +314,8 @@ class _DocumentEditorScreenState extends State<DocumentEditorScreen> {
     setState(() => _isSaving = true);
 
     final now = DateTime.now();
-    final status = forcedStatus ??
+    final status =
+        forcedStatus ??
         widget.initialDocument?.status ??
         (_docType == DocumentType.receipt
             ? DocumentStatus.paid
@@ -355,7 +356,8 @@ class _DocumentEditorScreenState extends State<DocumentEditorScreen> {
           _includePaymentDetails,
       selectedBankDetailId: _selectedBankDetailId,
       selectedUpiDetailId: _selectedUpiDetailId,
-      poNumber: (_docType == DocumentType.invoice ||
+      poNumber:
+          (_docType == DocumentType.invoice ||
                   _docType == DocumentType.proforma) &&
               _poNumberController.text.trim().isNotEmpty
           ? _poNumberController.text.trim()
@@ -370,8 +372,8 @@ class _DocumentEditorScreenState extends State<DocumentEditorScreen> {
       terms: _docType == DocumentType.receipt
           ? null
           : (_termsController.text.trim().isNotEmpty
-              ? _termsController.text.trim()
-              : null),
+                ? _termsController.text.trim()
+                : null),
       relatedDocId: widget.initialDocument?.relatedDocId,
       createdAt: widget.initialDocument?.createdAt ?? now,
       updatedAt: now,
@@ -462,9 +464,11 @@ class _DocumentEditorScreenState extends State<DocumentEditorScreen> {
                 ],
 
                 // 6. Notes & Terms Section
-                _buildSectionTitle(_docType == DocumentType.receipt
-                    ? 'PAYMENT & NOTES'
-                    : 'PAYMENT DETAILS & TERMS'),
+                _buildSectionTitle(
+                  _docType == DocumentType.receipt
+                      ? 'PAYMENT & NOTES'
+                      : 'PAYMENT DETAILS & TERMS',
+                ),
                 _buildNotesTermsSection(),
               ],
             ),
@@ -704,7 +708,8 @@ class _DocumentEditorScreenState extends State<DocumentEditorScreen> {
               children: [
                 Expanded(
                   child: _buildDateChip(
-                    label: _docType == DocumentType.quotation ||
+                    label:
+                        _docType == DocumentType.quotation ||
                             _docType == DocumentType.proforma
                         ? 'Issue Date'
                         : '${_docType.displayName} Date',
@@ -715,7 +720,8 @@ class _DocumentEditorScreenState extends State<DocumentEditorScreen> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: _buildDateChip(
-                    label: _docType == DocumentType.quotation ||
+                    label:
+                        _docType == DocumentType.quotation ||
                             _docType == DocumentType.proforma
                         ? 'Valid Until'
                         : 'Due Date',
@@ -1608,7 +1614,10 @@ class _DocumentEditorScreenState extends State<DocumentEditorScreen> {
                           value: 'Net Banking',
                           child: Text('Net Banking / NEFT'),
                         ),
-                        DropdownMenuItem(value: 'Cheque', child: Text('Cheque')),
+                        DropdownMenuItem(
+                          value: 'Cheque',
+                          child: Text('Cheque'),
+                        ),
                       ],
                       onChanged: (val) {
                         if (val != null) {

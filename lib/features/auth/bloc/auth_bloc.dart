@@ -138,15 +138,19 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             emit(Authenticated(user: user));
           } on DeviceLimitException {
             emit(AuthDeviceLimitReached(user));
+          } catch (e) {
+            // Non-fatal error during device registration (e.g. slow network)
+            emit(Authenticated(user: user));
           }
         } else {
           emit(const Unauthenticated());
         }
       } catch (e) {
-        String msg = 'Failed to sign in with Google: $e';
-        if (e.toString().contains('ApiException: 10')) {
+        String rawError = e.toString().replaceFirst(RegExp(r'^Exception:\s*'), '');
+        String msg = rawError;
+        if (rawError.contains('ApiException: 10') || rawError.contains('ApiException: 12500')) {
           msg =
-              'Google Sign-In configuration error (ApiException: 10). Add your SHA-1 fingerprint in Firebase Console.';
+              'Google Sign-In configuration error. Please ensure your Google Play App Signing SHA-1 fingerprint is added in Firebase Console.';
         }
         emit(AuthError(msg));
         emit(const Unauthenticated());

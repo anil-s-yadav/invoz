@@ -6,6 +6,18 @@
 -keep class io.flutter.**  { *; }
 -keep class io.flutter.plugins.**  { *; }
 
+# Google Sign In / Identity / Credential Manager
+-keep class androidx.credentials.** { *; }
+-keep interface androidx.credentials.** { *; }
+-keep class com.google.android.libraries.identity.googleid.** { *; }
+-keep class com.google.android.gms.auth.api.signin.** { *; }
+-keep class com.google.android.gms.auth.** { *; }
+-keep class com.google.android.gms.common.** { *; }
+-keep class io.flutter.plugins.googlesignin.** { *; }
+-dontwarn androidx.credentials.**
+-dontwarn com.google.android.libraries.identity.googleid.**
+-dontwarn com.google.android.gms.**
+
 # Razorpay
 -keepclassmembers class * {
     @android.webkit.JavascriptInterface <methods>;

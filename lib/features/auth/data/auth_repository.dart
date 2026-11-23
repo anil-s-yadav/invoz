@@ -45,15 +45,17 @@ class FirebaseAuthRepository implements AuthRepository {
     fb.FirebaseAuth? firebaseAuth,
     GoogleSignIn? googleSignIn,
   }) : _firebaseAuth = firebaseAuth ?? fb.FirebaseAuth.instance,
-       _googleSignIn = googleSignIn ?? GoogleSignIn.instance;
+       _googleSignIn = googleSignIn ?? GoogleSignIn.instance {
+    unawaited(_ensureGoogleSignInInitialized());
+  }
 
   Future<void> _ensureGoogleSignInInitialized() async {
     if (!_isGoogleSignInInitialized) {
       try {
-        final serverClientId =
+        const serverClientId =
             '556388897712-bibf3l0a44orhi08gkkhmv7d86g4ogat.apps.googleusercontent.com';
         final clientId = kIsWeb
-            ? '556388897712-bibf3l0a44orhi08gkkhmv7d86g4ogat.apps.googleusercontent.com'
+            ? serverClientId
             : (Platform.isAndroid
                   ? null
                   : DefaultFirebaseOptions.currentPlatform.iosClientId);
@@ -106,15 +108,16 @@ class FirebaseAuthRepository implements AuthRepository {
         return user;
       } else {
         await _ensureGoogleSignInInitialized();
-        final googleUser = await _googleSignIn.authenticate(
-          scopeHint: ['email', 'profile'],
-        );
+        final googleUser = await _googleSignIn.authenticate();
         final googleAuth = googleUser.authentication;
-        final authorization = await googleUser.authorizationClient
-            .authorizationForScopes(['email', 'profile']);
+        if (googleAuth.idToken == null || googleAuth.idToken!.isEmpty) {
+          throw Exception(
+            'Google Sign-In failed: No ID token returned. Make sure the Google Play App Signing SHA-1 fingerprint is added in Firebase Console.',
+          );
+        }
+
         final credential = fb.GoogleAuthProvider.credential(
           idToken: googleAuth.idToken,
-          accessToken: authorization?.accessToken,
         );
         final userCredential = await _firebaseAuth.signInWithCredential(
           credential,
@@ -127,14 +130,28 @@ class FirebaseAuthRepository implements AuthRepository {
         return user;
       }
     } on GoogleSignInException catch (e) {
+      debugPrint('GoogleSignInException: code=${e.code}, description=${e.description}, details=${e.details}');
       if (e.code == GoogleSignInExceptionCode.canceled) {
-        return null;
+        // On Android Credential Manager, when Google Play Services rejects the token request
+        // (usually because the app's SHA-1 fingerprint is not added to Firebase/Google Cloud),
+        // the OS cancels the flow and returns GoogleSignInExceptionCode.canceled.
+        throw Exception(
+          'Google Sign-In was cancelled or rejected by Google Play Services. If testing from Google Play (Closed Testing), your Google Play App Signing SHA-1 must be added to Firebase Console.',
+        );
+      }
+      rethrow;
+    } catch (e) {
+      debugPrint('Google Sign-In general error: $e');
+      final str = e.toString().toLowerCase();
+      if (str.contains('canceled') || str.contains('sign_in_canceled') || str.contains('12501')) {
+        throw Exception(
+          'Google Sign-In was cancelled or rejected by Google Play Services. If testing from Google Play (Closed Testing), your Google Play App Signing SHA-1 must be added to Firebase Console.',
+        );
       }
       rethrow;
     }
   }
 
-  @override
   @override
   Future<AuthUser> signInWithEmailAndPassword(
     String email,
