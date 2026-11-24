@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "556388897712-4ciju7m9d3uc7vufc1b9j82lusvfs48h.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.invoice.invoz",
+            "certificate_hash": "717456c03f7482797a6e37c39fbcfc0801f5aa01"
+          }
+        },
+        {
           "client_id": "556388897712-ag42arjn5f6qngsugf1kq6ab5k7uigpd.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
